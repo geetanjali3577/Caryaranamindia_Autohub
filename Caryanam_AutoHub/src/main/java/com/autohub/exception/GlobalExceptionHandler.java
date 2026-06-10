@@ -1,0 +1,44 @@
+package com.autohub.exception;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, Object>> handleGeneric(Exception ex) {
+
+        Map<String, Object> error = new HashMap<>();
+        error.put("status", 500);
+        error.put("message", ex.getMessage());
+
+        return ResponseEntity.internalServerError().body(error);
+    }
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?> handleValidationException(
+            MethodArgumentNotValidException ex) {
+
+        Map<String, String> errors = new LinkedHashMap<>();
+
+        ex.getBindingResult()
+                .getFieldErrors()
+                .forEach(error ->
+                        errors.put(error.getField(),
+                                error.getDefaultMessage()));
+
+        return ResponseEntity.badRequest().body(
+                Map.of(
+                        "status", 400,
+                        "message", "Validation Failed",
+                        "errors", errors
+                )
+        );
+    }
+}
