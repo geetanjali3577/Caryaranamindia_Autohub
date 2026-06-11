@@ -4,6 +4,7 @@ import com.autohub.dto.ResetPasswordDTO;
 import com.autohub.dto.UserRegisterDTO;
 import com.autohub.dto.UserResponseDTO;
 import com.autohub.dto.VerifyOtpDTO;
+import com.autohub.entity.Vehicle;
 
 import java.util.List;
 
@@ -44,4 +45,6 @@ public interface UserService {
     );
     //.......................
     void paymentSuccess(Long userId);
+
+    List<Vehicle> getAllActiveVehicles();
 }

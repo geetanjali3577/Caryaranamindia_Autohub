@@ -9,5 +9,5 @@ import java.util.List;
 @Service
 public interface VehicleMediaService {
 
-    String uploadVehicleMedia(String vehicleId,List<MultipartFile> images,MultipartFile video) throws IOException;
+    String uploadVehicleMedia(Long id,List<MultipartFile> images,MultipartFile video) throws IOException;
 }

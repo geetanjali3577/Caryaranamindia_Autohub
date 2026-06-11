@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,19 +23,12 @@ public class DealerServiceImpl implements DealerService {
 
     @Autowired
     private DealerRepository dealerRepository;
-
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private PasswordEncoder passwordEncoder;
-
     @Autowired
     private EmailService emailService;
-
-
-
-
     @Override
     public DealerResponseDTO registerDealer(DealerRegisterDTO dto) {
 
@@ -47,7 +41,7 @@ public class DealerServiceImpl implements DealerService {
 
 
         Dealer dealer = new Dealer();
-        dealer.setDealerId(dto.getDealerId());
+        dealer.setDealerCode(dto.getDealerId());
         dealer.setBusinessName(dto.getBusinessName());
         dealer.setOwnerName(dto.getOwnerName());
         dealer.setGstNumber(dto.getGstNumber());
@@ -74,7 +68,7 @@ public class DealerServiceImpl implements DealerService {
 
         return DealerResponseDTO.builder()
                 .id(dealer.getId())
-                .dealerId(dealer.getDealerId())
+                .dealerId(dealer.getDealerCode())
                 .businessName(dealer.getBusinessName())
                 .ownerName(dealer.getOwnerName())
                 .gstNumber(dealer.getGstNumber())
@@ -363,4 +357,31 @@ public class DealerServiceImpl implements DealerService {
                 .build();
     }
 */
+
+    @Override
+    public List<DealerSubscriptionResponseDTO> getSubscriptions() {
+
+        return dealerRepository.findAll()
+                .stream()
+                .map(dealer -> {
+
+                    DealerSubscriptionResponseDTO dto =
+                            new DealerSubscriptionResponseDTO();
+
+                    dto.setId((dealer.getId()));
+
+                    dto.setDealerName(dealer.getBusinessName());
+
+                    dto.setDealerId(dealer.getDealerCode());
+
+                    dto.setSubscriptionActive(
+                            dealer.getSubscriptionActive());
+
+                    dto.setSubscriptionPlan(
+                            dealer.getSubscriptionPlan());
+
+                    return dto;
+
+                }).toList();
+    }
 }

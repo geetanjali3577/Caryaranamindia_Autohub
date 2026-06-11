@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class VehicleRequestDTO {
-
         private String dealerId;
 
         private String brand;

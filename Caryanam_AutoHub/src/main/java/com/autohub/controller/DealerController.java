@@ -9,6 +9,7 @@ import com.autohub.service.VehicleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,13 +25,8 @@ import java.util.List;
 public class DealerController {
 
     private final DealerService dealerService;
-   private final VehicleMediaService mediaService;
-    private final VehicleService vehicleService;
-
 
     // ================= REGISTER DEALER =================
-
-
     @PostMapping("/register")
     public ResponseEntity<ResponseDto<DealerResponseDTO>> registerDealer(@Valid @RequestBody DealerRegisterDTO dto) {
 
@@ -39,60 +35,6 @@ public class DealerController {
                 .body(new ResponseDto<>(201, "Dealer Registered Successfully", response));
     }
 
-  // ================= ADD VEHICLE INFO=================
-
-    @PostMapping("/add-vehicle")
-    public ResponseEntity<ResponseDto> addVehicle(@Valid @RequestBody VehicleRequestDTO vehicleRequestDTO){
-
-        VehicleResponseDTO vehicleResponseDTO = vehicleService.addVehicle(vehicleRequestDTO);
-
-        return new ResponseEntity<>(new ResponseDto<>(201,"Vehicle Added Successfully ",vehicleResponseDTO), HttpStatus.CREATED);
-    }
-
-    // ================= ADD VEHICLE IMAGE & VIDEO =================
-
-    @PostMapping(value = "/upload-media/{vehicleId}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ResponseDto<String>> uploadMedia( @PathVariable String vehicleId,
-                                                            @RequestPart("images") List<MultipartFile> images,
-                                                            @RequestPart("video") MultipartFile video) throws IOException {
-
-        String response =mediaService.uploadVehicleMedia(vehicleId,images,video);
-
-        return ResponseEntity.ok(
-                new ResponseDto<>(200,"Image Upload Successfully !!",response));
-    }
-
-    // ================= UPDATE VEHICLE INFO=================
-
-    @PutMapping("/vehicle/update/{vehicleId}")
-    public ResponseEntity<ResponseDto<VehicleResponseDTO>> updateVehicle(@PathVariable String vehicleId,
-                                                                         @RequestBody VehicleRequestDTO request) {
-
-        VehicleResponseDTO response = vehicleService.updateVehicle(vehicleId, request);
-
-        return ResponseEntity.ok(new ResponseDto<>(200,"Vehicle Updated Successfully",response));
-
-    }
-
-    // ================= UPDATE VEHICLE STATUS =================
-
-    @PatchMapping("/vehicle/status/{vehicleId}")
-    public ResponseEntity<ResponseDto<String>> updateVehicleStatus(
-            @PathVariable String vehicleId,
-            @RequestBody VehicleStatusRequestDTO request) {
-
-        VehicleResponseDTO response =
-                vehicleService.updateVehicleStatus(
-                        vehicleId,
-                        request);
-
-        return ResponseEntity.ok(
-                new ResponseDto<>(
-                        200,
-                        "Vehicle Status Updated Successfully",
-                        response.getStatus()
-                ));
-    }
 
     // ================= FORGOT PASSWORD DEALER =================
     @PostMapping("/send-otp")
@@ -108,6 +50,13 @@ public class DealerController {
     @PostMapping("/reset-password")
     public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordDTO dto) {
         return ResponseEntity.ok(dealerService.resetPassword(dto));
+    }
+
+    @GetMapping("/subscriptions")
+    public ResponseEntity<ResponseDto<List<DealerSubscriptionResponseDTO>>> getSubscriptions() {
+
+        List<DealerSubscriptionResponseDTO> data = dealerService.getSubscriptions();
+        return ResponseEntity.ok(new ResponseDto<>(200, "Subscriptions fetched successfully", data));
     }
 
 }

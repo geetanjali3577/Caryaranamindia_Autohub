@@ -12,7 +12,7 @@ public interface DealerRepository extends JpaRepository<Dealer, Long> {
 
     //Optional<Dealer> findByDealerCode(String dealerCode);
 
-
+    //Optional<Dealer> findByDealerId(String DealerId);
 
     Optional<Dealer> findByEmail(String email);
 
