@@ -32,8 +32,8 @@ public class VehicleMediaServiceImpl implements VehicleMediaService {
         private final VehicleMediaRepository mediaRepository;
 
     @Override
-    public String uploadVehicleMedia(String vehicleId, List<MultipartFile> images, MultipartFile video) throws IOException {
-        Vehicle vehicle = vehicleRepository.findByVehicleId(vehicleId)
+    public String uploadVehicleMedia(Long id, List<MultipartFile> images, MultipartFile video) throws IOException {
+        Vehicle vehicle = vehicleRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Vehicle not found"));
 
@@ -48,10 +48,10 @@ public class VehicleMediaServiceImpl implements VehicleMediaService {
         }
 
         String imageFolder =
-                uploadDir + "/images/" + vehicleId;
+                uploadDir + "/images/" + id;
 
         String videoFolder =
-                uploadDir + "/videos/" + vehicleId;
+                uploadDir + "/videos/" + id;
 
         Files.createDirectories(Paths.get(imageFolder));
         Files.createDirectories(Paths.get(videoFolder));
@@ -72,7 +72,7 @@ public class VehicleMediaServiceImpl implements VehicleMediaService {
                     StandardCopyOption.REPLACE_EXISTING);
 
             VehicleMedia media = VehicleMedia.builder()
-                    .vehicleId(vehicleId)
+                    .id(id)
                     .mediaType("IMAGE")
                     .fileName(fileName)
                     .filePath(path.toString())
@@ -97,7 +97,7 @@ public class VehicleMediaServiceImpl implements VehicleMediaService {
 
         VehicleMedia videoMedia =
                 VehicleMedia.builder()
-                        .vehicleId(vehicleId)
+                        .id(id)
                         .mediaType("VIDEO")
                         .fileName(videoName)
                         .filePath(videoPath.toString())

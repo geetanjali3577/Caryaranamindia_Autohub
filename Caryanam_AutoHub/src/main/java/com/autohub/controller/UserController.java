@@ -2,6 +2,7 @@ package com.autohub.controller;
 
 import com.autohub.dto.*;
 import com.autohub.entity.Dealer;
+import com.autohub.entity.Vehicle;
 import com.autohub.enums.DealerStatus;
 
 import com.autohub.enums.RegistrationType;
@@ -26,6 +27,8 @@ public class UserController {
     private final UserRepository userRepository;
 
     private final DealerRepository dealerRepository;
+
+    private final UserService vehicleService;
 
     @PostMapping("/register")
     //USER
@@ -520,5 +523,31 @@ public class UserController {
                 userService.searchByEmail(email);
 
         return ResponseEntity.ok(user);
+    }
+
+    @GetMapping("/active")
+    public ResponseEntity<ResponseDto<List<Vehicle>>> getAllActiveVehicles() {
+
+        List<Vehicle> vehicles =
+                vehicleService.getAllActiveVehicles();
+
+        if (vehicles.isEmpty()) {
+
+            return ResponseEntity.ok(
+                    new ResponseDto<>(
+                            404,
+                            "No Active Vehicles Found",
+                            null
+                    )
+            );
+        }
+
+        return ResponseEntity.ok(
+                new ResponseDto<>(
+                        200,
+                        "Active Vehicles Fetched Successfully",
+                        vehicles
+                )
+        );
     }
 }

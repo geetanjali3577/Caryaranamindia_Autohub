@@ -6,7 +6,7 @@ import com.autohub.dto.UserResponseDTO;
 import com.autohub.dto.VerifyOtpDTO;
 import com.autohub.emailservice.EmailService;
 import com.autohub.entity.User;
-import com.autohub.enums.RegistrationType;
+import com.autohub.entity.Vehicle;
 import com.autohub.enums.Role;
 import com.autohub.enums.UserStatus;
 import com.autohub.repository.*;
@@ -35,6 +35,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private VehicleRepository vehicleRepository;
 
     //====================================================
     // GENERATE APPLICATION ID
@@ -274,9 +276,7 @@ public class UserServiceImpl implements UserService {
             user.setPassword(passwordEncoder.encode(dto.getPassword()));
         }
 
-//        if (dto.getDealerCode() != null && !dto.getDealerCode().isEmpty()) {
-//            user.setDealerCode(dto.getDealerCode());
-//        }
+
 
         if (dto.getRegistrationType() != null) {
             user.setRegistrationType(dto.getRegistrationType());
@@ -365,14 +365,7 @@ public class UserServiceImpl implements UserService {
 
         dto.setCreatedAt(user.getCreatedAt());
 
-        // ======================
-        // PERSONAL INFO (IMPORTANT)
-        // ======================
-//        dto.setMobileNumber(
-//                user.getPersonalInfo() != null && user.getPersonalInfo().getMobileNumber() != null
-//                        ? user.getPersonalInfo().getMobileNumber()
-//                        : user.getMobileNumber()
-//        );
+
 
         return dto;
     }
@@ -579,32 +572,7 @@ public class UserServiceImpl implements UserService {
                                         "User Not Found"
                                 ));
 
-//        Bank bank =
-//                bankRepository.findById(bankId)
-//                        .orElseThrow(() ->
-//                                new RuntimeException(
-//                                        "Bank Not Found"
-//                                ));
-//
-//        PersonalInfo personalInfo =
-//                personalInfoRepository
-//                        .findByUser_UserId(userId)
-//                        .orElseThrow(() ->
-//                                new RuntimeException(
-//                                        "Personal Info Not Found"
-//                                ));
-//
-//        List<Document> documents =
-//                documentRepository
-//                        .findByUser_UserId(userId);
-//
-//        emailService.sendCustomerDetailsToBank(
-//
-//                bank,
-//                user,
-//                personalInfo,
-//                documents
-//        );
+
     }
      //..........................
      @Override
@@ -628,5 +596,9 @@ public class UserServiceImpl implements UserService {
                         new RuntimeException("User not found with email: " + email));
 
         return mapToDTO(user);
+    }
+    @Override
+    public List<Vehicle> getAllActiveVehicles() {
+        return vehicleRepository.getAllActiveVehicles();
     }
 }

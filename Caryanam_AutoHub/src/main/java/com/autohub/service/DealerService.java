@@ -10,7 +10,7 @@ import java.util.*;
 public interface DealerService {
 
     DealerResponseDTO registerDealer(DealerRegisterDTO dto);
-
+    List<DealerSubscriptionResponseDTO> getSubscriptions();
 
     String sendOtp(String email);
 

@@ -3,9 +3,12 @@ package com.autohub.serviceImpl;
 import com.autohub.dto.VehicleRequestDTO;
 import com.autohub.dto.VehicleResponseDTO;
 import com.autohub.dto.VehicleStatusRequestDTO;
+import com.autohub.entity.Dealer;
 import com.autohub.entity.Vehicle;
+import com.autohub.enums.SubscriptionPlan;
 import com.autohub.enums.VehicleStatus;
 import com.autohub.exception.ResourceNotFoundException;
+import com.autohub.repository.DealerRepository;
 import com.autohub.repository.VehicleRepository;
 import com.autohub.service.VehicleService;
 import lombok.RequiredArgsConstructor;
@@ -14,17 +17,55 @@ import org.springframework.stereotype.Service;
 
 import java.nio.file.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class VehicleServiceImpl implements VehicleService {
 
    private final VehicleRepository vehicleRepository;
-
+   private final DealerRepository dealerRepository;
    private final ModelMapper modelMapper;
 
    @Override
-   public VehicleResponseDTO addVehicle(VehicleRequestDTO request) {
+   public VehicleResponseDTO addVehicle(VehicleRequestDTO request,Long id) {
+       Dealer dealer = dealerRepository.findById(id)
+               .orElseThrow(() ->
+                       new RuntimeException("Dealer not found"));
+
+       // Subscription Active आहे का?
+       if (dealer.getSubscriptionActive() == null ||
+               !dealer.getSubscriptionActive()) {
+
+           throw new RuntimeException(
+                   "Please purchase subscription before adding vehicles");
+       }
+
+       // Subscription Expired आहे का?
+       if (dealer.getSubscriptionEndDate() != null &&
+               dealer.getSubscriptionEndDate().isBefore(LocalDateTime.now())) {
+
+           throw new RuntimeException(
+                   "Subscription expired. Please renew subscription");
+       }
+
+       // Vehicle Count Check
+       Long vehicleCount =
+               vehicleRepository.countByDealerId(
+                       request.getDealerId());
+
+       if (dealer.getSubscriptionPlan() != SubscriptionPlan.PREMIUM) {
+
+           int limit = dealer.getSubscriptionPlan()
+                   .getVehicleLimit();
+
+           if (vehicleCount >= limit) {
+
+               throw new RuntimeException(
+                       "Vehicle limit exceeded for "
+                               + dealer.getSubscriptionPlan());
+           }
+       }
 
        String vehicleId =String.format("VH%03d", vehicleRepository.count() + 1);
 
@@ -83,10 +124,10 @@ public class VehicleServiceImpl implements VehicleService {
         }
 
     @Override
-    public VehicleResponseDTO updateVehicle(String vehicleId, VehicleRequestDTO request) {
+    public VehicleResponseDTO updateVehicle(Long id, VehicleRequestDTO request) {
 
-        Vehicle vehicle = vehicleRepository.findByVehicleId(vehicleId).orElseThrow(() ->
-                        new ResourceNotFoundException("Vehicle not found with id: " + vehicleId));
+        Vehicle vehicle = vehicleRepository.findById(id).orElseThrow(() ->
+                        new ResourceNotFoundException("Vehicle not found with id: " + id));
 
         vehicle.setBrand(request.getBrand());
         vehicle.setModel(request.getModel());
@@ -113,9 +154,9 @@ public class VehicleServiceImpl implements VehicleService {
 
 
     @Override
-    public VehicleResponseDTO updateVehicleStatus(String vehicleId,VehicleStatusRequestDTO request) {
+    public VehicleResponseDTO updateVehicleStatus(Long id,VehicleStatusRequestDTO request) {
 
-        Vehicle vehicle = vehicleRepository.findByVehicleId(vehicleId).orElseThrow(() ->
+        Vehicle vehicle = vehicleRepository.findById(id).orElseThrow(() ->
                         new ResourceNotFoundException(
                                 "Vehicle not found"));
 
@@ -133,5 +174,10 @@ public class VehicleServiceImpl implements VehicleService {
                 .vehicleId(updatedVehicle.getVehicleId())
                 .status(String.valueOf(updatedVehicle.getStatus()))
                 .build();
+    }
+
+    @Override
+    public List<Vehicle> getAllActiveVehicles() {
+        return List.of();
     }
 }

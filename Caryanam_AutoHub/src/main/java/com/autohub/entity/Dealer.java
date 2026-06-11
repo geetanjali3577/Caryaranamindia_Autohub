@@ -4,6 +4,7 @@ import com.autohub.enums.DealerStatus;
 import com.autohub.enums.Role;
 
 
+import com.autohub.enums.SubscriptionPlan;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -21,7 +22,7 @@ public class Dealer {
     private Long id;
 
     @Column(nullable = false)
-    private String dealerId;  //Need to autogenerate
+    private String dealerCode;  //Need to autogenerate
 
     @Column(nullable = false)
     private String businessName;
@@ -78,4 +79,15 @@ public class Dealer {
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
+    //////////////////////////////////////////////////
+    private Boolean subscriptionActive = false;
+
+    @Enumerated(EnumType.STRING)
+    private SubscriptionPlan subscriptionPlan;
+
+    private LocalDateTime subscriptionStartDate;
+
+    private LocalDateTime subscriptionEndDate;
+
+
 }

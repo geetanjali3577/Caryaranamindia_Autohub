@@ -15,4 +15,6 @@ public class ResponseDto<T> {
 
     public ResponseDto(boolean b, String error, Object data) {
     }
+
+
 }
