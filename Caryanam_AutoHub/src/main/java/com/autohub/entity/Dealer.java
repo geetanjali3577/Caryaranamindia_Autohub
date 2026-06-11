@@ -6,6 +6,7 @@ import com.autohub.enums.Role;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
@@ -71,7 +72,7 @@ public class Dealer {
     @Enumerated(EnumType.STRING)
     private DealerStatus status; // PENDING, APPROVED, REJECTED
 
-    @CreatedDate
+    @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 }

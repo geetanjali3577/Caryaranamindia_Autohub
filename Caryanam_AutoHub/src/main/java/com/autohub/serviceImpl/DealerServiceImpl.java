@@ -56,7 +56,7 @@ public class DealerServiceImpl implements DealerService {
         dealer.setWhatsapp(dto.getWhatsapp());
         dealer.setEmail(dto.getEmail());
         dealer.setPassword(passwordEncoder.encode(dto.getPassword()));
-
+        dealer.setCreatedAt(LocalDateTime.now());
         dealer.setAddress(dto.getAddress());
         dealer.setCity(dto.getCity());
         dealer.setState(dto.getState());
@@ -87,6 +87,7 @@ public class DealerServiceImpl implements DealerService {
                 .city(dealer.getCity())
                 .state(dealer.getState())
                 .pinCode(dealer.getPinCode())
+                .createdAt(dealer.getCreatedAt())
                 .build();
     }
 

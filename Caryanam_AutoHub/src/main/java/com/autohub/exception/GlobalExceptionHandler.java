@@ -1,5 +1,7 @@
 package com.autohub.exception;
 
+import com.autohub.dto.ResponseDto;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -40,5 +42,11 @@ public class GlobalExceptionHandler {
                         "errors", errors
                 )
         );
+    }
+
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ResponseDto> handleResourceNotFoundException(ResourceNotFoundException e) {
+        return new ResponseEntity<>(new ResponseDto(404, e.getMessage(), null), HttpStatus.NOT_FOUND);
     }
 }

@@ -44,82 +44,9 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
 
-                                .requestMatchers("/api/dealer/**","/api/vehicle/**").permitAll()
+                                .requestMatchers("/api/dealer/**","/api/vehicle/**","/api/auth/**").permitAll()
 
 
-                                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-
-                                        // Admin APIs
-                                        .requestMatchers(
-                                                "/api/user/all",
-                                                "/api/user/search",
-                                                "/api/user/assign-bank/**",
-                                                "/api/user/payment-success/**",
-                                                "/api/dealer/all",
-                                                "/api/dealer/search/dealer-code",
-                                                "/api/admin/current",
-                                                "/api/admin/me",
-                                                "/api/admin/profile",
-                                                "/api/admin/dashboard",
-                                                "/api/admin/banks/**",
-                                                "/api/personal-info/all",
-                                                "/api/documents/status/**",
-                                                "/api/documents/pending",
-                                                "/api/documents/verified",
-                                                "/api/documents/*/remarks"
-                                        ).hasRole("ADMIN")
-
-                                        // User + Admin
-                                        .requestMatchers(
-                                                "/api/user/**",
-                                                "/api/user/update/**",
-                                                "/api/user/search/email"
-                                        ).hasAnyRole("USER", "ADMIN")
-
-                                        // Personal Info
-                                .requestMatchers(
-                                        "/api/personal-info/save",
-                                        "/api/personal-info/**",
-                                        "/api/personal-info/update/**"
-                                ).hasAnyRole("USER","DEALER","ADMIN")
-
-                                .requestMatchers("/api/personal-info/all")
-                                .hasAnyRole("DEALER","ADMIN")
-
-                                        // Documents
-                                        .requestMatchers(
-                                                "/api/documents/upload"
-                                        ).hasAnyRole("USER", "DEALER")
-
-                                        .requestMatchers(
-                                                "/api/documents/count/**",
-                                                "/api/documents/download/**",
-                                                "/api/documents/preview/**",
-                                                "/api/documents/user/**"
-                                        ).hasAnyRole("USER", "DEALER", "ADMIN")
-
-                                        // Notifications
-                                        .requestMatchers("/api/notifications/**")
-                                        .hasAnyRole("USER", "DEALER", "ADMIN")
-
-                                        // Dealer
-                                        .requestMatchers("/api/dealer/**","/api/dealer/all",
-                                                 "/api/dealer/search/dealer-code")
-                                        .hasAnyRole("DEALER", "ADMIN")
-
-                                        // Chatbot
-                                        .requestMatchers("/api/chatbot/**")
-                                        .hasAnyRole("USER", "DEALER", "ADMIN")
-
-                                .requestMatchers(
-                                        "/api/user/all",
-                                        "/api/user/search"
-                                ).hasAnyRole("DEALER","ADMIN")
-
-                                .requestMatchers(
-                                        "/api/user/assign-bank/**",
-                                        "/api/user/payment-success/**"
-                                ).hasRole("ADMIN")
                                         .anyRequest().authenticated()
                                 )
 
