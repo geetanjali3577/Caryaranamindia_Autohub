@@ -1,27 +1,19 @@
-package com.autohub.entity;
+package com.autohub.dto;
 
-import com.autohub.enums.VehicleStatus;
-import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "vehicle-info")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Vehicle {
+public class VehicleResponseDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(unique = true)
     private String vehicleId;
-
     private String dealerId;
 
     private String brand;
@@ -42,7 +34,6 @@ public class Vehicle {
 
     private Double askingPrice;
 
-    @Column(length = 5000)
     private String vehicleDescription;
 
     private Boolean financeAvailability;
@@ -52,10 +43,7 @@ public class Vehicle {
     private String dealerContactNumber;
     private String dealerContactEmail;
 
+    private String status;
+
     private LocalDateTime createdAt;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private VehicleStatus status;
-
 }

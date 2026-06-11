@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 @Builder
 public class DealerResponseDTO {
 
-    private Long dealerId;
-
+    private Long id;
+    private  String dealerId;
     private String businessName;
     private String ownerName;
     private String gstNumber;

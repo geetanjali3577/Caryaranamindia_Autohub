@@ -119,7 +119,7 @@ public class AuthServiceImpl implements AuthService {
 
 
             String token = jwtUtil.generateToken(
-                    dealer.getDealerId(),
+                    dealer.getId(),
                     dealer.getOwnerName(), // name
                     dealer.getEmail(),     // username/subject
                     dealer.getRole()

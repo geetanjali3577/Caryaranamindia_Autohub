@@ -82,7 +82,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                     : "DEALER";
 
             return new CustomUserDetails(
-                    dealer.getDealerId(),
+                    dealer.getId(),
                     dealer.getOwnerName(),
                     dealer.getEmail(),
                     dealer.getPassword(),

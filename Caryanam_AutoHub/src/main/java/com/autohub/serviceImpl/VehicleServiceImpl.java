@@ -1,117 +1,137 @@
-package com.autohub.service.impl;
+package com.autohub.serviceImpl;
 
 import com.autohub.dto.VehicleRequestDTO;
+import com.autohub.dto.VehicleResponseDTO;
+import com.autohub.dto.VehicleStatusRequestDTO;
 import com.autohub.entity.Vehicle;
+import com.autohub.enums.VehicleStatus;
+import com.autohub.exception.ResourceNotFoundException;
 import com.autohub.repository.VehicleRepository;
 import com.autohub.service.VehicleService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.nio.file.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
 public class VehicleServiceImpl implements VehicleService {
 
-    private final VehicleRepository vehicleRepository;
+   private final VehicleRepository vehicleRepository;
 
-    private static final String IMAGE_DIR = "uploads/images/";
-    private static final String VIDEO_DIR = "uploads/videos/";
+   private final ModelMapper modelMapper;
+
+   @Override
+   public VehicleResponseDTO addVehicle(VehicleRequestDTO request) {
+
+       String vehicleId =String.format("VH%03d", vehicleRepository.count() + 1);
+
+       Vehicle vehicle = Vehicle.builder()
+                    .vehicleId(vehicleId)
+                    .dealerId(request.getDealerId())
+                    .brand(request.getBrand())
+                    .model(request.getModel())
+                    .variant(request.getVariant())
+                    .manufacturingYear(request.getManufacturingYear())
+                    .registrationYear(request.getRegistrationYear())
+                    .fuelType(request.getFuelType())
+                    .transmission(request.getTransmission())
+                    .kilometerDriven(request.getKilometerDriven())
+                    .ownershipDetails(request.getOwnershipDetails())
+                    .insuranceStatus(request.getInsuranceStatus())
+                    .rtoInformation(request.getRtoInformation())
+                    .askingPrice(request.getAskingPrice())
+                    .vehicleDescription(request.getVehicleDescription())
+                    .financeAvailability(request.getFinanceAvailability())
+                    .featured(request.getFeatured())
+                    .dealerContactName(request.getDealerContactName())
+                    .dealerContactNumber(request.getDealerContactNumber())
+                    .dealerContactEmail(request.getDealerContactEmail())
+                    .createdAt(LocalDateTime.now())
+                    .status(VehicleStatus.ACTIVE)
+                    .build();
+
+       Vehicle savedVehicle = vehicleRepository.save(vehicle);
+
+       return VehicleResponseDTO.builder()
+                    .vehicleId(savedVehicle.getVehicleId())
+                    .dealerId(savedVehicle.getDealerId())
+                    .brand(savedVehicle.getBrand())
+                    .model(savedVehicle.getModel())
+                    .variant(savedVehicle.getVariant())
+                    .manufacturingYear(savedVehicle.getManufacturingYear())
+                    .registrationYear(savedVehicle.getRegistrationYear())
+                    .fuelType(savedVehicle.getFuelType())
+                    .transmission(savedVehicle.getTransmission())
+                    .kilometerDriven(savedVehicle.getKilometerDriven())
+                    .ownershipDetails(savedVehicle.getOwnershipDetails())
+                    .insuranceStatus(savedVehicle.getInsuranceStatus())
+                    .rtoInformation(savedVehicle.getRtoInformation())
+                    .askingPrice(savedVehicle.getAskingPrice())
+                    .vehicleDescription(savedVehicle.getVehicleDescription())
+                    .financeAvailability(savedVehicle.getFinanceAvailability())
+                    .featured(savedVehicle.getFeatured())
+                    .dealerContactName(savedVehicle.getDealerContactName())
+                    .dealerContactNumber(savedVehicle.getDealerContactNumber())
+                    .dealerContactEmail(savedVehicle.getDealerContactEmail())
+                    .status(String.valueOf(VehicleStatus.ACTIVE))
+                    .createdAt(savedVehicle.getCreatedAt())
+                    .build();
+
+        }
 
     @Override
-    public String addVehicle(
-            VehicleRequestDTO dto,
-            List<MultipartFile> images,
-            MultipartFile video
-    ) throws IOException {
+    public VehicleResponseDTO updateVehicle(String vehicleId, VehicleRequestDTO request) {
 
-        if(images == null || images.size() < 10){
-            throw new RuntimeException(
-                    "Minimum 10 images required"
-            );
-        }
+        Vehicle vehicle = vehicleRepository.findByVehicleId(vehicleId).orElseThrow(() ->
+                        new ResourceNotFoundException("Vehicle not found with id: " + vehicleId));
 
-        Files.createDirectories(Paths.get(IMAGE_DIR));
-        Files.createDirectories(Paths.get(VIDEO_DIR));
+        vehicle.setBrand(request.getBrand());
+        vehicle.setModel(request.getModel());
+        vehicle.setVariant(request.getVariant());
+        vehicle.setManufacturingYear(request.getManufacturingYear());
+        vehicle.setRegistrationYear(request.getRegistrationYear());
+        vehicle.setFuelType(request.getFuelType());
+        vehicle.setTransmission(request.getTransmission());
+        vehicle.setKilometerDriven(request.getKilometerDriven());
+        vehicle.setOwnershipDetails(request.getOwnershipDetails());
+        vehicle.setInsuranceStatus(request.getInsuranceStatus());
+        vehicle.setRtoInformation(request.getRtoInformation());
+        vehicle.setAskingPrice(request.getAskingPrice());
+        vehicle.setVehicleDescription(request.getVehicleDescription());
+        vehicle.setFinanceAvailability(request.getFinanceAvailability());
+        vehicle.setFeatured(request.getFeatured());
+        vehicle.setDealerContactName(request.getDealerContactName());
+        vehicle.setDealerContactNumber(request.getDealerContactNumber());
+        vehicle.setDealerContactEmail(request.getDealerContactEmail());
+        Vehicle updatedVehicle = vehicleRepository.save(vehicle);
 
-        List<String> imagePaths = new ArrayList<>();
-
-        for(MultipartFile image : images){
-
-            String imageName =
-                    UUID.randomUUID() + "_" +
-                            image.getOriginalFilename();
-
-            Path imagePath =
-                    Paths.get(IMAGE_DIR, imageName);
-
-            Files.copy(
-                    image.getInputStream(),
-                    imagePath,
-                    StandardCopyOption.REPLACE_EXISTING
-            );
-
-            imagePaths.add(imagePath.toString());
-        }
-
-        String videoPathString = null;
-
-        if(video != null && !video.isEmpty()){
-
-            String videoName =
-                    UUID.randomUUID() + "_" +
-                            video.getOriginalFilename();
-
-            Path videoPath =
-                    Paths.get(VIDEO_DIR, videoName);
-
-            Files.copy(
-                    video.getInputStream(),
-                    videoPath,
-                    StandardCopyOption.REPLACE_EXISTING
-            );
-
-            videoPathString = videoPath.toString();
-        }
-
-        Vehicle vehicle = Vehicle.builder()
-                .vehicleId(
-                        "VH" + System.currentTimeMillis()
-                )
-                .dealerId(dto.getDealerId())
-                .brand(dto.getBrand())
-                .model(dto.getModel())
-                .variant(dto.getVariant())
-                .manufacturingYear(dto.getManufacturingYear())
-                .registrationYear(dto.getRegistrationYear())
-                .fuelType(dto.getFuelType())
-                .transmission(dto.getTransmission())
-                .kilometerDriven(dto.getKilometerDriven())
-                .ownershipDetails(dto.getOwnershipDetails())
-                .insuranceStatus(dto.getInsuranceStatus())
-                .rtoInformation(dto.getRtoInformation())
-                .askingPrice(dto.getAskingPrice())
-                .vehicleDescription(dto.getVehicleDescription())
-                .financeAvailability(dto.getFinanceAvailability())
-                .featured(dto.getFeatured())
-                .dealerContactName(dto.getDealerContactName())
-                .dealerContactNumber(dto.getDealerContactNumber())
-                .dealerContactEmail(dto.getDealerContactEmail())
-                .status("ACTIVE")
-                .imagePaths(imagePaths)
-                .videoPath(videoPathString)
-                .build();
-
-        vehicleRepository.save(vehicle);
-
-        return "Vehicle Added Successfully";
+        return modelMapper.map(updatedVehicle, VehicleResponseDTO.class);
     }
 
 
+    @Override
+    public VehicleResponseDTO updateVehicleStatus(String vehicleId,VehicleStatusRequestDTO request) {
+
+        Vehicle vehicle = vehicleRepository.findByVehicleId(vehicleId).orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Vehicle not found"));
+
+        if (!request.getStatus().equalsIgnoreCase("ACTIVE")
+                && !request.getStatus().equalsIgnoreCase("INACTIVE")) {
+
+            throw new RuntimeException("Status must be ACTIVE or INACTIVE");
+        }
+
+        vehicle.setStatus(VehicleStatus.valueOf(request.getStatus().toUpperCase()));
+
+        Vehicle updatedVehicle = vehicleRepository.save(vehicle);
+
+        return VehicleResponseDTO.builder()
+                .vehicleId(updatedVehicle.getVehicleId())
+                .status(String.valueOf(updatedVehicle.getStatus()))
+                .build();
+    }
 }

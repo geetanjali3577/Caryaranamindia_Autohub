@@ -1,49 +1,37 @@
 package com.autohub.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-
-import java.math.BigDecimal;
 
 @Data
 public class VehicleRequestDTO {
 
-    private String dealerId;
+        private String dealerId;
 
-    private String brand;
+        private String brand;
+        private String model;
+        private String variant;
 
-    private String model;
+        private Integer manufacturingYear;
+        private Integer registrationYear;
 
-    private String variant;
+        private String fuelType;
+        private String transmission;
 
-    private Integer manufacturingYear;
+        private Long kilometerDriven;
 
-    private Integer registrationYear;
+        private String ownershipDetails;
+        private String insuranceStatus;
+        private String rtoInformation;
 
-    private String fuelType;
+        private Double askingPrice;
 
-    private String transmission;
+        private String vehicleDescription;
 
-    private Integer kilometerDriven;
+        private Boolean financeAvailability;
+        private Boolean featured;
 
-    private String ownershipDetails;
+        private String dealerContactName;
+        private String dealerContactNumber;
+        private String dealerContactEmail;
 
-    private String insuranceStatus;
-
-    private String rtoInformation;
-
-    private BigDecimal askingPrice;
-
-    private String vehicleDescription;
-
-    private Boolean financeAvailability;
-
-    private Boolean featured;
-
-    private String dealerContactName;
-
-    private String dealerContactNumber;
-
-    private String dealerContactEmail;
 }

@@ -18,7 +18,10 @@ public class Dealer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long dealerId;
+    private Long id;
+
+    @Column(nullable = false)
+    private String dealerId;  //Need to autogenerate
 
     @Column(nullable = false)
     private String businessName;

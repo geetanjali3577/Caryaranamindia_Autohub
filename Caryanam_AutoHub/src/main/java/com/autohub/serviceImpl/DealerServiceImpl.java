@@ -47,6 +47,7 @@ public class DealerServiceImpl implements DealerService {
 
 
         Dealer dealer = new Dealer();
+        dealer.setDealerId(dto.getDealerId());
         dealer.setBusinessName(dto.getBusinessName());
         dealer.setOwnerName(dto.getOwnerName());
         dealer.setGstNumber(dto.getGstNumber());
@@ -72,6 +73,7 @@ public class DealerServiceImpl implements DealerService {
         Dealer savedDealer = dealerRepository.save(dealer);
 
         return DealerResponseDTO.builder()
+                .id(dealer.getId())
                 .dealerId(dealer.getDealerId())
                 .businessName(dealer.getBusinessName())
                 .ownerName(dealer.getOwnerName())

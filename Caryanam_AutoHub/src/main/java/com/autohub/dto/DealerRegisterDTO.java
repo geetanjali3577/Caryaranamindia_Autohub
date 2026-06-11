@@ -6,6 +6,9 @@ import lombok.Data;
 @Data
 public class DealerRegisterDTO {
 
+    @NotBlank(message = "dealer Id is Required")
+    private String dealerId;
+
     @NotBlank(message = "Business Name is Required")
     private String businessName;
 

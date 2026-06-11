@@ -4,15 +4,18 @@ import com.autohub.dto.*;
 import com.autohub.service.DealerService;
 
 
+import com.autohub.service.VehicleMediaService;
 import com.autohub.service.VehicleService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -21,14 +24,13 @@ import java.util.List;
 public class DealerController {
 
     private final DealerService dealerService;
-
-
+   private final VehicleMediaService mediaService;
     private final VehicleService vehicleService;
 
 
     // ================= REGISTER DEALER =================
 
-    //DEALER
+
     @PostMapping("/register")
     public ResponseEntity<ResponseDto<DealerResponseDTO>> registerDealer(@Valid @RequestBody DealerRegisterDTO dto) {
 
@@ -37,22 +39,60 @@ public class DealerController {
                 .body(new ResponseDto<>(201, "Dealer Registered Successfully", response));
     }
 
+  // ================= ADD VEHICLE INFO=================
 
+    @PostMapping("/add-vehicle")
+    public ResponseEntity<ResponseDto> addVehicle(@Valid @RequestBody VehicleRequestDTO vehicleRequestDTO){
 
-    @PostMapping(value = "/add-vehicle",consumes = "multipart/form-data")
-    public String addVehicle(@RequestPart("vehicleData") String vehicleData,@RequestPart("images") List<MultipartFile> images,@RequestPart("video") MultipartFile video) throws Exception {
+        VehicleResponseDTO vehicleResponseDTO = vehicleService.addVehicle(vehicleRequestDTO);
 
-        ObjectMapper mapper = new ObjectMapper();
-
-        VehicleRequestDTO dto =
-                mapper.readValue(
-                        vehicleData,
-                        VehicleRequestDTO.class
-                );
-
-        return vehicleService.addVehicle(dto,images,video);
+        return new ResponseEntity<>(new ResponseDto<>(201,"Vehicle Added Successfully ",vehicleResponseDTO), HttpStatus.CREATED);
     }
 
+    // ================= ADD VEHICLE IMAGE & VIDEO =================
+
+    @PostMapping(value = "/upload-media/{vehicleId}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ResponseDto<String>> uploadMedia( @PathVariable String vehicleId,
+                                                            @RequestPart("images") List<MultipartFile> images,
+                                                            @RequestPart("video") MultipartFile video) throws IOException {
+
+        String response =mediaService.uploadVehicleMedia(vehicleId,images,video);
+
+        return ResponseEntity.ok(
+                new ResponseDto<>(200,"Image Upload Successfully !!",response));
+    }
+
+    // ================= UPDATE VEHICLE INFO=================
+
+    @PutMapping("/vehicle/update/{vehicleId}")
+    public ResponseEntity<ResponseDto<VehicleResponseDTO>> updateVehicle(@PathVariable String vehicleId,
+                                                                         @RequestBody VehicleRequestDTO request) {
+
+        VehicleResponseDTO response = vehicleService.updateVehicle(vehicleId, request);
+
+        return ResponseEntity.ok(new ResponseDto<>(200,"Vehicle Updated Successfully",response));
+
+    }
+
+    // ================= UPDATE VEHICLE STATUS =================
+
+    @PatchMapping("/vehicle/status/{vehicleId}")
+    public ResponseEntity<ResponseDto<String>> updateVehicleStatus(
+            @PathVariable String vehicleId,
+            @RequestBody VehicleStatusRequestDTO request) {
+
+        VehicleResponseDTO response =
+                vehicleService.updateVehicleStatus(
+                        vehicleId,
+                        request);
+
+        return ResponseEntity.ok(
+                new ResponseDto<>(
+                        200,
+                        "Vehicle Status Updated Successfully",
+                        response.getStatus()
+                ));
+    }
 
     // ================= FORGOT PASSWORD DEALER =================
     @PostMapping("/send-otp")
@@ -70,83 +110,4 @@ public class DealerController {
         return ResponseEntity.ok(dealerService.resetPassword(dto));
     }
 
-//    // ================= UPDATE DEALER =================
-//    @PutMapping("/update/{id}")
-//    public ResponseEntity<ResponseDto<DealerResponseDTO>> updateDealer(@PathVariable Long id, @RequestBody DealerRegisterDTO dto) {
-//
-//        if (id == null || id <= 0) {
-//            return ResponseEntity.badRequest()
-//                    .body(new ResponseDto<>(400, "Valid Dealer Id is Required", null));
-//        }
-//
-//        if (dto == null) {
-//            return ResponseEntity.badRequest()
-//                    .body(new ResponseDto<>(400, "Request Body is Missing", null));
-//        }
-//
-//        if (dto.getFullName() == null || dto.getFullName().trim().isEmpty()) {
-//            return ResponseEntity.badRequest()
-//                    .body(new ResponseDto<>(400, "Name is Required", null));
-//        }
-//        if (!dto.getFullName().matches("^[A-Za-z]+(?: [A-Za-z]+)*$")) {
-//            return ResponseEntity.badRequest()
-//                    .body(new ResponseDto<>(400,
-//                            "Name must contain only alphabets and spaces (3-50 characters)",
-//                            null));
-//        }
-//
-//        if (dto.getEmail() == null || dto.getEmail().trim().isEmpty()) {
-//            return ResponseEntity.badRequest()
-//                    .body(new ResponseDto<>(400, "Email is Required", null));
-//        }
-//        if (!dto.getEmail().matches("^[A-Za-z0-9._%+-]+@gmail\\.com$")) {
-//            return ResponseEntity.badRequest().body(new ResponseDto<>(400, "Only Gmail format allowed", null));
-//        }
-//
-//        if (dto.getMobileNumber() == null || dto.getMobileNumber().trim().isEmpty()) {
-//            return ResponseEntity.badRequest()
-//                    .body(new ResponseDto<>(400, "Mobile Number is Required", null));
-//        }
-//
-//        if (!dto.getMobileNumber() .matches("\\d+")) {
-//            return ResponseEntity.badRequest()
-//                    .body(new ResponseDto<>(400, "Mobile Number must contain only digits", null));
-//        }
-//
-//
-//        if (dto.getMobileNumber() .length() != 10) {
-//            return ResponseEntity.badRequest()
-//                    .body(new ResponseDto<>(400, "Mobile Number must be exactly 10 digits", null));
-//        }
-//
-//
-//        if (!dto.getMobileNumber() .matches("^[6-9]\\d{9}$")) {
-//            return ResponseEntity.badRequest()
-//                    .body(new ResponseDto<>(400, "Enter a valid Indian Mobile Number", null));
-//        }
-//
-//        DealerResponseDTO response = dealerService.updateDealer(id, dto);
-//
-//        return ResponseEntity.ok(
-//                new ResponseDto<>(200, "Dealer Updated Successfully", response));
-//    }
-//
-//    // ================= GET ALL DEALERS =================
-//    //ADMIN
-//    @GetMapping("/all")
-//    public ResponseEntity<ResponseDto<List<DealerResponseDTO>>> getAllDealers() {
-//        List<DealerResponseDTO> response = dealerService.getAllDealers();
-//        return ResponseEntity.ok(new ResponseDto<>(200, "All Dealers Fetched Successfully", response));
-//    }
-//
-//    //ADMIN
-//    @GetMapping("/search/dealer-code")
-//    public ResponseEntity<DealerResponseDTO> searchByDealerCode(@RequestParam String dealerCode)
-//    {
-//
-//        DealerResponseDTO dealer =
-//                dealerService.searchByDealerCode(dealerCode);
-//
-//        return ResponseEntity.ok(dealer);
-//    }
 }
