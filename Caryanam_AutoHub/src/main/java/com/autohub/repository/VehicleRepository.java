@@ -1,6 +1,7 @@
 package com.autohub.repository;
 
 import com.autohub.entity.Vehicle;
+import com.autohub.enums.VehicleStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -13,18 +14,19 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
 
     long count();
 
-    Optional<Vehicle> findByVehicleId(String vehicleId);
+   Optional<Vehicle> findByVehicleId(String vehicleId);
 
-    Long countByDealerId(String dealerId);
+
+    Long countByDealer_Id(Long dealerId);
 
     @Query("""
-    SELECT v
-    FROM Vehicle v
-    WHERE v.dealerId IN (
-        SELECT d.dealerCode
-        FROM Dealer d
-        WHERE d.subscriptionActive = true
-    )
+        SELECT v
+        FROM Vehicle v
+        WHERE v.dealer.subscriptionActive = true
     """)
     List<Vehicle> getAllActiveVehicles();
+
+    Long countByDealer_IdAndStatus(
+            Long dealerId,
+            VehicleStatus status);
 }

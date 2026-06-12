@@ -18,10 +18,6 @@ public interface DealerService {
 
     String resetPassword(ResetPasswordDTO dto);
 
-   // DealerResponseDTO updateDealer(Long id, DealerRegisterDTO dto);
-
-   // List<DealerResponseDTO> getAllDealers();
-
-    //DealerResponseDTO searchByDealerCode(String dealerCode);
+    DashboardResponseDTO getDashboard(Long dealerId);
 
 }

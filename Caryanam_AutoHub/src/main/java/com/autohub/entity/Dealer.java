@@ -20,10 +20,6 @@ public class Dealer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
-    private String dealerCode;  //Need to autogenerate
-
     @Column(nullable = false)
     private String businessName;
 

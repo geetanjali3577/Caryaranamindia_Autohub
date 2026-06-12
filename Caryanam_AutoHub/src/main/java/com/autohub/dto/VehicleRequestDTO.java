@@ -1,10 +1,13 @@
 package com.autohub.dto;
 
+import com.autohub.entity.Dealer;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
 @Data
 public class VehicleRequestDTO {
-        private String dealerId;
+        private Long dealerId;
 
         private String brand;
         private String model;
@@ -25,12 +28,10 @@ public class VehicleRequestDTO {
         private Double askingPrice;
 
         private String vehicleDescription;
-
         private Boolean financeAvailability;
-        private Boolean featured;
-
         private String dealerContactName;
         private String dealerContactNumber;
         private String dealerContactEmail;
+
 
 }

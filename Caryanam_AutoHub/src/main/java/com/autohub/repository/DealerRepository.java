@@ -23,4 +23,6 @@ public interface DealerRepository extends JpaRepository<Dealer, Long> {
     //boolean existsByDealerCode(String dealerCode);
 
     //Optional<Dealer> findByDealerCodeAndStatus(String dealerCode, DealerStatus dealerStatus);
+
+
 }

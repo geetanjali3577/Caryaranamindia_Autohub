@@ -14,11 +14,13 @@ import java.util.List;
 @Service
 public interface VehicleService {
 
-    VehicleResponseDTO addVehicle(VehicleRequestDTO vehicleRequestDTO,Long id);
+    VehicleResponseDTO addVehicle(VehicleRequestDTO vehicleRequestDTO, Long id);
 
-    VehicleResponseDTO updateVehicle(Long id,VehicleRequestDTO request);
+    VehicleResponseDTO updateVehicle(Long id, VehicleRequestDTO request);
 
-    VehicleResponseDTO updateVehicleStatus(Long id,VehicleStatusRequestDTO request);
+    VehicleResponseDTO updateVehicleStatus(Long id, VehicleStatusRequestDTO request);
 
     List<Vehicle> getAllActiveVehicles();
 }
+
+

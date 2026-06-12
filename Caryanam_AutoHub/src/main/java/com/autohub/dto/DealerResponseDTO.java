@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 public class DealerResponseDTO {
 
     private Long id;
-    private  String dealerId;
     private String businessName;
     private String ownerName;
     private String gstNumber;

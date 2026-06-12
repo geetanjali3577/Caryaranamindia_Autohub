@@ -1,5 +1,6 @@
 package com.autohub.entity;
 
+import com.autohub.enums.PaymentStatus;
 import com.autohub.enums.SubscriptionPlan;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -15,7 +16,7 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long paymentId;
 
-    private String dealerId;
+
 
     @Enumerated(EnumType.STRING)
     private SubscriptionPlan subscriptionPlan;
@@ -24,7 +25,12 @@ public class Payment {
 
     private String transactionId;
 
-    private String paymentStatus;
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus;
 
     private LocalDateTime paymentDate;
+
+    @ManyToOne
+    @JoinColumn(name = "dealer_id")
+    private Dealer dealer;
 }

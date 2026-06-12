@@ -4,6 +4,7 @@ import com.autohub.dto.ResponseDto;
 import com.autohub.dto.VehicleRequestDTO;
 import com.autohub.dto.VehicleResponseDTO;
 import com.autohub.dto.VehicleStatusRequestDTO;
+import com.autohub.enums.VehicleStatus;
 import com.autohub.service.VehicleMediaService;
 import com.autohub.service.VehicleService;
 import jakarta.validation.Valid;
@@ -29,11 +30,18 @@ public class VehicleController {
     // ================= ADD VEHICLE INFO=================
 
     @PostMapping("/add/{dealerId}")
-    public ResponseEntity<ResponseDto> addVehicle(@Valid @RequestBody VehicleRequestDTO vehicleRequestDTO, @PathVariable Long id){
+    public ResponseEntity<ResponseDto> addVehicle(
+            @Valid @RequestBody VehicleRequestDTO vehicleRequestDTO,
+            @PathVariable("dealerId") Long dealerId) {
 
-        VehicleResponseDTO vehicleResponseDTO = vehicleService.addVehicle(vehicleRequestDTO,id);
+        VehicleResponseDTO vehicleResponseDTO =
+                vehicleService.addVehicle(vehicleRequestDTO, dealerId);
 
-        return new ResponseEntity<>(new ResponseDto<>(201,"Vehicle Added Successfully ",vehicleResponseDTO), HttpStatus.CREATED);
+        return new ResponseEntity<>(
+                new ResponseDto<>(201,
+                        "Vehicle Added Successfully",
+                        vehicleResponseDTO),
+                HttpStatus.CREATED);
     }
 
     // ================= ADD VEHICLE IMAGE & VIDEO =================
@@ -64,7 +72,7 @@ public class VehicleController {
     // ================= UPDATE VEHICLE STATUS =================
 
     @PatchMapping("/status/{vehicleId}")
-    public ResponseEntity<ResponseDto<String>> updateVehicleStatus(
+    public ResponseEntity<ResponseDto<VehicleStatus>> updateVehicleStatus(
             @PathVariable Long id,
             @RequestBody VehicleStatusRequestDTO request) {
 
@@ -74,7 +82,7 @@ public class VehicleController {
                 new ResponseDto<>(
                         200,
                         "Vehicle Status Updated Successfully",
-                        response.getStatus()
+                        response.getVehicleStatus()
                 ));
     }
 

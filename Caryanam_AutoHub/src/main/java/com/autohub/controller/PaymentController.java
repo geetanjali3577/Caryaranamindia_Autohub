@@ -2,10 +2,17 @@ package com.autohub.controller;
 
 import com.autohub.dto.PaymentRequestDTO;
 import com.autohub.dto.ResponseDto;
+import com.autohub.entity.Dealer;
+import com.autohub.entity.Payment;
+import com.autohub.enums.PaymentStatus;
+import com.autohub.repository.DealerRepository;
+import com.autohub.repository.PaymentRepository;
 import com.autohub.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/payment")
@@ -13,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class PaymentController {
 
     private final PaymentService paymentService;
+
 
     @PostMapping("/create")
     public ResponseEntity<ResponseDto<?>> createPayment(
