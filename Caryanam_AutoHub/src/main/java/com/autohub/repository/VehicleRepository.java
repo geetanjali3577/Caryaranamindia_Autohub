@@ -14,7 +14,7 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
 
     long count();
 
-   Optional<Vehicle> findByVehicleId(String vehicleId);
+   //Optional<Vehicle> findByVehicleId(String vehicleId);
 
 
     Long countByDealer_Id(Long dealerId);
@@ -26,7 +26,7 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
     """)
     List<Vehicle> getAllActiveVehicles();
 
-    Long countByDealer_IdAndStatus(
+    Long countByDealer_IdAndVehicleStatus(
             Long dealerId,
             VehicleStatus status);
 }

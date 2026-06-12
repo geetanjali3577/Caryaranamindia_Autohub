@@ -21,14 +21,15 @@ public class PaymentController {
 
     private final PaymentService paymentService;
 
-
+// ================== DO PAYMENT ======================
     @PostMapping("/create")
     public ResponseEntity<ResponseDto<?>> createPayment(
             @RequestBody PaymentRequestDTO dto) {
 
-        return ResponseEntity.ok(
-                paymentService.createPayment(dto));
+        return ResponseEntity.ok(paymentService.createPayment(dto));
     }
+
+// ============ APPROVED PAYMENT BY ADMIN ===========
 
     @PutMapping("/success/{paymentId}")
     public ResponseEntity<ResponseDto<?>> paymentSuccess(
@@ -51,6 +52,8 @@ public class PaymentController {
         return ResponseEntity.ok(
                 paymentService.getAllPayments());
     }
+
+
     @GetMapping("/dealer/{dealerId}")
     public ResponseEntity<ResponseDto<?>>
     getDealerPayments(

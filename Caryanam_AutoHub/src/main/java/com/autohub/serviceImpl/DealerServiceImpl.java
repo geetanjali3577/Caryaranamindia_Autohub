@@ -6,6 +6,7 @@ import com.autohub.entity.Dealer;
 import com.autohub.enums.DealerStatus;
 import com.autohub.enums.Role;
 import com.autohub.enums.VehicleStatus;
+import com.autohub.exception.ResourceNotFoundException;
 import com.autohub.repository.DealerLeadRepository;
 import com.autohub.repository.DealerRepository;
 import com.autohub.repository.UserRepository;
@@ -13,10 +14,18 @@ import com.autohub.repository.VehicleRepository;
 import com.autohub.service.DealerService;
 
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -26,66 +35,150 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class DealerServiceImpl implements DealerService {
+
+    @Value("${file.upload-dir}")
+    private String uploadDir;
+
     private final DealerRepository dealerRepository;
     private final VehicleRepository vehicleRepository;
     private final DealerLeadRepository dealerLeadRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
+    private final ModelMapper modelMapper;
+
+@Override
+public DealerResponseDTO registerDealer(DealerRegisterDTO dto, MultipartFile dealerLogo, MultipartFile showroomImage) {
+
+    if (dealerRepository.existsByEmail(dto.getEmail())) {
+        throw new RuntimeException("Email already registered");
+    }
+
+    if (dealerRepository.existsByMobile(dto.getMobile())) {
+        throw new RuntimeException("Mobile already registered");
+    }
+
+    validateImage(dealerLogo, "Dealer Logo");
+    validateImage(showroomImage, "Showroom Image");
+
+    Dealer dealer = new Dealer();
+    dealer.setBusinessName(dto.getBusinessName());
+    dealer.setOwnerName(dto.getOwnerName());
+    dealer.setGstNumber(dto.getGstNumber());
+    dealer.setYearsInBusiness(dto.getYearsInBusiness());
+    dealer.setMobile(dto.getMobile());
+    dealer.setWhatsapp(dto.getWhatsapp());
+    dealer.setEmail(dto.getEmail());
+    dealer.setPassword(passwordEncoder.encode(dto.getPassword()));
+    dealer.setAddress(dto.getAddress());
+    dealer.setStatus(DealerStatus.PENDING);
+    dealer.setCity(dto.getCity());
+    dealer.setState(dto.getState());
+    dealer.setPinCode(dto.getPinCode());
+
+
+    Dealer savedDealer = dealerRepository.save(dealer);
+
+    System.out.println(savedDealer);
+
+    String logoPath = saveFile(
+            dealerLogo,
+            String.valueOf(savedDealer.getId()),
+            "logo"
+    );
+
+    String showroomPath = saveFile(
+            showroomImage,
+            String.valueOf(savedDealer.getId()),
+            "showroom"
+    );
+
+    savedDealer.setDealerLogo(logoPath);
+    savedDealer.setShowroomImage(showroomPath);
+
+    savedDealer = dealerRepository.save(savedDealer);
+
+    return modelMapper.map(savedDealer, DealerResponseDTO.class);
+
+}
+
+    private void validateImage(MultipartFile file, String fieldName) {
+
+        if (file == null || file.isEmpty()) {
+            throw new RuntimeException(fieldName + " is required");
+        }
+
+        String fileName = file.getOriginalFilename();
+
+        if (fileName == null) {
+            throw new RuntimeException(fieldName + " is invalid");
+        }
+
+        String extension =
+                fileName.substring(fileName.lastIndexOf(".") + 1)
+                        .toLowerCase();
+
+        if (!extension.equals("jpg")
+                && !extension.equals("jpeg")
+                && !extension.equals("png")) {
+
+            throw new RuntimeException(
+                    fieldName + " must be JPG, JPEG or PNG format");
+        }
+    }
+
+
+    private String saveFile(MultipartFile file,String dealerId,String prefix) {
+
+        try {
+
+            File directory = new File(uploadDir);
+
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+
+            String extension =
+                    file.getOriginalFilename()
+                            .substring(
+                                    file.getOriginalFilename()
+                                            .lastIndexOf("."));
+
+            String fileName =
+                    dealerId +
+                            "_" +
+                            prefix +
+                            extension;
+
+            Path path =
+                    Paths.get(uploadDir, fileName);
+
+            Files.copy(
+                    file.getInputStream(),
+                    path,
+                    StandardCopyOption.REPLACE_EXISTING);
+
+            return path.toString();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to upload file");
+        }
+    }
 
     @Override
-    public DealerResponseDTO registerDealer(DealerRegisterDTO dto) {
+    public DealerProfileResponseDTO updateDealerProfile(Long id, UpdateDealerProfileRequestDTO dto) {
 
-        if (dealerRepository.existsByEmail(dto.getEmail())) {
-            throw new RuntimeException("Email Already Exists");
-        }
-        if (dealerRepository.existsByMobile(dto.getMobile())) {
-            throw new RuntimeException("Mobile Number Already Exists");
-        }
-
-
-        Dealer dealer = new Dealer();
+        Dealer dealer = dealerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Dealer Not Found"));
         dealer.setBusinessName(dto.getBusinessName());
         dealer.setOwnerName(dto.getOwnerName());
-        dealer.setGstNumber(dto.getGstNumber());
-        dealer.setYearsInBusiness(dto.getYearsInBusiness());
-
-        dealer.setMobile(dto.getMobile());
         dealer.setWhatsapp(dto.getWhatsapp());
-        dealer.setEmail(dto.getEmail());
-        dealer.setPassword(passwordEncoder.encode(dto.getPassword()));
-        dealer.setCreatedAt(LocalDateTime.now());
         dealer.setAddress(dto.getAddress());
         dealer.setCity(dto.getCity());
         dealer.setState(dto.getState());
-        dealer.setPinCode(dto.getPinCode());
 
-        dealer.setDealerLogo(dto.getDealerLogo());
-        dealer.setShowroomImage(dto.getShowroomImage());
+        Dealer save = dealerRepository.save(dealer);
 
+        return modelMapper.map(save,DealerProfileResponseDTO.class);
 
-        dealer.setRole(Role.DEALER);
-        dealer.setStatus(DealerStatus.ACTIVE);
-
-        Dealer savedDealer = dealerRepository.save(dealer);
-
-        return DealerResponseDTO.builder()
-                .id(dealer.getId())
-                .businessName(dealer.getBusinessName())
-                .ownerName(dealer.getOwnerName())
-                .gstNumber(dealer.getGstNumber())
-                .yearsInBusiness(dealer.getYearsInBusiness())
-                .mobile(dealer.getMobile())
-                .whatsapp(dealer.getWhatsapp())
-                .dealerLogo(dealer.getDealerLogo())
-                .showroomImage(dealer.getShowroomImage())
-                .email(dealer.getEmail())
-                .password(dealer.getPassword())
-                .address(dealer.getAddress())
-                .city(dealer.getCity())
-                .state(dealer.getState())
-                .pinCode(dealer.getPinCode())
-                .createdAt(dealer.getCreatedAt())
-                .build();
     }
 
     @Override
@@ -154,7 +247,7 @@ public class DealerServiceImpl implements DealerService {
                         "This OTP is valid for 5 minutes.\n\n" +
 
                         "Regards,\n" +
-                        "Caryanam Finserv Team";
+                        "Caryanam AutoHub Team";
 
         emailService.sendMail(
                 dealer.getEmail(),
@@ -268,7 +361,7 @@ public class DealerServiceImpl implements DealerService {
                         "please contact support immediately.\n\n" +
 
                         "Regards,\n" +
-                        "Caryanam Finserv Team";
+                        "Caryanam AutoHub Team";
 
         emailService.sendMail(
                 dealer.getEmail(),
@@ -278,6 +371,7 @@ public class DealerServiceImpl implements DealerService {
 
         return "Password reset successfully";
     }
+
 
     @Override
     public List<DealerSubscriptionResponseDTO> getSubscriptions() {
@@ -321,7 +415,7 @@ public class DealerServiceImpl implements DealerService {
                         dealer.getId()));
 
         dto.setFeaturedVehicles(
-                vehicleRepository.countByDealer_IdAndStatus(
+                vehicleRepository.countByDealer_IdAndVehicleStatus(
                         dealer.getId(),
                         VehicleStatus.FEATURED));
 

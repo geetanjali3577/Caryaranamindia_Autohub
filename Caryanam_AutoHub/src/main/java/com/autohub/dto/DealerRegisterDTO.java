@@ -5,13 +5,13 @@ import lombok.Data;
 
 @Data
 public class DealerRegisterDTO {
+
     @NotBlank(message = "Business Name is Required")
     private String businessName;
 
     @NotBlank(message = "Owner Name is Required")
     private String ownerName;
 
-    @NotBlank(message = "GST Number is Required")
     private String gstNumber;
 
    @NotNull(message = "Years In Business is Required")
@@ -43,8 +43,4 @@ public class DealerRegisterDTO {
     @NotBlank(message = "PinCode is Required")
     private String pinCode;
 
-
-    //Add Validation as Image
-    private String dealerLogo;
-    private String showroomImage;
 }

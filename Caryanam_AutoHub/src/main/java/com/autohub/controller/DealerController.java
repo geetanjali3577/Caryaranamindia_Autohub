@@ -4,19 +4,16 @@ import com.autohub.dto.*;
 import com.autohub.service.DealerService;
 
 
-import com.autohub.service.VehicleMediaService;
-import com.autohub.service.VehicleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import tools.jackson.databind.ObjectMapper;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -25,15 +22,48 @@ import java.util.List;
 public class DealerController {
 
     private final DealerService dealerService;
+    private final ObjectMapper objectMapper;
 
 
     // ================= REGISTER DEALER =================
-    @PostMapping("/register")
-    public ResponseEntity<ResponseDto<DealerResponseDTO>> registerDealer(@Valid @RequestBody DealerRegisterDTO dto) {
 
-        DealerResponseDTO response = dealerService.registerDealer(dto);
-        return ResponseEntity.status(201)
-                .body(new ResponseDto<>(201, "Dealer Registered Successfully", response));
+    @PostMapping(value = "/register",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ResponseDto<DealerResponseDTO>> registerDealer(@RequestPart("dealer") String dealerJson,
+                                            @RequestPart("dealerLogo")MultipartFile dealerLogo,
+                                            @RequestPart("showroomImage") MultipartFile showroomImage) throws Exception {
+
+        DealerRegisterDTO dto =objectMapper.readValue(dealerJson, DealerRegisterDTO.class);
+
+        DealerResponseDTO dealerResponseDTO = dealerService.registerDealer(dto, dealerLogo, showroomImage);
+
+        return new ResponseEntity<>(new ResponseDto(200,"Dealer Registration Successfully",dealerResponseDTO),HttpStatus.OK);
+    }
+
+    // ================= UPDATE DEALER PROFILE =================
+
+    @PutMapping("/profile/{dealerId}")
+    public ResponseEntity<ResponseDto<DealerProfileResponseDTO>> updateDealerProfile(@PathVariable Long dealerId,@Valid @RequestBody UpdateDealerProfileRequestDTO request) {
+
+        DealerProfileResponseDTO dealerResponseDTO = dealerService.updateDealerProfile(dealerId, request);
+
+        return new ResponseEntity<>(new ResponseDto<>(200,"Dealer Profile Updated Successfully",dealerResponseDTO),HttpStatus.OK);
+    }
+
+    // ================= DEALER DASHBOARD =================
+
+    @GetMapping("/dashboard/{dealerId}")
+    public ResponseEntity<DashboardResponseDTO>   getDashboard(@PathVariable Long dealerId) {
+
+        return ResponseEntity.ok( dealerService.getDashboard(dealerId));
+    }
+
+    // ================= SUBSCRIPTION =================
+
+    @GetMapping("/subscriptions")
+    public ResponseEntity<ResponseDto<List<DealerSubscriptionResponseDTO>>> getSubscriptions() {
+
+        List<DealerSubscriptionResponseDTO> data = dealerService.getSubscriptions();
+        return ResponseEntity.ok(new ResponseDto<>(200, "Subscriptions fetched successfully", data));
     }
 
 
@@ -53,18 +83,8 @@ public class DealerController {
         return ResponseEntity.ok(dealerService.resetPassword(dto));
     }
 
-    @GetMapping("/subscriptions")
-    public ResponseEntity<ResponseDto<List<DealerSubscriptionResponseDTO>>> getSubscriptions() {
 
-        List<DealerSubscriptionResponseDTO> data = dealerService.getSubscriptions();
-        return ResponseEntity.ok(new ResponseDto<>(200, "Subscriptions fetched successfully", data));
-    }
-    @GetMapping("/{dealerId}")
-    public ResponseEntity<DashboardResponseDTO>
-    getDashboard(@PathVariable Long dealerId) {
 
-        return ResponseEntity.ok(
-                dealerService.getDashboard(dealerId));
-    }
+
 
 }

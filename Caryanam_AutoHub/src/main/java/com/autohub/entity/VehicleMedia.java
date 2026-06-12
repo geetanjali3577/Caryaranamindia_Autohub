@@ -18,15 +18,17 @@ public class VehicleMedia {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String vehicleId;
-
-    //private String dealerId;
-
-    private String mediaType; // IMAGE, VIDEO
-
     private String fileName;
+
+    private String fileType;
 
     private String filePath;
 
+    private String mediaType;
+
     private LocalDateTime uploadedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "vehicle_id")
+    private Vehicle vehicle;
 }

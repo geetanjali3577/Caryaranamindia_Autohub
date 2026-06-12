@@ -9,8 +9,12 @@ import java.util.*;
 
 public interface DealerService {
 
-    DealerResponseDTO registerDealer(DealerRegisterDTO dto);
+    DealerResponseDTO registerDealer(DealerRegisterDTO dto, MultipartFile dealerLogo,MultipartFile showroomImage);
+
     List<DealerSubscriptionResponseDTO> getSubscriptions();
+
+
+    DealerProfileResponseDTO updateDealerProfile(Long id, UpdateDealerProfileRequestDTO dto);
 
     String sendOtp(String email);
 

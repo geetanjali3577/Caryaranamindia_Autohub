@@ -3,8 +3,10 @@ package com.autohub.entity;
 import com.autohub.enums.VehicleStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "vehicle-info")
@@ -19,48 +21,62 @@ public class Vehicle {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
-    private String vehicleId;
-
+    @Column(nullable = false)
     private String brand;
 
+    @Column(nullable = false)
     private String model;
 
+    @Column(nullable = false)
     private String variant;
 
-    private Integer manufacturingYear;
+    @Column(nullable = false)
     private Integer registrationYear;
 
-    private String fuelType;
-    private String transmission;
-
-    private Long kilometerDriven;
-
-    private String ownershipDetails;
-    private String insuranceStatus;
-    private String rtoInformation;
-
+    @Column(nullable = false)
     private Double askingPrice;
 
-    @Column(length = 5000)
-    private String vehicleDescription;
+    @Column(nullable = false)
+    private Long kilometerDriven;
 
-    private Boolean financeAvailability;
+    @Column(nullable = false)
+    private String fuelType;
+
+    @Column(nullable = false)
+    private String transmission;
+
+    @Column(nullable = false)
+    private String ownershipDetails;
+
+    @Column(nullable = false)
+    private String insuranceStatus;
+
+    @Column(nullable = false)
+    private String city;
+
+    @Column(length = 5000,nullable = false)
+    private String vehicleDescription;
 
     @Enumerated(EnumType.STRING)
     private VehicleStatus vehicleStatus;
 
-    private String dealerContactName;
-    private String dealerContactNumber;
-    private String dealerContactEmail;
-
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private VehicleStatus status;
+
+    private String dealerContactName;
+
+    private String dealerContactNumber;
+
+    private  String dealerContactEmail;
 
     @ManyToOne
     @JoinColumn(name = "dealer_id")
     private Dealer dealer;
+
+    @OneToMany(mappedBy = "vehicle",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private List<VehicleMedia> mediaList;
 }

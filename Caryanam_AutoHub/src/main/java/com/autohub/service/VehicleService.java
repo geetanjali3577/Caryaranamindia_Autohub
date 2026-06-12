@@ -14,7 +14,8 @@ import java.util.List;
 @Service
 public interface VehicleService {
 
-    VehicleResponseDTO addVehicle(VehicleRequestDTO vehicleRequestDTO, Long id);
+    VehicleResponseDTO addVehicleWithData(VehicleRequestDTO vehicleRequestDTO,List<MultipartFile> images,List<MultipartFile> videos,
+            Long dealerId) throws IOException;
 
     VehicleResponseDTO updateVehicle(Long id, VehicleRequestDTO request);
 

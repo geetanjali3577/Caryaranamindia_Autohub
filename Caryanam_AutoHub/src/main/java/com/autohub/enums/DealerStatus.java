@@ -1,7 +1,6 @@
 package com.autohub.enums;
 
 public enum DealerStatus {
-
-    ACTIVE,
-    INACTIVE
+    APPROVED,
+    PENDING
 }

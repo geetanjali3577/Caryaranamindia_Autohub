@@ -1,37 +1,47 @@
 package com.autohub.dto;
 
-import com.autohub.entity.Dealer;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
 public class VehicleRequestDTO {
-        private Long dealerId;
 
-        private String brand;
-        private String model;
-        private String variant;
+    @NotBlank(message = "Brand Name is Required")
+    private String brand;
 
-        private Integer manufacturingYear;
-        private Integer registrationYear;
+    @NotBlank(message = "Model Name is Required")
+    private String model;
 
-        private String fuelType;
-        private String transmission;
+    @NotBlank(message = "Variant Name is Required")
+    private String variant;
 
-        private Long kilometerDriven;
+    @NotNull(message = "Registration Year is Required")
+    private Integer registrationYear;
 
-        private String ownershipDetails;
-        private String insuranceStatus;
-        private String rtoInformation;
+    @NotNull(message = "Asking Price is Required")
+    private Double askingPrice;
 
-        private Double askingPrice;
+    @NotNull(message = "Kilometer Driven is Required")
+    private Long kilometerDriven;
 
-        private String vehicleDescription;
-        private Boolean financeAvailability;
-        private String dealerContactName;
-        private String dealerContactNumber;
-        private String dealerContactEmail;
+    @NotBlank(message = "Fuel Type is Required")
+    private String fuelType;
+
+    @NotBlank(message = "Transmission is Required")
+    private String transmission;
+
+    @NotBlank(message = "Ownership Details is Required")
+    private String ownershipDetails;
+
+    @NotBlank(message = "Insurance Status is Required")
+    private String insuranceStatus;
+
+    @NotBlank(message = "City is Required")
+    private String city;
+
+    @NotBlank(message = "Vehicle Description is Required")
+    private String vehicleDescription;
 
 
 }

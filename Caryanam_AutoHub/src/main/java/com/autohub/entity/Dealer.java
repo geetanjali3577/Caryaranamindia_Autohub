@@ -20,13 +20,14 @@ public class Dealer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+
     @Column(nullable = false)
     private String businessName;
 
     @Column(nullable = false)
     private String ownerName;
 
-    @Column(nullable = false)
     private String gstNumber;
 
     @Column(nullable = false)
@@ -56,7 +57,10 @@ public class Dealer {
     @Column(nullable = false)
     private String pinCode;
 
+    @Column(length = 500)
     private String dealerLogo;
+
+    @Column(length = 500)
     private String showroomImage;
 
     @Enumerated(EnumType.STRING)
@@ -75,7 +79,7 @@ public class Dealer {
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
-    //////////////////////////////////////////////////
+
     private Boolean subscriptionActive = false;
 
     @Enumerated(EnumType.STRING)
