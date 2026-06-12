@@ -6,14 +6,17 @@ import com.autohub.dto.PaymentRequestDTO;
 import com.autohub.dto.ResponseDto;
 import com.autohub.entity.Dealer;
 import com.autohub.entity.Payment;
+import com.autohub.enums.PaymentStatus;
 import com.autohub.repository.DealerRepository;
 import com.autohub.repository.PaymentRepository;
 import com.autohub.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -24,21 +27,36 @@ public class PaymentServiceImpl implements PaymentService {
     private final DealerRepository dealerRepository;
 
     @Override
-    public ResponseDto<?> createPayment(
-            PaymentRequestDTO dto) {
+    public ResponseDto<?> createPayment(PaymentRequestDTO dto) {
 
+        // Dealer fetch
+        Dealer dealer = dealerRepository.findById(dto.getDealerId())
+                .orElseThrow(() -> new RuntimeException("Dealer not found"));
+
+        // Validation 1 - Active subscription
+        if (Boolean.TRUE.equals(dealer.getSubscriptionActive())) {
+            throw new RuntimeException(
+                    "Dealer already has an active subscription");
+        }
+
+        // Validation 2 - Pending payment exists
+        Optional<Payment> pendingPayment =
+                paymentRepository
+                        .findTopByDealerIdAndPaymentStatusOrderByPaymentIdDesc(
+                                dto.getDealerId(),
+                                PaymentStatus.PENDING);
+
+        if (pendingPayment.isPresent()) {
+            throw new RuntimeException(
+                    "Pending payment already exists");
+        }
+
+        // Payment create logic
         Payment payment = new Payment();
-
-        payment.setDealerId(String.valueOf(dto.getDealerId()));
-
-        payment.setSubscriptionPlan(
-                dto.getSubscriptionPlan());
-
-        payment.setAmount(
-                dto.getSubscriptionPlan()
-                        .getAmount());
-
-        payment.setPaymentStatus("PENDING");
+        payment.setDealer(dealer);
+        payment.setSubscriptionPlan(dto.getSubscriptionPlan());
+        payment.setAmount(dto.getSubscriptionPlan().getAmount());
+        payment.setPaymentStatus((PaymentStatus.PENDING));
 
         paymentRepository.save(payment);
 
@@ -50,43 +68,44 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public ResponseDto paymentSuccess(Long paymentId) {
+    public ResponseDto<?> paymentSuccess(Long paymentId) {
 
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() ->
                         new RuntimeException("Payment not found"));
 
-        payment.setPaymentStatus("SUCCESS");
+        if (payment.getPaymentStatus() == PaymentStatus.SUCCESS) {
+            return new ResponseDto<>(
+                    400,
+                    "Payment already completed",
+                    null
+            );
+        }
 
-        payment.setPaymentDate(
-                LocalDateTime.now());
+        // Update payment
+        payment.setPaymentStatus(PaymentStatus.SUCCESS);
+        payment.setPaymentDate(LocalDateTime.now());
+        payment.setTransactionId(UUID.randomUUID().toString());
 
-        payment.setTransactionId(
-                UUID.randomUUID().toString());
-
-        paymentRepository.save(payment);
-
-        Dealer dealer = dealerRepository.findById(
-                        Long.valueOf(payment.getDealerId()))
-                .orElseThrow(() ->
-                        new RuntimeException("Dealer not found"));
+        // Dealer
+        Dealer dealer = payment.getDealer();
 
         dealer.setSubscriptionActive(true);
-
-        dealer.setSubscriptionPlan(
-                payment.getSubscriptionPlan());
-
-        dealer.setSubscriptionStartDate(
-                LocalDateTime.now());
-
+        dealer.setSubscriptionPlan(payment.getSubscriptionPlan());
+        dealer.setSubscriptionStartDate(LocalDate.now().atStartOfDay());
         dealer.setSubscriptionEndDate(
-                LocalDateTime.now().plusMonths(1));
+                LocalDate.now().plusMonths(1).atStartOfDay()
+        );
 
         dealerRepository.save(dealer);
+        paymentRepository.save(payment);
 
-        return new ResponseDto<>(200, "Subscription Activated Successfully", null);
+        return new ResponseDto<>(
+                200,
+                "Payment Successful",
+                payment
+        );
     }
-
     @Override
     public ResponseDto paymentFailed(Long paymentId) {
 
@@ -94,7 +113,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .orElseThrow(() ->
                         new RuntimeException("Payment not found"));
 
-        payment.setPaymentStatus("FAILED");
+        payment.setPaymentStatus(PaymentStatus.valueOf("FAILED"));
 
         paymentRepository.save(payment);
 

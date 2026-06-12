@@ -26,6 +26,7 @@ public class DealerController {
 
     private final DealerService dealerService;
 
+
     // ================= REGISTER DEALER =================
     @PostMapping("/register")
     public ResponseEntity<ResponseDto<DealerResponseDTO>> registerDealer(@Valid @RequestBody DealerRegisterDTO dto) {
@@ -57,6 +58,13 @@ public class DealerController {
 
         List<DealerSubscriptionResponseDTO> data = dealerService.getSubscriptions();
         return ResponseEntity.ok(new ResponseDto<>(200, "Subscriptions fetched successfully", data));
+    }
+    @GetMapping("/{dealerId}")
+    public ResponseEntity<DashboardResponseDTO>
+    getDashboard(@PathVariable Long dealerId) {
+
+        return ResponseEntity.ok(
+                dealerService.getDashboard(dealerId));
     }
 
 }

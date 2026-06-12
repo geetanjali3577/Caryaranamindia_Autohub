@@ -1,5 +1,6 @@
 package com.autohub.dto;
 
+import com.autohub.enums.VehicleStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,10 +13,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class VehicleResponseDTO {
-
     private String vehicleId;
-    private String dealerId;
-
+    private Long dealerId;
     private String brand;
     private String model;
     private String variant;
@@ -37,13 +36,9 @@ public class VehicleResponseDTO {
     private String vehicleDescription;
 
     private Boolean financeAvailability;
-    private Boolean featured;
-
+    private VehicleStatus vehicleStatus;
     private String dealerContactName;
     private String dealerContactNumber;
-    private String dealerContactEmail;
-
-    private String status;
-
+    private String dealerContactEmail; 
     private LocalDateTime createdAt;
 }

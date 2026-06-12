@@ -5,30 +5,33 @@ import com.autohub.emailservice.EmailService;
 import com.autohub.entity.Dealer;
 import com.autohub.enums.DealerStatus;
 import com.autohub.enums.Role;
+import com.autohub.enums.VehicleStatus;
+import com.autohub.repository.DealerLeadRepository;
 import com.autohub.repository.DealerRepository;
 import com.autohub.repository.UserRepository;
+import com.autohub.repository.VehicleRepository;
 import com.autohub.service.DealerService;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class DealerServiceImpl implements DealerService {
+    private final DealerRepository dealerRepository;
+    private final VehicleRepository vehicleRepository;
+    private final DealerLeadRepository dealerLeadRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
-    @Autowired
-    private DealerRepository dealerRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private EmailService emailService;
     @Override
     public DealerResponseDTO registerDealer(DealerRegisterDTO dto) {
 
@@ -41,7 +44,6 @@ public class DealerServiceImpl implements DealerService {
 
 
         Dealer dealer = new Dealer();
-        dealer.setDealerCode(dto.getDealerId());
         dealer.setBusinessName(dto.getBusinessName());
         dealer.setOwnerName(dto.getOwnerName());
         dealer.setGstNumber(dto.getGstNumber());
@@ -68,7 +70,6 @@ public class DealerServiceImpl implements DealerService {
 
         return DealerResponseDTO.builder()
                 .id(dealer.getId())
-                .dealerId(dealer.getDealerCode())
                 .businessName(dealer.getBusinessName())
                 .ownerName(dealer.getOwnerName())
                 .gstNumber(dealer.getGstNumber())
@@ -86,8 +87,6 @@ public class DealerServiceImpl implements DealerService {
                 .createdAt(dealer.getCreatedAt())
                 .build();
     }
-
-
 
     @Override
     public String sendOtp(String email) {
@@ -279,84 +278,6 @@ public class DealerServiceImpl implements DealerService {
 
         return "Password reset successfully";
     }
-/*
-    @Override
-    public DealerResponseDTO updateDealer(Long id, DealerRegisterDTO dto) {
-
-        Dealer dealer = dealerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Dealer Not Found"));
-
-        if (dto.getOwnerName() != null && !dto.getOwnerName().isEmpty()) {
-            dealer.getOwnerName(dto.getOwnerName());
-        }
-
-        if (dto.getEmail() != null && !dto.getEmail().isEmpty()) {
-            String newEmail = dto.getEmail().toLowerCase().trim();
-            if (!dealer.getEmail().equalsIgnoreCase(newEmail) && dealerRepository.existsByEmail(newEmail)) {
-                throw new RuntimeException("Email Already Exists");
-            }
-            dealer.setEmail(newEmail);
-        }
-
-        if (dto.getMobile() != null && !dto.getMobile().isEmpty()) {
-            if (!dealer.getMobile().equals(dto.getMobile()) && dealerRepository.existsByMobile(dto.getMobile())) {
-                throw new RuntimeException("Mobile Number Already Exists");
-            }
-            dealer.setMobile(dto.getMobile());
-        }
-
-        if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
-            dealer.setPassword(passwordEncoder.encode(dto.getPassword()));
-        }
-
-        Dealer savedDealer = dealerRepository.save(dealer);
-        return DealerResponseDTO.builder()
-                .dealerId(savedDealer.getDealerId())
-                .ownerName(savedDealer.getOwnerName()
-                .email(savedDealer.getEmail())
-                .mobileNumber(savedDealer.getMobile())
-                .role(savedDealer.getRole().name())
-                .createdAt(savedDealer.getCreatedAt())
-                .build();
-    }
-
-    @Override
-    public List<DealerResponseDTO> getAllDealers() {
-        List<Dealer> dealers = dealerRepository.findAll();
-        return dealers.stream().map(d -> DealerResponseDTO.builder()
-                .dealerId(d.getDealerId())
-                .dealerCode(d.getDealerCode())
-                .fullName(d.getFullName())
-                .email(d.getEmail())
-                .mobileNumber(d.getMobileNumber())
-                .role(d.getRole().name())
-                .createdAt(d.getCreatedAt())
-                .build()).toList();
-    }
-
-    @Override
-    public DealerResponseDTO searchByDealerCode(String dealerCode) {
-
-        Dealer dealer = dealerRepository
-                .findByDealerCode(dealerCode)
-                .orElseThrow(() ->
-                        new RuntimeException("Dealer not found"));
-
-        return mapToDealerResponseDTO(dealer);
-    }
-
-    private DealerResponseDTO mapToDealerResponseDTO(Dealer dealer) {
-
-        return DealerResponseDTO.builder()
-                .dealerId(dealer.getDealerId())
-                .dealerCode(dealer.getDealerCode())
-                .fullName(dealer.getFullName())
-                .email(dealer.getEmail())
-                .mobileNumber(dealer.getMobileNumber())
-                .createdAt(dealer.getCreatedAt())
-                .build();
-    }
-*/
 
     @Override
     public List<DealerSubscriptionResponseDTO> getSubscriptions() {
@@ -372,7 +293,6 @@ public class DealerServiceImpl implements DealerService {
 
                     dto.setDealerName(dealer.getBusinessName());
 
-                    dto.setDealerId(dealer.getDealerCode());
 
                     dto.setSubscriptionActive(
                             dealer.getSubscriptionActive());
@@ -383,5 +303,46 @@ public class DealerServiceImpl implements DealerService {
                     return dto;
 
                 }).toList();
+    }
+
+    @Override
+    public DashboardResponseDTO getDashboard(Long dealerId) {
+
+        Dealer dealer = dealerRepository.findById(dealerId)
+                .orElseThrow(() ->
+                        new RuntimeException("Dealer not found"));
+
+        DashboardResponseDTO dto = new DashboardResponseDTO();
+
+        dto.setDealerName(dealer.getBusinessName());
+
+        dto.setTotalVehicles(
+                vehicleRepository.countByDealer_Id(
+                        dealer.getId()));
+
+        dto.setFeaturedVehicles(
+                vehicleRepository.countByDealer_IdAndStatus(
+                        dealer.getId(),
+                        VehicleStatus.FEATURED));
+
+        dto.setTotalLeads(
+                dealerLeadRepository.countByDealer_Id(
+                        dealerId));
+
+        // Temporary value
+        dto.setVehicleViews(9900L);
+
+        // Temporary chart data
+        dto.setMonthlyViews(Arrays.asList(
+                800, 950, 1070, 1200,
+                1350, 1480, 1620, 1760,
+                1910, 830, 970, 1100));
+
+        dto.setMonthlyLeads(Arrays.asList(
+                12, 19, 25, 32,
+                12, 19, 25, 32,
+                12, 19, 25, 32));
+
+        return dto;
     }
 }

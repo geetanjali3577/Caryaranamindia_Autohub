@@ -22,10 +22,10 @@ public class Vehicle {
     @Column(unique = true)
     private String vehicleId;
 
-    private String dealerId;
-
     private String brand;
+
     private String model;
+
     private String variant;
 
     private Integer manufacturingYear;
@@ -46,7 +46,9 @@ public class Vehicle {
     private String vehicleDescription;
 
     private Boolean financeAvailability;
-    private Boolean featured;
+
+    @Enumerated(EnumType.STRING)
+    private VehicleStatus vehicleStatus;
 
     private String dealerContactName;
     private String dealerContactNumber;
@@ -58,4 +60,7 @@ public class Vehicle {
     @Column(name = "status")
     private VehicleStatus status;
 
+    @ManyToOne
+    @JoinColumn(name = "dealer_id")
+    private Dealer dealer;
 }
