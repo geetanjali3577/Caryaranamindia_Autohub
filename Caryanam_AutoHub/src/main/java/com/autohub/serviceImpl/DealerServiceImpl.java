@@ -70,7 +70,7 @@ public DealerResponseDTO registerDealer(DealerRegisterDTO dto, MultipartFile dea
     dealer.setEmail(dto.getEmail());
     dealer.setPassword(passwordEncoder.encode(dto.getPassword()));
     dealer.setAddress(dto.getAddress());
-    dealer.setStatus(DealerStatus.PENDING);
+    dealer.setDealerAccountStatus(DealerStatus.PENDING);
     dealer.setCity(dto.getCity());
     dealer.setState(dto.getState());
     dealer.setPinCode(dto.getPinCode());
@@ -179,6 +179,50 @@ public DealerResponseDTO registerDealer(DealerRegisterDTO dto, MultipartFile dea
 
         return modelMapper.map(save,DealerProfileResponseDTO.class);
 
+    }
+
+
+    @Override
+    public DealerResponseDTO updateDealerAccountStatus(
+            Long dealerId,
+            DealerAccountStatusRequestDTO requestDTO) {
+
+        Dealer dealer = dealerRepository.findById(dealerId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Dealer not found"));
+
+        if (requestDTO.getStatus() == null ||
+                requestDTO.getStatus().trim().isEmpty()) {
+
+            throw new RuntimeException("Status is required");
+        }
+
+        DealerStatus newStatus;
+
+        try {
+            newStatus = DealerStatus.valueOf(
+                    requestDTO.getStatus().trim().toUpperCase());
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Invalid status. Only PENDING and APPROVED are allowed");
+        }
+
+        DealerStatus currentStatus = dealer.getDealerAccountStatus();
+
+        if (currentStatus == null) {
+            currentStatus = DealerStatus.PENDING;
+        }
+
+        if (currentStatus.equals(newStatus)) {
+            throw new RuntimeException(
+                    "Dealer account already " + currentStatus);
+        }
+
+        dealer.setDealerAccountStatus(newStatus);
+
+        Dealer updatedDealer = dealerRepository.save(dealer);
+
+        return modelMapper.map(updatedDealer, DealerResponseDTO.class);
     }
 
     @Override
@@ -398,6 +442,9 @@ public DealerResponseDTO registerDealer(DealerRegisterDTO dto, MultipartFile dea
 
                 }).toList();
     }
+
+
+
 
     @Override
     public DashboardResponseDTO getDashboard(Long dealerId) {

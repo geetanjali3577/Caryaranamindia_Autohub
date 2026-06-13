@@ -21,6 +21,8 @@ public interface VehicleService {
 
     VehicleResponseDTO updateVehicleStatus(Long id, VehicleStatusRequestDTO request);
 
+    void deleteVehicle(Long id);
+
     List<Vehicle> getAllActiveVehicles();
 }
 

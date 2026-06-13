@@ -74,7 +74,7 @@ public class Dealer {
     private Boolean isOtpVerified = false;
 
     @Enumerated(EnumType.STRING)
-    private DealerStatus status; // PENDING, APPROVED, REJECTED
+    private DealerStatus dealerAccountStatus; // PENDING, APPROVED
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

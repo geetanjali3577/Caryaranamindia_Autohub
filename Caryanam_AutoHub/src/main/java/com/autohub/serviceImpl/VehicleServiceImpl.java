@@ -6,6 +6,7 @@ import com.autohub.dto.VehicleStatusRequestDTO;
 import com.autohub.entity.Dealer;
 import com.autohub.entity.Vehicle;
 import com.autohub.entity.VehicleMedia;
+import com.autohub.enums.DealerStatus;
 import com.autohub.enums.SubscriptionPlan;
 import com.autohub.enums.VehicleStatus;
 import com.autohub.exception.ResourceNotFoundException;
@@ -24,7 +25,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -47,44 +47,47 @@ public class VehicleServiceImpl implements VehicleService {
                 .orElseThrow(() ->
                         new RuntimeException("Dealer not found"));
 
-        // Subscription Check
-        if (dealer.getSubscriptionActive() == null ||
-                !dealer.getSubscriptionActive()) {
-
-            throw new RuntimeException(
-                    "Please purchase subscription before adding vehicles");
+        // Dealer account status Check
+        if (dealer.getDealerAccountStatus() != DealerStatus.APPROVED) {
+            throw new RuntimeException("Your account is pending for admin approval. You cannot add vehicles until approval.");
         }
 
-        // Expiry Check
-        if (dealer.getSubscriptionEndDate() != null &&
-                dealer.getSubscriptionEndDate().isBefore(LocalDateTime.now())) {
+        // Dealer subscription Check
+        if (dealer.getSubscriptionActive() == null ||
+                !dealer.getSubscriptionActive()) {
+            throw new RuntimeException("Please purchase subscription before adding vehicles");
+        }
 
-            throw new RuntimeException(
-                    "Subscription expired. Please renew subscription");
+        // Dealer subscription expiration Check
+        if (dealer.getSubscriptionEndDate() != null &&dealer.getSubscriptionEndDate().isBefore(LocalDateTime.now())) {
+
+            throw new RuntimeException("Subscription expired. Please renew subscription");
         }
 
         // Vehicle Limit Check
-        Long vehicleCount =
-                vehicleRepository.countByDealer_Id(dealerId);
+        Long vehicleCount = vehicleRepository.countByDealer_Id(dealerId);
 
         if (dealer.getSubscriptionPlan() != SubscriptionPlan.PREMIUM) {
 
-            int limit =
-                    dealer.getSubscriptionPlan().getVehicleLimit();
+            int vehicleLimit = dealer.getSubscriptionPlan().getVehicleLimit();
 
-            if (vehicleCount >= limit) {
-
+            if (vehicleCount >= vehicleLimit) {
                 throw new RuntimeException(
-                        "Vehicle limit exceeded for "
-                                + dealer.getSubscriptionPlan());
+                        "Vehicle limit exceeded. Your "
+                                + dealer.getSubscriptionPlan()
+                                + " plan allows only "
+                                + vehicleLimit
+                                + " vehicles.");
             }
         }
 
+        //Minimum 10 image required to add vehicle
         if (images == null || images.size() < 10) {
             throw new RuntimeException(
                     "Minimum 10 images are required");
         }
 
+        //Video required to add vehicle
         if (videos == null || videos.isEmpty()) {
             throw new RuntimeException(
                     "Minimum 1 video is required");
@@ -128,9 +131,7 @@ public class VehicleServiceImpl implements VehicleService {
 
         Vehicle savedVehicle = vehicleRepository.save(vehicle);
 
-        // ===============================
         // IMAGE UPLOAD
-        // ===============================
 
         if (images != null && !images.isEmpty()) {
 
@@ -175,9 +176,7 @@ public class VehicleServiceImpl implements VehicleService {
             }
         }
 
-        // ===============================
         // VIDEO UPLOAD
-        // ===============================
 
         if (videos != null && !videos.isEmpty()) {
 
@@ -223,7 +222,7 @@ public class VehicleServiceImpl implements VehicleService {
         }
 
         return VehicleResponseDTO.builder()
-                .vehicleId(savedVehicle.getId())
+                .id(savedVehicle.getId())
                 .dealerId(savedVehicle.getDealer().getId())
                 .brand(savedVehicle.getBrand())
                 .model(savedVehicle.getModel())
@@ -288,10 +287,19 @@ public class VehicleServiceImpl implements VehicleService {
         Vehicle updatedVehicle = vehicleRepository.save(vehicle);
 
         return VehicleResponseDTO.builder()
-                .vehicleId(updatedVehicle.getId())
+                .id(updatedVehicle.getId())
                 .vehicleStatus(VehicleStatus.valueOf(String.valueOf(updatedVehicle.getVehicleStatus())))
                 .build();
     }
+
+    @Override
+    public void deleteVehicle(Long id) {
+        Vehicle vehicle = vehicleRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("Vehicle not found with id: " + id));
+
+        vehicleRepository.delete(vehicle);
+    }
+
 
     @Override
     public List<Vehicle> getAllActiveVehicles() {

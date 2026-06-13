@@ -1,6 +1,7 @@
 package com.autohub.service;
 
 import com.autohub.dto.*;
+import com.autohub.enums.DealerStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,6 +14,7 @@ public interface DealerService {
 
     List<DealerSubscriptionResponseDTO> getSubscriptions();
 
+    public DealerResponseDTO updateDealerAccountStatus(Long dealerId,DealerAccountStatusRequestDTO requestDTO);
 
     DealerProfileResponseDTO updateDealerProfile(Long id, UpdateDealerProfileRequestDTO dto);
 

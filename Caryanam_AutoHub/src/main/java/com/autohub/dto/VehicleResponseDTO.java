@@ -1,13 +1,10 @@
 package com.autohub.dto;
 
-import com.autohub.entity.Dealer;
 import com.autohub.enums.VehicleStatus;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -17,7 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 public class VehicleResponseDTO {
 
-    private Long vehicleId;
+    private Long id;
 
     private Long dealerId;
 
@@ -55,7 +52,4 @@ public class VehicleResponseDTO {
 
     private  String dealerContactEmail;
 
-//    @ManyToOne
-//    @JoinColumn(name = "dealer_id")
-//    private Dealer dealer;
 }

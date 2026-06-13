@@ -1,5 +1,6 @@
 package com.autohub.dto;
 
+import com.autohub.enums.DealerStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,6 +33,8 @@ public class DealerResponseDTO {
 
     private String dealerLogo;
     private String showroomImage;
+
+    private DealerStatus dealerAccountStatus;
 
     private LocalDateTime createdAt;
 

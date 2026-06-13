@@ -6,8 +6,8 @@ import com.autohub.dto.VehicleResponseDTO;
 import com.autohub.dto.VehicleStatusRequestDTO;
 import com.autohub.enums.VehicleStatus;
 import com.autohub.service.VehicleService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,43 +26,22 @@ public class VehicleController {
 
     // ================= ADD VEHICLE INFO=================
 
-    @PostMapping(value = "/addData/{dealerId}",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/addData/{dealerId}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ResponseDto> addVehicle(
-
-            @RequestPart("vehicle")
+           @Valid @RequestPart("vehicle")
             String vehicleJson,
-
-            @RequestPart(value = "images",
-                    required = false)
+            @RequestPart(value = "images",required = false)
             List<MultipartFile> images,
-
-            @RequestPart(value = "videos",
-                    required = false)
-            List<MultipartFile> videos,
-
-            @PathVariable Long dealerId)
-
-            throws IOException {
+            @RequestPart(value = "videos",required = false)
+            List<MultipartFile> videos, @PathVariable Long dealerId)throws IOException {
 
         ObjectMapper mapper = new ObjectMapper();
 
-        VehicleRequestDTO vehicleRequestDTO =
-                mapper.readValue(vehicleJson,
-                        VehicleRequestDTO.class);
+        VehicleRequestDTO vehicleRequestDTO =mapper.readValue(vehicleJson,VehicleRequestDTO.class);
 
-        VehicleResponseDTO response =
-                vehicleService.addVehicleWithData(
-                        vehicleRequestDTO,
-                        images,
-                        videos,
-                        dealerId);
+        VehicleResponseDTO response =vehicleService.addVehicleWithData(vehicleRequestDTO,images,videos,dealerId);
 
-        return new ResponseEntity<>(
-                new ResponseDto<>(201,
-                        "Vehicle Added Successfully",
-                        response),
-                HttpStatus.CREATED);
+        return new ResponseEntity<>( new ResponseDto<>(201,"Vehicle Added Successfully",response),HttpStatus.CREATED);
     }
 
 
@@ -94,6 +73,16 @@ public class VehicleController {
                         "Vehicle Status Updated Successfully",
                         response.getVehicleStatus()
                 ));
+    }
+
+
+    // ================= DELETE VEHICLE =================
+
+    @DeleteMapping("/delete/{vehicleId}")
+    public ResponseEntity<ResponseDto> deleteVehicle(@PathVariable Long vehicleId){
+
+        vehicleService.deleteVehicle(vehicleId);
+        return new ResponseEntity<>(new ResponseDto<>(201,"Vehicle Delete Successfully",null),HttpStatus.OK);
     }
 
 }

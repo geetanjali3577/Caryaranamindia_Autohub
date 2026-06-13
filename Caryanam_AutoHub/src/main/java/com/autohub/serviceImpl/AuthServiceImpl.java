@@ -110,7 +110,7 @@ public class AuthServiceImpl implements AuthService {
         if (dealer != null) {
 
             // DEALER STATUS CHECK
-            if (dealer.getStatus() == DealerStatus.PENDING) {
+            if (dealer.getDealerAccountStatus() == DealerStatus.PENDING) {
 
                 throw new RuntimeException(
                         "Dealer account is inactive. Please contact admin."
