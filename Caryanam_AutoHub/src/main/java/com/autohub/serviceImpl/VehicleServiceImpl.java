@@ -11,6 +11,7 @@ import com.autohub.enums.SubscriptionPlan;
 import com.autohub.enums.VehicleStatus;
 import com.autohub.exception.ResourceNotFoundException;
 import com.autohub.repository.DealerRepository;
+import com.autohub.repository.LeadRepository;
 import com.autohub.repository.VehicleMediaRepository;
 import com.autohub.repository.VehicleRepository;
 import com.autohub.service.VehicleService;
@@ -19,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -36,6 +38,7 @@ public class VehicleServiceImpl implements VehicleService {
    private final DealerRepository dealerRepository;
    private final ModelMapper modelMapper;
    private final VehicleMediaRepository mediaRepository;
+   private final LeadRepository leadRepository;
 
     @Value("${file.upload-dir}")
     private String uploadDir;
@@ -293,11 +296,14 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
+    @Transactional
     public void deleteVehicle(Long id) {
         Vehicle vehicle = vehicleRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Vehicle not found with id: " + id));
 
-        vehicleRepository.delete(vehicle);
+        leadRepository.deleteLeadsByVehicleId(vehicle.getId());
+
+        vehicleRepository.deleteById(vehicle.getId());
     }
 
 

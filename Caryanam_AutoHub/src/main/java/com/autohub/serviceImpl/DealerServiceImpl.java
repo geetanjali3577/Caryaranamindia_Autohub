@@ -183,9 +183,7 @@ public DealerResponseDTO registerDealer(DealerRegisterDTO dto, MultipartFile dea
 
 
     @Override
-    public DealerResponseDTO updateDealerAccountStatus(
-            Long dealerId,
-            DealerAccountStatusRequestDTO requestDTO) {
+    public DealerResponseDTO updateDealerAccountStatus(Long dealerId,DealerAccountStatusRequestDTO requestDTO) {
 
         Dealer dealer = dealerRepository.findById(dealerId)
                 .orElseThrow(() ->

@@ -14,7 +14,7 @@ public interface DealerService {
 
     List<DealerSubscriptionResponseDTO> getSubscriptions();
 
-    public DealerResponseDTO updateDealerAccountStatus(Long dealerId,DealerAccountStatusRequestDTO requestDTO);
+    DealerResponseDTO updateDealerAccountStatus(Long dealerId,DealerAccountStatusRequestDTO requestDTO);
 
     DealerProfileResponseDTO updateDealerProfile(Long id, UpdateDealerProfileRequestDTO dto);
 

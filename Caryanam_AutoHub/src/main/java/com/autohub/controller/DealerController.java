@@ -4,6 +4,7 @@ import com.autohub.dto.*;
 import com.autohub.service.DealerService;
 
 
+import com.autohub.service.LeadService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -23,6 +24,7 @@ public class DealerController {
 
     private final DealerService dealerService;
     private final ObjectMapper objectMapper;
+    private final LeadService leadService;
 
 
     // ================= REGISTER DEALER =================
@@ -49,7 +51,31 @@ public class DealerController {
         return new ResponseEntity<>(new ResponseDto<>(200,"Dealer Profile Updated Successfully",dealerResponseDTO),HttpStatus.OK);
     }
 
-    // ================= DEALER DASHBOARD =================
+    // ================= ALL LEADS =================
+
+    @GetMapping("/leads/{dealerId}")
+    public ResponseEntity<ResponseDto<List<LeadResponseDTO>>> getCustomerLeads(
+            @PathVariable Long dealerId) {
+
+        List<LeadResponseDTO> response = leadService.getDealerLeads(dealerId);
+
+        return ResponseEntity.ok(new ResponseDto<>(200,"Customer All Leads Fetched Successfully",response)
+        );
+    }
+
+    // ================= UPDATE LEADS STATUS=================
+
+    @PutMapping("/lead-status/{leadId}")
+    public ResponseEntity<ResponseDto<LeadResponseDTO>> updateLeadStatus(
+            @PathVariable Long leadId,
+            @RequestBody LeadStatusRequestDTO requestDTO) {
+        LeadResponseDTO response = leadService.updateLeadStatus(leadId, requestDTO);
+
+        return ResponseEntity.ok(new ResponseDto<>(200,"Lead status successfully",response));
+    }
+
+
+   // ================= DEALER DASHBOARD =================
 
     @GetMapping("/dashboard/{dealerId}")
     public ResponseEntity<DashboardResponseDTO>   getDashboard(@PathVariable Long dealerId) {

@@ -3,7 +3,6 @@ package com.autohub.controller;
 import com.autohub.dto.DealerAccountStatusRequestDTO;
 import com.autohub.dto.DealerResponseDTO;
 import com.autohub.dto.ResponseDto;
-import com.autohub.enums.DealerStatus;
 import com.autohub.service.DealerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

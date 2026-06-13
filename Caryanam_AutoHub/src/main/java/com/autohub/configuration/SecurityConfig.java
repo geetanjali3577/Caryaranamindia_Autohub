@@ -38,14 +38,14 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-                // 🔥 ENABLE CORS (FIXED)
+
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
 
                                 .requestMatchers("/api/dealer/**","/api/vehicle/**","/api/auth/**","/api/payment/**","/api/admin/**").permitAll()
-
+                                .requestMatchers("/api/lead/**").permitAll()
 
                                         .anyRequest().authenticated()
                                 )
@@ -84,7 +84,6 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // 🔥🔥🔥 FINAL CORS FIX
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
