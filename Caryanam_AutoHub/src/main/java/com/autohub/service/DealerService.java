@@ -14,6 +14,10 @@ public interface DealerService {
 
     List<DealerSubscriptionResponseDTO> getSubscriptions();
 
+    List<SubscriptionPlanDTO> getAllSubscriptionsPlans();
+
+    DealerCurrentSubscriptionPlanDTO getDealerSubscriptionPlan(Long dealerId);
+
     DealerResponseDTO updateDealerAccountStatus(Long dealerId,DealerAccountStatusRequestDTO requestDTO);
 
     DealerProfileResponseDTO updateDealerProfile(Long id, UpdateDealerProfileRequestDTO dto);

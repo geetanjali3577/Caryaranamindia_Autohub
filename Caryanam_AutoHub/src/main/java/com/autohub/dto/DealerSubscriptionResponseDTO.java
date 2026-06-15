@@ -3,14 +3,18 @@ package com.autohub.dto;
 import com.autohub.enums.SubscriptionPlan;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 public class DealerSubscriptionResponseDTO {
 
-    private Long Id;
+    private Long dealerId;
 
     private String dealerName;
 
-    private String dealerId;
+    private LocalDateTime subscriptionStartDate;
+
+    private LocalDateTime subscriptionEndDate;
 
     private Boolean subscriptionActive;
 

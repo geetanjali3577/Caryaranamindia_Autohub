@@ -21,8 +21,8 @@ public class PaymentController {
 
     private final PaymentService paymentService;
 
-// ================== DO PAYMENT ======================
-    @PostMapping("/create")
+// ================== DO PAYMENT FOR SUBSCRIPTION PLAN ======================
+    @PostMapping("/subscription/purchase")
     public ResponseEntity<ResponseDto<?>> createPayment(
             @RequestBody PaymentRequestDTO dto) {
 
@@ -55,8 +55,7 @@ public class PaymentController {
 
 
     @GetMapping("/dealer/{dealerId}")
-    public ResponseEntity<ResponseDto<?>>
-    getDealerPayments(
+    public ResponseEntity<ResponseDto<?>> getDealerPayments(
             @PathVariable Long Id) {
 
         return ResponseEntity.ok(paymentService.getDealerPayments(Id));

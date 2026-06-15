@@ -4,6 +4,7 @@ import com.autohub.dto.*;
 import com.autohub.emailservice.EmailService;
 import com.autohub.entity.Dealer;
 import com.autohub.enums.DealerStatus;
+import com.autohub.enums.SubscriptionPlan;
 import com.autohub.enums.VehicleStatus;
 import com.autohub.exception.ResourceNotFoundException;
 import com.autohub.repository.*;
@@ -24,7 +25,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,8 +46,6 @@ public class DealerServiceImpl implements DealerService {
     private final EmailService emailService;
     private final ModelMapper modelMapper;
     private final VehicleViewRepository vehicleViewRepository;
-    private final VehicleViewService vehicleViewService;
-    private final LeadService leadService;
 
 @Override
 public DealerResponseDTO registerDealer(DealerRegisterDTO dto, MultipartFile dealerLogo, MultipartFile showroomImage) {
@@ -167,6 +169,43 @@ public DealerResponseDTO registerDealer(DealerRegisterDTO dto, MultipartFile dea
 
 
     @Override
+    public DashboardResponseDTO getDashboard(Long dealerId) {
+
+        Dealer dealer = dealerRepository.findById(dealerId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Dealer not found"));
+
+        DashboardResponseDTO dto = new DashboardResponseDTO();
+
+        dto.setDealerName(dealer.getOwnerName());
+
+        dto.setTotalVehicles( vehicleRepository.countByDealerId(dealer.getId()));
+
+        dto.setFeaturedVehicles(vehicleRepository.countByDealer_IdAndVehicleStatus(dealer.getId(), VehicleStatus.FEATURED));
+
+        dto.setTotalLeads(leadRepository.countByDealerId(dealer.getId()));
+
+        dto.setVehicleViews(vehicleViewRepository.countViewsByDealerId(dealerId));
+//
+//        dto.setMonthlyViews(
+//                vehicleViewService.getMonthlyViews(dealerId)
+//                        .stream()
+//                        .map(view -> view.getViews().intValue())
+//                        .toList()
+//        );
+//
+//        dto.setMonthlyLeads(
+//                leadService.getMonthlyLead(dealerId)
+//                        .stream()
+//                        .map(lead -> lead.getLeads().intValue())
+//                        .toList()
+//        );
+
+        return dto;
+    }
+
+
+    @Override
     public DealerResponseDTO getDealerProfile(Long dealerId) {
         Dealer dealer = dealerRepository.findById(dealerId).orElseThrow(() -> new ResourceNotFoundException("Dealer Not Found"));
 
@@ -189,7 +228,6 @@ public DealerResponseDTO registerDealer(DealerRegisterDTO dto, MultipartFile dea
         return modelMapper.map(save,DealerProfileResponseDTO.class);
 
     }
-
 
     @Override
     public DealerResponseDTO updateDealerAccountStatus(Long dealerId,DealerAccountStatusRequestDTO requestDTO) {
@@ -431,59 +469,68 @@ public DealerResponseDTO registerDealer(DealerRegisterDTO dto, MultipartFile dea
                 .stream()
                 .map(dealer -> {
 
-                    DealerSubscriptionResponseDTO dto =
-                            new DealerSubscriptionResponseDTO();
+                    DealerSubscriptionResponseDTO dto = new DealerSubscriptionResponseDTO();
 
-                    dto.setId((dealer.getId()));
-
+                    dto.setDealerId(dealer.getId());
                     dto.setDealerName(dealer.getBusinessName());
+                    dto.setSubscriptionStartDate(dealer.getSubscriptionStartDate());
+                    dto.setSubscriptionEndDate(dealer.getSubscriptionEndDate());
 
+                    dto.setSubscriptionActive( dealer.getSubscriptionActive());
 
-                    dto.setSubscriptionActive(
-                            dealer.getSubscriptionActive());
-
-                    dto.setSubscriptionPlan(
-                            dealer.getSubscriptionPlan());
+                    dto.setSubscriptionPlan(   dealer.getSubscriptionPlan());
 
                     return dto;
 
-                }).toList();
+                })
+                .toList();
     }
-
 
     @Override
-    public DashboardResponseDTO getDashboard(Long dealerId) {
+    public List<SubscriptionPlanDTO> getAllSubscriptionsPlans() {
 
+        return Arrays.stream(SubscriptionPlan.values())
+                .map(plan -> new SubscriptionPlanDTO(
+                        plan.name(),
+                        plan.getAmount(),
+                        plan.getVehicleLimit(),
+                        plan.getValidityMonths()
+                ))
+                .toList();
+    }
+
+    @Override
+    public DealerCurrentSubscriptionPlanDTO getDealerSubscriptionPlan(Long dealerId) {
         Dealer dealer = dealerRepository.findById(dealerId)
                 .orElseThrow(() ->
-                        new ResourceNotFoundException("Dealer not found"));
+                        new ResourceNotFoundException("Dealer Not Found"));
 
-        DashboardResponseDTO dto = new DashboardResponseDTO();
+        SubscriptionPlan plan = dealer.getSubscriptionPlan();
 
-        dto.setDealerName(dealer.getOwnerName());
+        Long remainingDays = 0L;
 
-        dto.setTotalVehicles( vehicleRepository.countByDealerId(dealer.getId()));
+        if (dealer.getSubscriptionEndDate() != null) {
 
-        dto.setFeaturedVehicles(vehicleRepository.countByDealer_IdAndVehicleStatus(dealer.getId(), VehicleStatus.FEATURED));
+            remainingDays = ChronoUnit.DAYS.between(
+                    LocalDate.now(),
+                    dealer.getSubscriptionEndDate().toLocalDate()
+            );
 
-        dto.setTotalLeads(leadRepository.countByDealerId(dealer.getId()));
+            if (remainingDays < 0) {
+                remainingDays = 0L;
+            }
+        }
 
-        dto.setVehicleViews(vehicleViewRepository.countViewsByDealerId(dealerId));
-//
-//        dto.setMonthlyViews(
-//                vehicleViewService.getMonthlyViews(dealerId)
-//                        .stream()
-//                        .map(view -> view.getViews().intValue())
-//                        .toList()
-//        );
-//
-//        dto.setMonthlyLeads(
-//                leadService.getMonthlyLead(dealerId)
-//                        .stream()
-//                        .map(lead -> lead.getLeads().intValue())
-//                        .toList()
-//        );
-
-        return dto;
+        return new DealerCurrentSubscriptionPlanDTO(
+                dealer.getId(),
+                plan.name(),
+                plan.getAmount(),
+                plan.getVehicleLimit(),
+                plan.getValidityMonths(),
+                dealer.getSubscriptionStartDate(),
+                dealer.getSubscriptionEndDate(),
+                remainingDays
+        );
     }
+
 }

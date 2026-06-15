@@ -69,15 +69,33 @@ public class DealerController {
         return ResponseEntity.ok( dealerService.getDashboard(dealerId));
     }
 
-    // ================= SUBSCRIPTION =================
 
-    @GetMapping("/subscriptions")
-    public ResponseEntity<ResponseDto<List<DealerSubscriptionResponseDTO>>> getSubscriptions() {
+    // ================= GET AVAILABLE SUBSCRIPTION PLAN =================
 
-        List<DealerSubscriptionResponseDTO> data = dealerService.getSubscriptions();
-        return ResponseEntity.ok(new ResponseDto<>(200, "Subscriptions fetched successfully", data));
+    @GetMapping("/subscription/plans")
+    public ResponseEntity<ResponseDto<List<SubscriptionPlanDTO>>> getPlans() {
+
+        return ResponseEntity.ok(new ResponseDto<>(200,"Subscription Plans Fetched Successfully",
+                dealerService.getAllSubscriptionsPlans()
+                )
+        );
     }
 
+    // ================= GET CURRENT SUBSCRIPTION PLAN =================
+
+    @GetMapping("/current-plan/{dealerId}")
+    public ResponseEntity<ResponseDto<DealerCurrentSubscriptionPlanDTO>> getDealerCurrentSubscription(@PathVariable Long dealerId) {
+
+        DealerCurrentSubscriptionPlanDTO dealerSubscriptionPlan =dealerService.getDealerSubscriptionPlan(dealerId);
+
+        return ResponseEntity.ok(
+                new ResponseDto<>(
+                        200,
+                        "Subscription Details Fetched Successfully",
+                        dealerSubscriptionPlan
+                )
+        );
+    }
 
     // ================= FORGOT PASSWORD DEALER =================
     @PostMapping("/send-otp")
