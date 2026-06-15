@@ -23,6 +23,8 @@ public interface VehicleService {
 
     void deleteVehicle(Long id);
 
+
+
     List<Vehicle> getAllActiveVehicles();
 }
 

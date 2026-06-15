@@ -6,15 +6,14 @@ import com.autohub.dto.VehicleStatusRequestDTO;
 import com.autohub.entity.Dealer;
 import com.autohub.entity.Vehicle;
 import com.autohub.entity.VehicleMedia;
+import com.autohub.entity.VehicleView;
 import com.autohub.enums.DealerStatus;
 import com.autohub.enums.SubscriptionPlan;
 import com.autohub.enums.VehicleStatus;
 import com.autohub.exception.ResourceNotFoundException;
-import com.autohub.repository.DealerRepository;
-import com.autohub.repository.LeadRepository;
-import com.autohub.repository.VehicleMediaRepository;
-import com.autohub.repository.VehicleRepository;
+import com.autohub.repository.*;
 import com.autohub.service.VehicleService;
+import com.autohub.service.VehicleViewService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -39,6 +38,7 @@ public class VehicleServiceImpl implements VehicleService {
    private final ModelMapper modelMapper;
    private final VehicleMediaRepository mediaRepository;
    private final LeadRepository leadRepository;
+   private final VehicleViewRepository vehicleViewRepository;
 
     @Value("${file.upload-dir}")
     private String uploadDir;

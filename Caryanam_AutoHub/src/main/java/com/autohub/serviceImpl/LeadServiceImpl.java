@@ -1,9 +1,6 @@
 package com.autohub.serviceImpl;
 
-import com.autohub.dto.DealerResponseDTO;
-import com.autohub.dto.LeadRequestDTO;
-import com.autohub.dto.LeadResponseDTO;
-import com.autohub.dto.LeadStatusRequestDTO;
+import com.autohub.dto.*;
 import com.autohub.entity.Dealer;
 import com.autohub.entity.Lead;
 import com.autohub.entity.Vehicle;
@@ -19,7 +16,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -34,10 +34,11 @@ public class LeadServiceImpl implements LeadService {
     private final ModelMapper modelMapper;
 
     @Override
-    public LeadResponseDTO createLead(Long vehicleId, Long dealerId, LeadRequestDTO leadRequestDTO) {
+    public LeadResponseDTO createLead(Long vehicleId, LeadRequestDTO leadRequestDTO) {
 
         Vehicle vehicle = vehicleRepository.findById(vehicleId).orElseThrow(() ->
                 new ResourceNotFoundException("Vehicle not found with id: " + vehicleId));
+        Long dealerId = vehicle.getDealer().getId();
 
         Dealer dealer = dealerRepository.findById(dealerId)
                          .orElseThrow(() ->  new ResourceNotFoundException("Dealer not found"));
@@ -143,5 +144,50 @@ public class LeadServiceImpl implements LeadService {
                 .dealer(saved.getDealer().getId())
                 .leadStatus(saved.getLeadStatus())
                 .build();
+    }
+
+    @Override
+    public List<MonthlyLeadAnalyticsDTO> getLeadAnalytics(Long dealerId) {
+
+        List<Object[]> result = leadRepository.getMonthlyLeadAnalytics(dealerId);
+
+        String[] months = {
+                "Jan","Feb","Mar","Apr","May","Jun",
+                "Jul","Aug","Sep","Oct","Nov","Dec"
+        };
+
+        Map<Integer, MonthlyLeadAnalyticsDTO> map = new HashMap<>();
+
+        for (Object[] row : result) {
+
+            int month = ((Number) row[0]).intValue();
+            Long leads = ((Number) row[1]).longValue();
+            Long conversions = ((Number) row[2]).longValue();
+
+            map.put(month,
+                    new MonthlyLeadAnalyticsDTO(
+                            months[month - 1],
+                            leads,
+                            conversions
+                    ));
+        }
+
+        List<MonthlyLeadAnalyticsDTO> response = new ArrayList<>();
+
+        for (int i = 1; i <= 12; i++) {
+
+            response.add(
+                    map.getOrDefault(
+                            i,
+                            new MonthlyLeadAnalyticsDTO(
+                                    months[i - 1],
+                                    0L,
+                                    0L
+                            )
+                    )
+            );
+        }
+
+        return response;
     }
 }

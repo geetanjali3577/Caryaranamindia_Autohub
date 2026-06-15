@@ -6,6 +6,7 @@ import com.autohub.dto.VehicleResponseDTO;
 import com.autohub.dto.VehicleStatusRequestDTO;
 import com.autohub.enums.VehicleStatus;
 import com.autohub.service.VehicleService;
+import com.autohub.service.VehicleViewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,9 +25,12 @@ public class VehicleController {
 
     private final VehicleService vehicleService;
 
+
+    private final VehicleViewService vehicleViewService;
+
     // ================= ADD VEHICLE INFO=================
 
-    @PostMapping(value = "/addData/{dealerId}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/add/{dealerId}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ResponseDto> addVehicle(
            @Valid @RequestPart("vehicle")
             String vehicleJson,
@@ -84,5 +88,6 @@ public class VehicleController {
         vehicleService.deleteVehicle(vehicleId);
         return new ResponseEntity<>(new ResponseDto<>(201,"Vehicle Delete Successfully",null),HttpStatus.OK);
     }
+
 
 }

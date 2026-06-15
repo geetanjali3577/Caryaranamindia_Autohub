@@ -20,4 +20,16 @@ public interface LeadRepository extends JpaRepository<Lead,Long> {
     @Query("DELETE FROM Lead l WHERE l.vehicle.id = :vehicleId")
     void deleteLeadsByVehicleId(@Param("vehicleId") Long vehicleId);
 
+    @Query("""
+        SELECT MONTH(l.enquiryDate),
+               COUNT(l),
+               SUM(CASE WHEN l.leadStatus = 'CONVERTED' THEN 1 ELSE 0 END)
+        FROM Lead l
+        WHERE l.dealer.id = :dealerId
+        AND YEAR(l.enquiryDate) = YEAR(CURRENT_DATE)
+        GROUP BY MONTH(l.enquiryDate)
+        ORDER BY MONTH(l.enquiryDate)
+    """)
+    List<Object[]> getMonthlyLeadAnalytics(@Param("dealerId") Long dealerId);
+
 }
