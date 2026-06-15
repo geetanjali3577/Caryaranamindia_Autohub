@@ -1,6 +1,7 @@
 package com.autohub.repository;
 
 import com.autohub.entity.Lead;
+import com.autohub.enums.LeadStatus;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -31,5 +32,11 @@ public interface LeadRepository extends JpaRepository<Lead,Long> {
         ORDER BY MONTH(l.enquiryDate)
     """)
     List<Object[]> getMonthlyLeadAnalytics(@Param("dealerId") Long dealerId);
+    long countByDealerId(Long dealerId);
+
+    long countByDealerIdAndLeadStatus(
+            Long dealerId,
+            LeadStatus leadStatus
+    );
 
 }
