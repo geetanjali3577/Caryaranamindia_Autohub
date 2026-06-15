@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface VehicleViewRepository extends JpaRepository<VehicleView, Long> {
 
+    // Month Wise Views
+
     @Query("""
         SELECT MONTH(v.viewedAt),
                COUNT(v)
@@ -19,4 +21,16 @@ public interface VehicleViewRepository extends JpaRepository<VehicleView, Long> 
         ORDER BY MONTH(v.viewedAt)
     """)
     List<Object[]> getMonthlyViews(@Param("dealerId") Long dealerId);
+
+
+    // Total Views
+
+    @Query("""
+            SELECT COUNT(vv)
+            FROM VehicleView vv
+            WHERE vv.vehicle.dealer.id = :dealerId
+            """)
+    long countViewsByDealerId(@Param("dealerId") Long dealerId);
+
+
 }

@@ -12,7 +12,6 @@ import com.autohub.repository.LeadRepository;
 import com.autohub.repository.VehicleRepository;
 import com.autohub.service.LeadService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -30,8 +29,6 @@ public class LeadServiceImpl implements LeadService {
     private final VehicleRepository vehicleRepository;
 
     private final DealerRepository dealerRepository;
-
-    private final ModelMapper modelMapper;
 
     @Override
     public LeadResponseDTO createLead(Long vehicleId, LeadRequestDTO leadRequestDTO) {
@@ -147,7 +144,7 @@ public class LeadServiceImpl implements LeadService {
     }
 
     @Override
-    public List<MonthlyLeadAnalyticsDTO> getLeadAnalytics(Long dealerId) {
+    public List<MonthlyLeadAnalyticsDTO> getMonthlyLead(Long dealerId) {
 
         List<Object[]> result = leadRepository.getMonthlyLeadAnalytics(dealerId);
 

@@ -25,7 +25,7 @@ public class AnalyticsController {
     private final LeadService leadService;
     private final VehicleViewService vehicleViewService;
 
-    // ================= Total Monthly Vehicle View on vehicle - Analytics  =================
+    // ================= Month wise Vehicle View on vehicle - Analytics  =================
 
     @GetMapping("/vehicle-view/{dealerId}")
     public ResponseEntity<List<MonthlyViewDTO>> getViewsAnalytics(
@@ -35,11 +35,11 @@ public class AnalyticsController {
         );
     }
 
-    // ================= Leads vs Conversions - Analytics  =================
+    // ================= Month wise Leads Leads on Vehicle - Analytics  =================
 
     @GetMapping("/vehicle-lead/{dealerId}")
     public ResponseEntity<ResponseDto<List<MonthlyLeadAnalyticsDTO>>> getLeadAnalytics(@PathVariable Long dealerId) {
-        List<MonthlyLeadAnalyticsDTO> leadAnalytics = leadService.getLeadAnalytics(dealerId);
+        List<MonthlyLeadAnalyticsDTO> leadAnalytics = leadService.getMonthlyLead(dealerId);
 
         return new ResponseEntity<>(new ResponseDto(200,"Lead Monthly Analytics Fetch Successfully",leadAnalytics), HttpStatus.OK);
     }

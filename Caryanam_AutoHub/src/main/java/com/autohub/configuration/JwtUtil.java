@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.UUID;
 
 @Component
 public class JwtUtil {
@@ -28,23 +29,9 @@ public class JwtUtil {
             Role role
             ) {
 
-//        return Jwts.builder()
-//                .setSubject(username)
-//                .claim("id", id)
-//                .claim("name", name)
-//                .claim("role", role.name())
-//                .setIssuedAt(new Date())
-//                .setExpiration(
-//                        new Date(
-//                                System.currentTimeMillis()
-//                                        + 1000 * 60 * 60
-//                        )
-//                )
-//                .signWith(key)
-//                .compact();
-
         return Jwts.builder()
                 .setSubject(username)
+                .setId(UUID.randomUUID().toString())
                 .claim("id", id)
                 .claim("name", name)
                 .claim("role", role.name())
@@ -55,6 +42,8 @@ public class JwtUtil {
                 .signWith(key)
                 .compact();
     }
+
+
     // EXTRACT USERNAME
     public String extractUsername(String token) {
 

@@ -2,8 +2,6 @@ package com.autohub.dto;
 
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 public class DashboardResponseDTO {
 
@@ -14,6 +12,6 @@ public class DashboardResponseDTO {
     private Long totalLeads;
     private Long vehicleViews;
 
-    private List<Integer> monthlyViews;
-    private List<Integer> monthlyLeads;
+//    private List<Integer> monthlyViews;
+//    private List<Integer> monthlyLeads;
 }

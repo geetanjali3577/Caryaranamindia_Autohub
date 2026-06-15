@@ -17,6 +17,6 @@ public interface LeadService {
 
     LeadResponseDTO updateLeadStatus(Long leadId, LeadStatusRequestDTO requestDTO);
 
-    List<MonthlyLeadAnalyticsDTO> getLeadAnalytics(Long dealerId);
+    List<MonthlyLeadAnalyticsDTO> getMonthlyLead(Long dealerId);
 
 }

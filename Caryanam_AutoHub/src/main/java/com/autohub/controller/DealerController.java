@@ -43,12 +43,21 @@ public class DealerController {
 
     // ================= UPDATE DEALER PROFILE =================
 
-    @PutMapping("/profile/{dealerId}")
+    @PutMapping("/update-profile/{dealerId}")
     public ResponseEntity<ResponseDto<DealerProfileResponseDTO>> updateDealerProfile(@PathVariable Long dealerId,@Valid @RequestBody UpdateDealerProfileRequestDTO request) {
 
         DealerProfileResponseDTO dealerResponseDTO = dealerService.updateDealerProfile(dealerId, request);
 
         return new ResponseEntity<>(new ResponseDto<>(200,"Dealer Profile Updated Successfully",dealerResponseDTO),HttpStatus.OK);
+    }
+
+    // ========== GET DEALER  BY ID ================
+    @GetMapping("/dealer-profile/{dealerId}")
+    public ResponseEntity<ResponseDto<DealerResponseDTO>>   getDealerById(@PathVariable Long dealerId) {
+
+        DealerResponseDTO dealerProfile = dealerService.getDealerProfile(dealerId);
+
+        return new ResponseEntity<>(new ResponseDto<>(200,"Dealer Profile Fetch Successfully",dealerProfile),HttpStatus.OK);
     }
 
 

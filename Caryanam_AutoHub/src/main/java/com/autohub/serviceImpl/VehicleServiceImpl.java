@@ -308,11 +308,6 @@ public class VehicleServiceImpl implements VehicleService {
 
 
     @Override
-    public List<Vehicle> getAllActiveVehicles() {
-        return List.of();
-    }
-
-    @Override
     public List<VehicleResponseDTO> getAllVehicleByDealerId(Long dealerId) {
 
         List<Vehicle> vehicles =
@@ -327,8 +322,16 @@ public class VehicleServiceImpl implements VehicleService {
                         .variant(vehicle.getVariant())
                         .registrationYear(vehicle.getRegistrationYear())
                         .askingPrice(vehicle.getAskingPrice())
+                        .kilometerDriven(vehicle.getKilometerDriven())
                         .fuelType(vehicle.getFuelType())
+                        .transmission(vehicle.getTransmission())
+                        .ownershipDetails(vehicle.getOwnershipDetails())
+                        .insuranceStatus(vehicle.getInsuranceStatus())
+                        .vehicleDescription(vehicle.getVehicleDescription())
                         .city(vehicle.getCity())
+                        .dealerContactName(vehicle.getDealerContactName())
+                        .dealerContactNumber(vehicle.getDealerContactNumber())
+                        .dealerContactEmail(vehicle.getDealerContactEmail())
                         .vehicleStatus(vehicle.getVehicleStatus())
                         .createdAt(vehicle.getCreatedAt())
                         .build())

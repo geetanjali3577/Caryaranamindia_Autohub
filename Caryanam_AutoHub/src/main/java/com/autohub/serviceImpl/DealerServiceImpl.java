@@ -4,18 +4,15 @@ import com.autohub.dto.*;
 import com.autohub.emailservice.EmailService;
 import com.autohub.entity.Dealer;
 import com.autohub.enums.DealerStatus;
-import com.autohub.enums.Role;
 import com.autohub.enums.VehicleStatus;
 import com.autohub.exception.ResourceNotFoundException;
-import com.autohub.repository.DealerLeadRepository;
-import com.autohub.repository.DealerRepository;
-import com.autohub.repository.UserRepository;
-import com.autohub.repository.VehicleRepository;
+import com.autohub.repository.*;
 import com.autohub.service.DealerService;
 
+import com.autohub.service.LeadService;
+import com.autohub.service.VehicleViewService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,7 +25,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,10 +37,13 @@ public class DealerServiceImpl implements DealerService {
 
     private final DealerRepository dealerRepository;
     private final VehicleRepository vehicleRepository;
-    private final DealerLeadRepository dealerLeadRepository;
+    private final LeadRepository leadRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final ModelMapper modelMapper;
+    private final VehicleViewRepository vehicleViewRepository;
+    private final VehicleViewService vehicleViewService;
+    private final LeadService leadService;
 
 @Override
 public DealerResponseDTO registerDealer(DealerRegisterDTO dto, MultipartFile dealerLogo, MultipartFile showroomImage) {
@@ -100,6 +99,8 @@ public DealerResponseDTO registerDealer(DealerRegisterDTO dto, MultipartFile dea
     return modelMapper.map(savedDealer, DealerResponseDTO.class);
 
 }
+
+
 
     private void validateImage(MultipartFile file, String fieldName) {
 
@@ -163,6 +164,14 @@ public DealerResponseDTO registerDealer(DealerRegisterDTO dto, MultipartFile dea
             throw new RuntimeException("Failed to upload file");
         }
     }
+
+
+    @Override
+    public DealerResponseDTO getDealerProfile(Long dealerId) {
+        Dealer dealer = dealerRepository.findById(dealerId).orElseThrow(() -> new ResourceNotFoundException("Dealer Not Found"));
+
+        return modelMapper.map(dealer,DealerResponseDTO.class);
+}
 
     @Override
     public DealerProfileResponseDTO updateDealerProfile(Long id, UpdateDealerProfileRequestDTO dto) {
@@ -442,45 +451,38 @@ public DealerResponseDTO registerDealer(DealerRegisterDTO dto, MultipartFile dea
     }
 
 
-
-
     @Override
     public DashboardResponseDTO getDashboard(Long dealerId) {
 
         Dealer dealer = dealerRepository.findById(dealerId)
                 .orElseThrow(() ->
-                        new RuntimeException("Dealer not found"));
+                        new ResourceNotFoundException("Dealer not found"));
 
         DashboardResponseDTO dto = new DashboardResponseDTO();
 
-        dto.setDealerName(dealer.getBusinessName());
+        dto.setDealerName(dealer.getOwnerName());
 
-        dto.setTotalVehicles(
-                vehicleRepository.countByDealer_Id(
-                        dealer.getId()));
+        dto.setTotalVehicles( vehicleRepository.countByDealerId(dealer.getId()));
 
-        dto.setFeaturedVehicles(
-                vehicleRepository.countByDealer_IdAndVehicleStatus(
-                        dealer.getId(),
-                        VehicleStatus.FEATURED));
+        dto.setFeaturedVehicles(vehicleRepository.countByDealer_IdAndVehicleStatus(dealer.getId(), VehicleStatus.FEATURED));
 
-        dto.setTotalLeads(
-                dealerLeadRepository.countByDealer_Id(
-                        dealerId));
+        dto.setTotalLeads(leadRepository.countByDealerId(dealer.getId()));
 
-        // Temporary value
-        dto.setVehicleViews(9900L);
-
-        // Temporary chart data
-        dto.setMonthlyViews(Arrays.asList(
-                800, 950, 1070, 1200,
-                1350, 1480, 1620, 1760,
-                1910, 830, 970, 1100));
-
-        dto.setMonthlyLeads(Arrays.asList(
-                12, 19, 25, 32,
-                12, 19, 25, 32,
-                12, 19, 25, 32));
+        dto.setVehicleViews(vehicleViewRepository.countViewsByDealerId(dealerId));
+//
+//        dto.setMonthlyViews(
+//                vehicleViewService.getMonthlyViews(dealerId)
+//                        .stream()
+//                        .map(view -> view.getViews().intValue())
+//                        .toList()
+//        );
+//
+//        dto.setMonthlyLeads(
+//                leadService.getMonthlyLead(dealerId)
+//                        .stream()
+//                        .map(lead -> lead.getLeads().intValue())
+//                        .toList()
+//        );
 
         return dto;
     }

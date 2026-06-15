@@ -88,6 +88,8 @@ public class VehicleController {
         vehicleService.deleteVehicle(vehicleId);
         return new ResponseEntity<>(new ResponseDto<>(201,"Vehicle Delete Successfully",null),HttpStatus.OK);
     }
+
+    // ================= GET ALL VEHICLE BY DEALER ID=================
     @GetMapping("/dealer/{dealerId}")
     public ResponseEntity<ResponseDto<List<VehicleResponseDTO>>> getAllVehicleByDealerId(
             @PathVariable Long dealerId) {
@@ -101,6 +103,9 @@ public class VehicleController {
                         "Vehicles fetched successfully",
                         response));
     }
+
+
+    // ================= GET VEHICLE BY ID=================
 
     @GetMapping("/{vehicleId}")
     public ResponseEntity<ResponseDto<VehicleResponseDTO>> getVehicleById(

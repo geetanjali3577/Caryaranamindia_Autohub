@@ -20,9 +20,9 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .info(
                         new Info()
-                                .title("Finance-Caryanam")
+                                .title("Caryanam AutoHub")
                                 .version("1.0")
-                                .description("Finance-Caryanam")
+                                .description("Caryanam-AutoHub")
                                 .contact(
                                         new Contact()
                                                 .name("Swapnil")

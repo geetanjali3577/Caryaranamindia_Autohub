@@ -160,6 +160,7 @@ public class AuthServiceImpl implements AuthService {
     // =====================================================
     // LOGOUT
     // =====================================================
+
     @Override
     public void logout(String token) {
 

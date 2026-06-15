@@ -14,13 +14,18 @@ import java.util.List;
 @Repository
 public interface LeadRepository extends JpaRepository<Lead,Long> {
 
+    // Dealer wise leads find
     List<Lead> findByDealerId(Long dealerId);
+
+    // Vehicle delete leads also delete
 
     @Modifying
     @Transactional
     @Query("DELETE FROM Lead l WHERE l.vehicle.id = :vehicleId")
     void deleteLeadsByVehicleId(@Param("vehicleId") Long vehicleId);
 
+
+    // Month wise leads
     @Query("""
         SELECT MONTH(l.enquiryDate),
                COUNT(l),
@@ -32,11 +37,14 @@ public interface LeadRepository extends JpaRepository<Lead,Long> {
         ORDER BY MONTH(l.enquiryDate)
     """)
     List<Object[]> getMonthlyLeadAnalytics(@Param("dealerId") Long dealerId);
-    long countByDealerId(Long dealerId);
 
     long countByDealerIdAndLeadStatus(
             Long dealerId,
             LeadStatus leadStatus
     );
+
+
+    // Total Leads
+    long countByDealerId(Long dealerId);
 
 }
