@@ -311,4 +311,58 @@ public class VehicleServiceImpl implements VehicleService {
     public List<Vehicle> getAllActiveVehicles() {
         return List.of();
     }
+
+    @Override
+    public List<VehicleResponseDTO> getAllVehicleByDealerId(Long dealerId) {
+
+        List<Vehicle> vehicles =
+                vehicleRepository.findByDealerId(dealerId);
+
+        return vehicles.stream()
+                .map(vehicle -> VehicleResponseDTO.builder()
+                        .id(vehicle.getId())
+                        .dealerId(vehicle.getDealer().getId())
+                        .brand(vehicle.getBrand())
+                        .model(vehicle.getModel())
+                        .variant(vehicle.getVariant())
+                        .registrationYear(vehicle.getRegistrationYear())
+                        .askingPrice(vehicle.getAskingPrice())
+                        .fuelType(vehicle.getFuelType())
+                        .city(vehicle.getCity())
+                        .vehicleStatus(vehicle.getVehicleStatus())
+                        .createdAt(vehicle.getCreatedAt())
+                        .build())
+                .toList();
+    }
+
+    @Override
+    public VehicleResponseDTO getVehicleById(Long vehicleId) {
+
+        Vehicle vehicle = vehicleRepository.findById(vehicleId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Vehicle not found with id : " + vehicleId));
+
+        return VehicleResponseDTO.builder()
+                .id(vehicle.getId())
+                .dealerId(vehicle.getDealer().getId())
+                .brand(vehicle.getBrand())
+                .model(vehicle.getModel())
+                .variant(vehicle.getVariant())
+                .registrationYear(vehicle.getRegistrationYear())
+                .askingPrice(vehicle.getAskingPrice())
+                .kilometerDriven(vehicle.getKilometerDriven())
+                .fuelType(vehicle.getFuelType())
+                .transmission(vehicle.getTransmission())
+                .ownershipDetails(vehicle.getOwnershipDetails())
+                .insuranceStatus(vehicle.getInsuranceStatus())
+                .vehicleDescription(vehicle.getVehicleDescription())
+                .city(vehicle.getCity())
+                .dealerContactName(vehicle.getDealerContactName())
+                .dealerContactNumber(vehicle.getDealerContactNumber())
+                .dealerContactEmail(vehicle.getDealerContactEmail())
+                .vehicleStatus(vehicle.getVehicleStatus())
+                .createdAt(vehicle.getCreatedAt())
+                .build();
+    }
 }
