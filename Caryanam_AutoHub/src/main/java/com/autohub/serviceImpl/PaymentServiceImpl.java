@@ -34,7 +34,7 @@ public class PaymentServiceImpl implements PaymentService {
         // Validation 1 - Active subscription
         if (Boolean.TRUE.equals(dealer.getSubscriptionActive())) {
             throw new RuntimeException(
-                    "Dealer already has an active subscription");
+                    "You have already an active subscription plan");
         }
 
         // Validation 2 - Pending payment exists
@@ -46,7 +46,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         if (pendingPayment.isPresent()) {
             throw new RuntimeException(
-                    "Pending payment already exists");
+                    "You have already subscription plan but Your subscription plan is waiting for admin approval.");
         }
 
         // Payment create logic
@@ -54,6 +54,7 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setDealer(dealer);
         payment.setSubscriptionPlan(dto.getSubscriptionPlan());
         payment.setAmount(dto.getSubscriptionPlan().getAmount());
+        payment.setTransactionId(UUID.randomUUID().toString());
         payment.setPaymentStatus((PaymentStatus.PENDING));
 
         paymentRepository.save(payment);
@@ -83,7 +84,6 @@ public class PaymentServiceImpl implements PaymentService {
         // Update payment
         payment.setPaymentStatus(PaymentStatus.SUCCESS);
         payment.setPaymentDate(LocalDateTime.now());
-        payment.setTransactionId(UUID.randomUUID().toString());
 
         // Dealer
         Dealer dealer = payment.getDealer();
@@ -104,6 +104,8 @@ public class PaymentServiceImpl implements PaymentService {
                 payment
         );
     }
+
+
     @Override
     public ResponseDto paymentFailed(Long paymentId) {
 
@@ -121,6 +123,8 @@ public class PaymentServiceImpl implements PaymentService {
                 null
         );
     }
+
+
     @Override
     public ResponseDto<?> getAllPayments() {
 
@@ -133,6 +137,8 @@ public class PaymentServiceImpl implements PaymentService {
                 payments
         );
     }
+
+
     @Override
     public ResponseDto<?> getDealerPayments(
             Long Id) {

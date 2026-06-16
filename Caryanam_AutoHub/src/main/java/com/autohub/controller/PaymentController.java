@@ -8,6 +8,7 @@ import com.autohub.enums.PaymentStatus;
 import com.autohub.repository.DealerRepository;
 import com.autohub.repository.PaymentRepository;
 import com.autohub.service.PaymentService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ public class PaymentController {
 
 // ================== DO PAYMENT FOR SUBSCRIPTION PLAN ======================
     @PostMapping("/subscription/purchase")
+    @Operation(summary = "Payment for purchase subscription API ")
     public ResponseEntity<ResponseDto<?>> createPayment(
             @RequestBody PaymentRequestDTO dto) {
 
@@ -32,6 +34,7 @@ public class PaymentController {
 // ============ APPROVED PAYMENT BY ADMIN ===========
 
     @PutMapping("/success/{paymentId}")
+    @Operation(summary = "Approve ( SUCCESS ) purchased subscription of dealer by Admin API ")
     public ResponseEntity<ResponseDto<?>> paymentSuccess(
             @PathVariable Long paymentId) {
 
@@ -40,6 +43,7 @@ public class PaymentController {
     }
 
     @PutMapping("/failed/{paymentId}")
+    @Operation(summary = "FAILED purchased subscription of dealer by Admin API")
     public ResponseEntity<ResponseDto<?>> paymentFailed(
             @PathVariable Long paymentId) {
 
@@ -47,6 +51,7 @@ public class PaymentController {
                 paymentService.paymentFailed(paymentId));
     }
     @GetMapping("/admin/history")
+    @Operation(summary = "Get all dealer subscription payment history by Admin API ")
     public ResponseEntity<ResponseDto<?>> getAllPayments() {
 
         return ResponseEntity.ok(
@@ -55,6 +60,7 @@ public class PaymentController {
 
 
     @GetMapping("/dealer/{dealerId}")
+    @Operation(summary = "Get Dealer purchased subscription of dealer by Admin API ")
     public ResponseEntity<ResponseDto<?>> getDealerPayments(
             @PathVariable Long Id) {
 

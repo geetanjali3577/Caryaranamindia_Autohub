@@ -1,5 +1,6 @@
 package com.autohub.dto;
 
+import com.autohub.enums.PaymentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -56,7 +56,7 @@ public class DealerController {
 
     // ========== GET DEALER  BY ID ================
     @GetMapping("/dealer-profile/{dealerId}")
-    @Operation(summary = "Get Dealer Profile API ")
+    @Operation(summary = "Get Dealer Profile By Id API ")
     public ResponseEntity<ResponseDto<DealerResponseDTO>>   getDealerById(@PathVariable Long dealerId) {
 
         DealerResponseDTO dealerProfile = dealerService.getDealerProfile(dealerId);
@@ -68,6 +68,7 @@ public class DealerController {
    // ================= DEALER DASHBOARD =================
 
     @GetMapping("/dashboard/{dealerId}")
+    @Operation(summary = "Dealer Dashboard API Total Vehicles, Featured Vehicles, Total Leads, Vehicle Views")
     public ResponseEntity<DashboardResponseDTO>   getDashboard(@PathVariable Long dealerId) {
 
         return ResponseEntity.ok( dealerService.getDashboard(dealerId));
@@ -77,6 +78,7 @@ public class DealerController {
     // ================= GET AVAILABLE SUBSCRIPTION PLAN =================
 
     @GetMapping("/subscription/plans")
+    @Operation(summary = "Get Available Subscription Plans API ( BASIC, STANDARD, PREMIUM) ")
     public ResponseEntity<ResponseDto<List<SubscriptionPlanDTO>>> getPlans() {
 
         return ResponseEntity.ok(new ResponseDto<>(200,"Subscription Plans Fetched Successfully",
@@ -88,9 +90,10 @@ public class DealerController {
     // ================= GET CURRENT SUBSCRIPTION PLAN =================
 
     @GetMapping("/current-plan/{dealerId}")
+    @Operation(summary = "Get Current Dealer Active Subscription Plan API")
     public ResponseEntity<ResponseDto<DealerCurrentSubscriptionPlanDTO>> getDealerCurrentSubscription(@PathVariable Long dealerId) {
 
-        DealerCurrentSubscriptionPlanDTO dealerSubscriptionPlan =dealerService.getDealerSubscriptionPlan(dealerId);
+        DealerCurrentSubscriptionPlanDTO dealerSubscriptionPlan =dealerService.getDealerCurrentSubscriptionPlan(dealerId);
 
         return ResponseEntity.ok(
                 new ResponseDto<>(
@@ -103,16 +106,19 @@ public class DealerController {
 
     // ================= FORGOT PASSWORD DEALER =================
     @PostMapping("/send-otp")
+    @Operation(summary = "Send OTP for Forgot Password API")
     public ResponseEntity<String> sendOtp(@RequestParam String email) {
         return ResponseEntity.ok(dealerService.sendOtp(email));
     }
 
     @PostMapping("/verify-otp")
+    @Operation(summary = "Verify OTP API ")
     public ResponseEntity<String> verifyOtp(@RequestBody VerifyOtpDTO dto) {
         return ResponseEntity.ok(dealerService.verifyOtp(dto));
     }
 
     @PostMapping("/reset-password")
+    @Operation(summary = "Change Password After Verify OTP API ")
     public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordDTO dto) {
         return ResponseEntity.ok(dealerService.resetPassword(dto));
     }

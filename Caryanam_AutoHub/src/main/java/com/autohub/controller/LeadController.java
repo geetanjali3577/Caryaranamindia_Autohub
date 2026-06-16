@@ -3,6 +3,7 @@ package com.autohub.controller;
 import com.autohub.dto.*;
 import com.autohub.service.LeadService;
 import com.autohub.service.VehicleViewService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ public class LeadController {
     // =============== ADD NEW LEAD ON VEHICLE FROM CUSTOMER =====================
 
     @PostMapping("/generate-lead/{vehicleId}")
+    @Operation(summary = "Add new lead on vehicle from customer/user API ")
     public ResponseEntity<ResponseDto<LeadResponseDTO>> createNewLead(
             @PathVariable Long vehicleId,
             @RequestBody LeadRequestDTO requestDTO) {
@@ -34,6 +36,7 @@ public class LeadController {
     // =============== ADD VIEW ON VEHICLE FROM CUSTOMER =====================
 
     @GetMapping("/generate-view/{vehicleId}")
+    @Operation(summary = "Add new view on vehicle from customer/user API ")
     public ResponseEntity<ResponseDto<VehicleResponseDTO>> getVehicleById(@PathVariable Long vehicleId) {
 
         vehicleViewService.saveView(vehicleId);
@@ -46,6 +49,7 @@ public class LeadController {
     // ================= ALL LEADS OF CUSTOMER =================
 
     @GetMapping("/all-leads/{dealerId}")
+    @Operation(summary = "Get all leads of customer/user API ")
     public ResponseEntity<ResponseDto<List<LeadResponseDTO>>> getCustomerLeads(
             @PathVariable Long dealerId) {
 
@@ -58,6 +62,7 @@ public class LeadController {
     // ================= UPDATE LEADS STATUS=================
 
     @PutMapping("/lead-status/{leadId}")
+    @Operation(summary = "Update lead status API (NEW, CONTACTED, CONVERTED)  ")
     public ResponseEntity<ResponseDto<LeadResponseDTO>> updateLeadStatus(
             @PathVariable Long leadId,
             @RequestBody LeadStatusRequestDTO requestDTO) {

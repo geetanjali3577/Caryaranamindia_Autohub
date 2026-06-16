@@ -3,11 +3,9 @@ package com.autohub.serviceImpl;
 import com.autohub.dto.VehicleRequestDTO;
 import com.autohub.dto.VehicleResponseDTO;
 import com.autohub.dto.VehicleStatusRequestDTO;
-import com.autohub.entity.Dealer;
-import com.autohub.entity.Vehicle;
-import com.autohub.entity.VehicleMedia;
-import com.autohub.entity.VehicleView;
+import com.autohub.entity.*;
 import com.autohub.enums.DealerStatus;
+import com.autohub.enums.PaymentStatus;
 import com.autohub.enums.SubscriptionPlan;
 import com.autohub.enums.VehicleStatus;
 import com.autohub.exception.ResourceNotFoundException;
@@ -38,7 +36,7 @@ public class VehicleServiceImpl implements VehicleService {
    private final ModelMapper modelMapper;
    private final VehicleMediaRepository mediaRepository;
    private final LeadRepository leadRepository;
-   private final VehicleViewRepository vehicleViewRepository;
+   private final PaymentRepository paymentRepository;
 
     @Value("${file.upload-dir}")
     private String uploadDir;
@@ -56,9 +54,20 @@ public class VehicleServiceImpl implements VehicleService {
         }
 
         // Dealer subscription Check
-        if (dealer.getSubscriptionActive() == null ||
-                !dealer.getSubscriptionActive()) {
-            throw new RuntimeException("Please purchase subscription before adding vehicles");
+//        if (dealer.getSubscriptionActive() == null ||
+//                !dealer.getSubscriptionActive()) {
+//            throw new RuntimeException("Please purchase subscription before adding vehicles");
+//        }
+
+        //Check subscription plan
+        Payment payment = paymentRepository.findTopByDealerIdOrderByPaymentIdDesc(dealerId)
+                .orElseThrow(() ->
+                        new RuntimeException("You don't have any subscription plan. Please purchase subscription before adding vehicles"));
+
+        if (payment.getPaymentStatus() == PaymentStatus.PENDING) {
+
+            throw new RuntimeException(
+                    "Your subscription plan is waiting for admin approval.");
         }
 
         // Dealer subscription expiration Check

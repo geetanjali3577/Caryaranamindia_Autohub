@@ -7,6 +7,7 @@ import com.autohub.dto.VehicleStatusRequestDTO;
 import com.autohub.enums.VehicleStatus;
 import com.autohub.service.VehicleService;
 import com.autohub.service.VehicleViewService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,7 @@ public class VehicleController {
     // ================= ADD VEHICLE INFO=================
 
     @PostMapping(value = "/add/{dealerId}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Add new vehicle by dealer after purchased subscription plan API ")
     public ResponseEntity<ResponseDto> addVehicle(
            @Valid @RequestPart("vehicle")
             String vehicleJson,
@@ -49,10 +51,10 @@ public class VehicleController {
     }
 
 
-
     // ================= UPDATE VEHICLE INFO=================
 
     @PutMapping("/update/{vehicleId}")
+    @Operation(summary = "Update vehicle info by dealer API")
     public ResponseEntity<ResponseDto<VehicleResponseDTO>> updateVehicle(@PathVariable("vehicleId") Long id,
                                                                          @RequestBody VehicleRequestDTO request) {
 
@@ -65,6 +67,7 @@ public class VehicleController {
     // ================= UPDATE VEHICLE STATUS =================
 
     @PatchMapping("/status/{vehicleId}")
+    @Operation(summary = "Update vehicle status ( FEATURED, ACTIVE, INACTIVE ) by dealer API")
     public ResponseEntity<ResponseDto<VehicleStatus>> updateVehicleStatus(
             @PathVariable("vehicleId") Long id,
             @RequestBody VehicleStatusRequestDTO request) {
@@ -83,6 +86,7 @@ public class VehicleController {
     // ================= DELETE VEHICLE =================
 
     @DeleteMapping("/delete/{vehicleId}")
+    @Operation(summary = "Delete vehicle by dealer API")
     public ResponseEntity<ResponseDto> deleteVehicle(@PathVariable Long vehicleId){
 
         vehicleService.deleteVehicle(vehicleId);
@@ -91,6 +95,7 @@ public class VehicleController {
 
     // ================= GET ALL VEHICLE BY DEALER ID=================
     @GetMapping("/dealer/{dealerId}")
+    @Operation(summary = "Get all vehicle by dealer id API")
     public ResponseEntity<ResponseDto<List<VehicleResponseDTO>>> getAllVehicleByDealerId(
             @PathVariable Long dealerId) {
 
@@ -108,6 +113,7 @@ public class VehicleController {
     // ================= GET VEHICLE BY ID=================
 
     @GetMapping("/{vehicleId}")
+    @Operation(summary = "Get vehicle by vehicle id API")
     public ResponseEntity<ResponseDto<VehicleResponseDTO>> getVehicleById(
             @PathVariable Long vehicleId) {
 

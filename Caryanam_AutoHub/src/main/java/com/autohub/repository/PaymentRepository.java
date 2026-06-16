@@ -13,7 +13,10 @@ import java.util.Optional;
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
     List<Payment> findByDealerId(String dealerId);
+
     Optional<Payment> findTopByDealerIdAndPaymentStatusOrderByPaymentIdDesc(Long dealerId, PaymentStatus paymentStatus);
+
+    Optional<Payment> findTopByDealerIdOrderByPaymentIdDesc(Long dealerId);
 
     @Query("""
             SELECT p.subscriptionPlan,

@@ -3,10 +3,8 @@ package com.autohub.serviceImpl;
 import com.autohub.dto.*;
 import com.autohub.emailservice.EmailService;
 import com.autohub.entity.Dealer;
-import com.autohub.enums.DealerStatus;
-import com.autohub.enums.Role;
-import com.autohub.enums.SubscriptionPlan;
-import com.autohub.enums.VehicleStatus;
+import com.autohub.entity.Payment;
+import com.autohub.enums.*;
 import com.autohub.exception.ResourceNotFoundException;
 import com.autohub.repository.*;
 import com.autohub.service.DealerService;
@@ -47,6 +45,7 @@ public class DealerServiceImpl implements DealerService {
     private final EmailService emailService;
     private final ModelMapper modelMapper;
     private final VehicleViewRepository vehicleViewRepository;
+    private final PaymentRepository paymentRepository;
 
 @Override
 public DealerResponseDTO registerDealer(DealerRegisterDTO dto, MultipartFile dealerLogo, MultipartFile showroomImage) {
@@ -80,8 +79,6 @@ public DealerResponseDTO registerDealer(DealerRegisterDTO dto, MultipartFile dea
 
 
     Dealer savedDealer = dealerRepository.save(dealer);
-
-    System.out.println(savedDealer);
 
     String logoPath = saveFile(
             dealerLogo,
@@ -502,12 +499,24 @@ public DealerResponseDTO registerDealer(DealerRegisterDTO dto, MultipartFile dea
     }
 
     @Override
-    public DealerCurrentSubscriptionPlanDTO getDealerSubscriptionPlan(Long dealerId) {
+    public DealerCurrentSubscriptionPlanDTO getDealerCurrentSubscriptionPlan(Long dealerId) {
         Dealer dealer = dealerRepository.findById(dealerId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Dealer Not Found"));
 
-        SubscriptionPlan plan = dealer.getSubscriptionPlan();
+
+        Payment payment = paymentRepository.findTopByDealerIdOrderByPaymentIdDesc(dealerId)
+                .orElseThrow(() ->
+                        new RuntimeException("You don't have any subscription plan."));
+
+        if (payment.getPaymentStatus() == PaymentStatus.PENDING) {
+
+            throw new RuntimeException(
+                    "Your subscription plan is waiting for admin approval.");
+        }
+
+        SubscriptionPlan plan = payment.getSubscriptionPlan();
+
 
         Long remainingDays = 0L;
 
