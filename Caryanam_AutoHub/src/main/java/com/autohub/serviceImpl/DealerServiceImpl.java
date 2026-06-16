@@ -47,7 +47,11 @@ public class DealerServiceImpl implements DealerService {
     private final VehicleViewRepository vehicleViewRepository;
     private final PaymentRepository paymentRepository;
 
-@Override
+    @Value("${server.port}")
+    private String baseUrl;
+
+
+    @Override
 public DealerResponseDTO registerDealer(DealerRegisterDTO dto, MultipartFile dealerLogo, MultipartFile showroomImage) {
 
     if (dealerRepository.existsByEmail(dto.getEmail())) {
@@ -100,8 +104,6 @@ public DealerResponseDTO registerDealer(DealerRegisterDTO dto, MultipartFile dea
     return modelMapper.map(savedDealer, DealerResponseDTO.class);
 
 }
-
-
 
     private void validateImage(MultipartFile file, String fieldName) {
 
@@ -208,8 +210,40 @@ public DealerResponseDTO registerDealer(DealerRegisterDTO dto, MultipartFile dea
     public DealerResponseDTO getDealerProfile(Long dealerId) {
         Dealer dealer = dealerRepository.findById(dealerId).orElseThrow(() -> new ResourceNotFoundException("Dealer Not Found"));
 
-        return modelMapper.map(dealer,DealerResponseDTO.class);
-}
+        //return modelMapper.map(dealer,DealerResponseDTO.class);
+
+       return DealerResponseDTO.builder()
+                .id(dealer.getId())
+                .businessName(dealer.getBusinessName())
+                .ownerName(dealer.getOwnerName())
+                .gstNumber(dealer.getGstNumber())
+                .yearsInBusiness(dealer.getYearsInBusiness())
+                .mobile(dealer.getMobile())
+                .whatsapp(dealer.getWhatsapp())
+                .email(dealer.getEmail())
+                //.password(dealer.getPassword())
+                .address(dealer.getAddress())
+                .city(dealer.getCity())
+                .state(dealer.getState())
+                .pinCode(dealer.getPinCode()).dealerLogo(
+                       dealer.getDealerLogo() != null
+                               ? "http://localhost:"+ baseUrl + "/" +
+                               dealer.getDealerLogo().replace("\\", "/")
+                               : null
+               )
+
+               .showroomImage(
+                       dealer.getShowroomImage() != null
+                               ? "http://localhost:"+ baseUrl + "/" +
+                               dealer.getShowroomImage().replace("\\", "/")
+                               : null
+               )
+
+               .dealerAccountStatus(dealer.getDealerAccountStatus())
+                .createdAt(dealer.getCreatedAt())
+                .build();
+
+    }
 
     @Override
     public DealerProfileResponseDTO updateDealerProfile(Long id, UpdateDealerProfileRequestDTO dto) {

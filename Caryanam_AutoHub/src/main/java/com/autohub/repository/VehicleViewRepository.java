@@ -1,5 +1,6 @@
 package com.autohub.repository;
 
+import com.autohub.entity.VehicleMedia;
 import com.autohub.entity.VehicleView;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -31,6 +32,9 @@ public interface VehicleViewRepository extends JpaRepository<VehicleView, Long> 
             WHERE vv.vehicle.dealer.id = :dealerId
             """)
     long countViewsByDealerId(@Param("dealerId") Long dealerId);
+
+    void deleteByVehicleId(Long vehicleId);
+
 
 
 }

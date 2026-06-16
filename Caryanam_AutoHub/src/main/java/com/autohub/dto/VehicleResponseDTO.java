@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -51,5 +52,9 @@ public class VehicleResponseDTO {
     private String dealerContactNumber;
 
     private  String dealerContactEmail;
+
+    private List<String> images;
+
+    private List<String> videos;
 
 }

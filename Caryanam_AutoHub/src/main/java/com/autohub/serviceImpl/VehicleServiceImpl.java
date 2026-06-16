@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -37,9 +38,14 @@ public class VehicleServiceImpl implements VehicleService {
    private final VehicleMediaRepository mediaRepository;
    private final LeadRepository leadRepository;
    private final PaymentRepository paymentRepository;
+   private final VehicleViewRepository vehicleViewRepository;
+
 
     @Value("${file.upload-dir}")
     private String uploadDir;
+
+    @Value("${server.port}")
+    private String port;
 
     @Override
     public VehicleResponseDTO addVehicleWithData(VehicleRequestDTO vehicleRequestDTO, List<MultipartFile> images, List<MultipartFile> videos, Long dealerId) throws IOException {
@@ -233,6 +239,23 @@ public class VehicleServiceImpl implements VehicleService {
             }
         }
 
+        List<VehicleMedia> mediaList =
+                mediaRepository.findByVehicleId(savedVehicle.getId());
+
+        List<String> image = mediaList.stream()
+                .filter(media -> "IMAGE".equalsIgnoreCase(media.getMediaType()))
+                .map(media -> "http://localhost:"+port + "/" +
+                        media.getFilePath().replace("\\", "/"))
+                .toList();
+
+        List<String> video = mediaList.stream()
+                .filter(media -> "VIDEO".equalsIgnoreCase(media.getMediaType()))
+                .map(media -> "http://localhost:"+port + "/" +
+                        media.getFilePath().replace("\\", "/"))
+                .toList();
+
+        System.out.println("Media Count = " + mediaList.size());
+
         return VehicleResponseDTO.builder()
                 .id(savedVehicle.getId())
                 .dealerId(savedVehicle.getDealer().getId())
@@ -253,7 +276,10 @@ public class VehicleServiceImpl implements VehicleService {
                 .dealerContactEmail(savedVehicle.getDealerContactEmail())
                 .vehicleStatus(savedVehicle.getVehicleStatus())
                 .createdAt(savedVehicle.getCreatedAt())
+                .images(image)
+                .videos(video)
                 .build();
+
     }
 
 
@@ -312,15 +338,21 @@ public class VehicleServiceImpl implements VehicleService {
 
         leadRepository.deleteLeadsByVehicleId(vehicle.getId());
 
+        vehicleViewRepository.deleteByVehicleId(vehicle.getId());
+
         vehicleRepository.deleteById(vehicle.getId());
+
     }
 
 
     @Override
     public List<VehicleResponseDTO> getAllVehicleByDealerId(Long dealerId) {
 
-        List<Vehicle> vehicles =
-                vehicleRepository.findByDealerId(dealerId);
+        List<Vehicle> vehicles = vehicleRepository.findByDealerId(dealerId);
+
+        if (vehicles.isEmpty()) {
+            throw new ResourceNotFoundException("Dealer has no vehicles");
+        }
 
         return vehicles.stream()
                 .map(vehicle -> VehicleResponseDTO.builder()
@@ -343,6 +375,28 @@ public class VehicleServiceImpl implements VehicleService {
                         .dealerContactEmail(vehicle.getDealerContactEmail())
                         .vehicleStatus(vehicle.getVehicleStatus())
                         .createdAt(vehicle.getCreatedAt())
+                        .images(
+                                vehicle.getMediaList() == null
+                                        ? List.of()
+                                        : vehicle.getMediaList().stream()
+                                        .filter(media -> "IMAGE".equalsIgnoreCase(media.getMediaType()))
+                                        //.map(VehicleMedia::getFilePath)
+                                        .map(media -> "http://localhost:"+port+"/" +
+                                                media.getFilePath().replace("\\", "/"))
+                                        .toList()
+                        )
+
+                        .videos(
+                                vehicle.getMediaList() == null
+                                        ? List.of()
+                                        : vehicle.getMediaList().stream()
+                                        .filter(media -> "VIDEO".equalsIgnoreCase(media.getMediaType()))
+                                        //.map(VehicleMedia::getFilePath)
+                                        .map(media ->"http://localhost:"+port+ "/" +
+                                                media.getFilePath().replace("\\", "/"))
+                                        .toList()
+                        )
+
                         .build())
                 .toList();
     }
@@ -375,6 +429,27 @@ public class VehicleServiceImpl implements VehicleService {
                 .dealerContactEmail(vehicle.getDealerContactEmail())
                 .vehicleStatus(vehicle.getVehicleStatus())
                 .createdAt(vehicle.getCreatedAt())
+                .images(
+                        vehicle.getMediaList() == null
+                                ? List.of()
+                                : vehicle.getMediaList().stream()
+                                .filter(media -> "IMAGE".equalsIgnoreCase(media.getMediaType()))
+                                //.map(VehicleMedia::getFilePath)
+                                .map(media -> "http://localhost:"+port+"/" +
+                                        media.getFilePath().replace("\\", "/"))
+                                .toList()
+                )
+
+                .videos(
+                        vehicle.getMediaList() == null
+                                ? List.of()
+                                : vehicle.getMediaList().stream()
+                                .filter(media -> "VIDEO".equalsIgnoreCase(media.getMediaType()))
+                                //.map(VehicleMedia::getFilePath)
+                                .map(media -> "http://localhost:"+port+"/" +
+                                        media.getFilePath().replace("\\", "/"))
+                                .toList()
+                )
                 .build();
     }
 }
