@@ -3,6 +3,7 @@ package com.autohub.configuration;
 import java.util.Arrays;
 import java.util.List;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +26,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     @Autowired
@@ -32,6 +34,11 @@ public class SecurityConfig {
 
     @Autowired
     private CustomUserDetailsService userDetailsService;
+
+    private final CustomAccessDeniedHandler accessDeniedHandler;
+
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
+
 
     // ✅ Security Filter
     @Bean
@@ -51,12 +58,16 @@ public class SecurityConfig {
 
                                         .anyRequest().authenticated()
                                 )
-
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(authenticationEntryPoint) //401 Unauthorized
+                        .accessDeniedHandler(accessDeniedHandler) // 403 Forbidden
+                )
 
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authenticationProvider(authenticationProvider());
+
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 

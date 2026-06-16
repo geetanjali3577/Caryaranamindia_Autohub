@@ -6,6 +6,7 @@ import com.autohub.service.DealerService;
 
 import com.autohub.service.LeadService;
 import com.autohub.service.VehicleViewService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -30,6 +31,7 @@ public class DealerController {
     // ================= REGISTER DEALER =================
 
     @PostMapping(value = "/register",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Dealer Registration API")
     public ResponseEntity<ResponseDto<DealerResponseDTO>> registerDealer(@RequestPart("dealer") String dealerJson,
                                             @RequestPart("dealerLogo")MultipartFile dealerLogo,
                                             @RequestPart("showroomImage") MultipartFile showroomImage) throws Exception {
@@ -44,6 +46,7 @@ public class DealerController {
     // ================= UPDATE DEALER PROFILE =================
 
     @PutMapping("/update-profile/{dealerId}")
+    @Operation(summary = "Update Dealer Profile API")
     public ResponseEntity<ResponseDto<DealerProfileResponseDTO>> updateDealerProfile(@PathVariable Long dealerId,@Valid @RequestBody UpdateDealerProfileRequestDTO request) {
 
         DealerProfileResponseDTO dealerResponseDTO = dealerService.updateDealerProfile(dealerId, request);
@@ -53,6 +56,7 @@ public class DealerController {
 
     // ========== GET DEALER  BY ID ================
     @GetMapping("/dealer-profile/{dealerId}")
+    @Operation(summary = "Get Dealer Profile API ")
     public ResponseEntity<ResponseDto<DealerResponseDTO>>   getDealerById(@PathVariable Long dealerId) {
 
         DealerResponseDTO dealerProfile = dealerService.getDealerProfile(dealerId);

@@ -4,6 +4,7 @@ import com.autohub.dto.LoginRequestDTO;
 import com.autohub.dto.LoginResponseDTO;
 import com.autohub.dto.ResponseDto;
 import com.autohub.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ public class AuthController {
     // =====================================================
     //ALL
     @PostMapping("/login")
+    @Operation(summary = "Login API for All")
     public ResponseEntity<ResponseDto<LoginResponseDTO>> login(
             @RequestBody LoginRequestDTO request) {
 
@@ -121,6 +123,7 @@ public class AuthController {
     // LOGOUT API
     // =====================================================
     @PostMapping("/logout")
+    @Operation(summary = "Logout API for All")
     public ResponseEntity<ResponseDto<String>> logout(
             HttpServletRequest request) {
 

@@ -5,6 +5,7 @@ import com.autohub.dto.DealerResponseDTO;
 import com.autohub.dto.DealerSubscriptionResponseDTO;
 import com.autohub.dto.ResponseDto;
 import com.autohub.service.DealerService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ public class AdminController {
 
     // ================= CHANGE DEALER ACCOUNT STATUS :  APPROVED, PENDING =================
     @PutMapping("/dealer-status/{dealerId}")
+    @Operation(summary = "Change Dealer Account Status By Admin API : Approve or Pending  ")
     public ResponseEntity<ResponseDto<DealerResponseDTO>> updateDealerStatus(
             @PathVariable Long dealerId,
             @RequestBody DealerAccountStatusRequestDTO requestDTO) {
@@ -31,6 +33,7 @@ public class AdminController {
     // ================= GET ALL HISTORY OF SUBSCRIPTION PLAN PURCHASED BY DEALER =================
 
     @GetMapping("/subscriptions")
+    @Operation(summary = "See All Subscription Plan Purchased By Dealer API for Admin ")
     public ResponseEntity<ResponseDto<List<DealerSubscriptionResponseDTO>>> getSubscriptions() {
 
         List<DealerSubscriptionResponseDTO> data = dealerService.getSubscriptions();

@@ -25,8 +25,8 @@ public class SwaggerConfig {
                                 .description("Caryanam-AutoHub")
                                 .contact(
                                         new Contact()
-                                                .name("Swapnil")
-                                                .email("swapnil@example.com")
+                                                .name("Caryanam AutoHub")
+                                                .email("support@caryanamautohub.com")
                                 )
                 )
                 .addSecurityItem(

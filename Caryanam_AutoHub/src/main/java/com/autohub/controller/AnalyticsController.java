@@ -6,6 +6,7 @@ import com.autohub.dto.ResponseDto;
 import com.autohub.service.DealerService;
 import com.autohub.service.LeadService;
 import com.autohub.service.VehicleViewService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ public class AnalyticsController {
     // ================= Month wise Vehicle View on vehicle - Analytics  =================
 
     @GetMapping("/vehicle-view/{dealerId}")
+    @Operation(summary = "To See Total Month wise Views on Vehicle API for Dealer ")
     public ResponseEntity<List<MonthlyViewDTO>> getViewsAnalytics(
             @PathVariable Long dealerId) {
 
@@ -38,6 +40,7 @@ public class AnalyticsController {
     // ================= Month wise Leads Leads on Vehicle - Analytics  =================
 
     @GetMapping("/vehicle-lead/{dealerId}")
+    @Operation(summary = "To See Total Month wise Leads on Vehicle API for Dealer ")
     public ResponseEntity<ResponseDto<List<MonthlyLeadAnalyticsDTO>>> getLeadAnalytics(@PathVariable Long dealerId) {
         List<MonthlyLeadAnalyticsDTO> leadAnalytics = leadService.getMonthlyLead(dealerId);
 

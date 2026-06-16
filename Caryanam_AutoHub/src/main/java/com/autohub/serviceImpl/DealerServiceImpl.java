@@ -4,6 +4,7 @@ import com.autohub.dto.*;
 import com.autohub.emailservice.EmailService;
 import com.autohub.entity.Dealer;
 import com.autohub.enums.DealerStatus;
+import com.autohub.enums.Role;
 import com.autohub.enums.SubscriptionPlan;
 import com.autohub.enums.VehicleStatus;
 import com.autohub.exception.ResourceNotFoundException;
@@ -75,6 +76,7 @@ public DealerResponseDTO registerDealer(DealerRegisterDTO dto, MultipartFile dea
     dealer.setCity(dto.getCity());
     dealer.setState(dto.getState());
     dealer.setPinCode(dto.getPinCode());
+    dealer.setRole(Role.DEALER);
 
 
     Dealer savedDealer = dealerRepository.save(dealer);

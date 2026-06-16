@@ -14,7 +14,7 @@ public class DealerRegisterDTO {
 
     private String gstNumber;
 
-   @NotNull(message = "Years In Business is Required")
+    @NotNull(message = "Years In Business is Required")
     private Integer yearsInBusiness;
 
     @NotBlank(message = "Mobile Number is Required")
