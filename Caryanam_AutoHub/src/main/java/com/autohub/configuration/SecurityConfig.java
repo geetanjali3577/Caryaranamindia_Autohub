@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -48,17 +49,45 @@ public class SecurityConfig {
 
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
 
-                                .requestMatchers("/api/dealer/**","/api/vehicle/**","/api/auth/**","/api/payment/**","/api/admin/**").permitAll()
-                                .requestMatchers("/api/lead/**","/api/analytics/**","/swagger-ui/**",
+                                //Permit All
+                                .requestMatchers(
+                                        "/api/auth/**"
+                                        ,"/api/dealer/register/**"
+                                        ,"/api/lead/generate-lead/**"
+                                        ,"/api/lead/generate-view/**"
+                                        ,"/uploads/**"
+                                        ,"/swagger-ui/**",
                                         "/swagger-ui.html",
-                                        "/v3/api-docs/**").permitAll()
-                                .requestMatchers("/uploads/**").permitAll()
+                                        "/v3/api-docs/**"
+                                ).permitAll()
 
-                                        .anyRequest().authenticated()
+                                //ADMIN API
+                                .requestMatchers("/api/admin/**"
+                                        ,"/api/payment/success/**"
+                                        ,"/api/payment/failed/**"
+                                        ,"/api/payment/admin/history"
+                                        ,"/api/payment/dealer/**"
+                                        ,"/api/admin/reports/**"
+
+                                ).hasRole("ADMIN")
+
+                                //DEALER API
+                                .requestMatchers(
+                                        "/api/dealer/**"
+                                        ,"/api/vehicle/**"
+                                        ,"/api/lead/all-leads/**"
+                                        ,"/api/lead/lead-status/**"
+                                        ,"/api/payment/subscription/purchase"
+                                        ,"/api/analytics/**"
+                                ).hasRole("DEALER")
+
+
+                                .anyRequest().authenticated()
                                 )
+
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(authenticationEntryPoint) //401 Unauthorized
                         .accessDeniedHandler(accessDeniedHandler) // 403 Forbidden

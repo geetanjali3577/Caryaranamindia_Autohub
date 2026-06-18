@@ -110,7 +110,7 @@ public class VehicleController {
     }
 
 
-    // ================= GET VEHICLE BY ID=================
+    // ================= GET VEHICLE BY VEHICLE ID=================
 
     @GetMapping("/{vehicleId}")
     @Operation(summary = "Get vehicle by vehicle id API")

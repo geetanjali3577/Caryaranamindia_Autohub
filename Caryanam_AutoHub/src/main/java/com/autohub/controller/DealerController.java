@@ -104,7 +104,7 @@ public class DealerController {
         );
     }
 
-    // ================= FORGOT PASSWORD DEALER =================
+    // ================= FORGOT PASSWORD FOR DEALER =================
     @PostMapping("/send-otp")
     @Operation(summary = "Send OTP for Forgot Password API")
     public ResponseEntity<String> sendOtp(@RequestParam String email) {

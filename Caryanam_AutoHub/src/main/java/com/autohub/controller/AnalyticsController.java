@@ -3,7 +3,6 @@ package com.autohub.controller;
 import com.autohub.dto.MonthlyLeadAnalyticsDTO;
 import com.autohub.dto.MonthlyViewDTO;
 import com.autohub.dto.ResponseDto;
-import com.autohub.service.DealerService;
 import com.autohub.service.LeadService;
 import com.autohub.service.VehicleViewService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,7 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import tools.jackson.databind.ObjectMapper;
+
 
 import java.util.List;
 
@@ -26,7 +25,7 @@ public class AnalyticsController {
     private final LeadService leadService;
     private final VehicleViewService vehicleViewService;
 
-    // ================= Month wise Vehicle View on vehicle - Analytics  =================
+    // ================= Month wise Vehicle View on vehicle - Analytics For Dealer =================
 
     @GetMapping("/vehicle-view/{dealerId}")
     @Operation(summary = "To See Total Month wise Views on Vehicle API for Dealer ")
@@ -37,7 +36,7 @@ public class AnalyticsController {
         );
     }
 
-    // ================= Month wise Leads Leads on Vehicle - Analytics  =================
+    // ================= Month wise Leads Leads on Vehicle - Analytics For Dealer  =================
 
     @GetMapping("/vehicle-lead/{dealerId}")
     @Operation(summary = "To See Total Month wise Leads on Vehicle API for Dealer ")

@@ -75,8 +75,6 @@ public class Vehicle {
     @JoinColumn(name = "dealer_id")
     private Dealer dealer;
 
-    @OneToMany(mappedBy = "vehicle",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
+    @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<VehicleMedia> mediaList;
 }

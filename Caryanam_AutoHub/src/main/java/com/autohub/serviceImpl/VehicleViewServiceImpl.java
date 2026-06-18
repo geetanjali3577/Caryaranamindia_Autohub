@@ -10,6 +10,7 @@ import com.autohub.repository.VehicleViewRepository;
 import com.autohub.service.VehicleViewService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -20,7 +21,8 @@ public class VehicleViewServiceImpl implements VehicleViewService {
 
     private final VehicleViewRepository vehicleViewRepository;
     private final VehicleRepository vehicleRepository;
-    private final ModelMapper modelMapper;
+    @Value("${server.port}")
+    private String port;
 
     @Override
     public void saveView(Long vehicleId) {
@@ -87,6 +89,48 @@ public class VehicleViewServiceImpl implements VehicleViewService {
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Vehicle Not Found"));
 
-        return modelMapper.map(vehicle, VehicleResponseDTO.class);
+        return VehicleResponseDTO.builder()
+                .id(vehicle.getId())
+                .dealerId(vehicle.getDealer().getId())
+                .brand(vehicle.getBrand())
+                .model(vehicle.getModel())
+                .variant(vehicle.getVariant())
+                .registrationYear(vehicle.getRegistrationYear())
+                .askingPrice(vehicle.getAskingPrice())
+                .kilometerDriven(vehicle.getKilometerDriven())
+                .fuelType(vehicle.getFuelType())
+                .transmission(vehicle.getTransmission())
+                .ownershipDetails(vehicle.getOwnershipDetails())
+                .insuranceStatus(vehicle.getInsuranceStatus())
+                .vehicleDescription(vehicle.getVehicleDescription())
+                .city(vehicle.getCity())
+                .dealerContactName(vehicle.getDealerContactName())
+                .dealerContactNumber(vehicle.getDealerContactNumber())
+                .dealerContactEmail(vehicle.getDealerContactEmail())
+                .vehicleStatus(vehicle.getVehicleStatus())
+                .createdAt(vehicle.getCreatedAt())
+                .images(
+                        vehicle.getMediaList() == null
+                                ? List.of()
+                                : vehicle.getMediaList().stream()
+                                .filter(media -> "IMAGE".equalsIgnoreCase(media.getMediaType()))
+                                //.map(VehicleMedia::getFilePath)
+                                .map(media -> "http://localhost:"+port+"/" +
+                                        media.getFilePath().replace("\\", "/"))
+                                .toList()
+                )
+
+                .videos(
+                        vehicle.getMediaList() == null
+                                ? List.of()
+                                : vehicle.getMediaList().stream()
+                                .filter(media -> "VIDEO".equalsIgnoreCase(media.getMediaType()))
+                                //.map(VehicleMedia::getFilePath)
+                                .map(media -> "http://localhost:"+port+"/" +
+                                        media.getFilePath().replace("\\", "/"))
+                                .toList()
+                )
+                .build();
     }
+
 }

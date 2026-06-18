@@ -147,7 +147,7 @@ public class UserServiceImpl implements UserService {
             );
         }
 */
-        user.setRole(Role.USER);
+      //  user.setRole(Role.USER);
 
         user.setStatus(UserStatus.ACTIVE);
 

@@ -31,7 +31,7 @@ public class PaymentController {
         return ResponseEntity.ok(paymentService.createPayment(dto));
     }
 
-// ============ APPROVED PAYMENT BY ADMIN ===========
+// ============ APPROVED DEALER PAYMENT STATUS BY ADMIN ===========
 
     @PutMapping("/success/{paymentId}")
     @Operation(summary = "Approve ( SUCCESS ) purchased subscription of dealer by Admin API ")
