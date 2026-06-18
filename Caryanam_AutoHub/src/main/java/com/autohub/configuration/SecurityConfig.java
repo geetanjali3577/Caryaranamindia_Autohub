@@ -30,11 +30,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    @Autowired
-    private JwtFilter jwtFilter;
 
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
+    private final JwtFilter jwtFilter;
+
+    private final  CustomUserDetailsService userDetailsService;
 
     private final CustomAccessDeniedHandler accessDeniedHandler;
 
@@ -58,6 +57,9 @@ public class SecurityConfig {
                                         ,"/api/dealer/register/**"
                                         ,"/api/lead/generate-lead/**"
                                         ,"/api/lead/generate-view/**"
+                                        ,"/api/vehicle/dealer/**"
+                                        ,"/api/vehicle/**"
+                                        ,"/api/vehicle/all-vehicle"
                                         ,"/uploads/**"
                                         ,"/swagger-ui/**",
                                         "/swagger-ui.html",
@@ -77,12 +79,19 @@ public class SecurityConfig {
                                 //DEALER API
                                 .requestMatchers(
                                         "/api/dealer/**"
-                                        ,"/api/vehicle/**"
+                                        ,"/api/vehicle/add/**"
+                                        ,"/api/vehicle/update/**"
+                                        ,"/api/vehicle/status/**"
+                                        ,"/api/vehicle/delete/**"
                                         ,"/api/lead/all-leads/**"
                                         ,"/api/lead/lead-status/**"
                                         ,"/api/payment/subscription/purchase"
                                         ,"/api/analytics/**"
                                 ).hasRole("DEALER")
+
+                                .requestMatchers("/api/lead/customer-dashboard"
+                                ).hasRole("CUSTOMER")
+
 
 
                                 .anyRequest().authenticated()
@@ -139,7 +148,7 @@ public class SecurityConfig {
                 "https://v1.vahanfinserv.com, " ,
                 "https://vahanfinserv.com"
         ));
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT","PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("*"));
         config.setAllowCredentials(true);
         config.setExposedHeaders(Arrays.asList("Authorization"));

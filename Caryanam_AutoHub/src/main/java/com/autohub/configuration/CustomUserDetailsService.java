@@ -5,54 +5,34 @@ import java.util.List;
 
 import com.autohub.entity.Admin;
 
+import com.autohub.entity.CustomerLead;
 import com.autohub.entity.Dealer;
 import com.autohub.repository.AdminRepository;
 
+import com.autohub.repository.CustomerLeadRepository;
 import com.autohub.repository.DealerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.autohub.entity.User;
-import com.autohub.repository.UserRepository;
-
 @Service
+@RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    @Autowired
-    private UserRepository userRepository;
 
-    @Autowired
-    private AdminRepository adminRepository;
+    private final AdminRepository adminRepository;
 
-    @Autowired
-    private DealerRepository dealerRepository;
+    private final DealerRepository dealerRepository;
 
+    private final CustomerLeadRepository leadRepository;
 
 
     @Override
     public CustomUserDetails loadUserByUsername(String email)
             throws UsernameNotFoundException {
 
-        // USER
-        User user = userRepository.findByEmail(email).orElse(null);
-
-        if (user != null) {
-
-            String role = user.getRole() != null
-                    ? user.getRole().name()
-                    : "USER";
-
-            return new CustomUserDetails(
-                    user.getUserId(),
-                    user.getFullName(),
-                    user.getEmail(),
-                    user.getPassword(),
-                    List.of(new SimpleGrantedAuthority("ROLE_" + role))
-            );
-        }
 
         // ADMIN
         Admin admin = adminRepository.findByEmail(email).orElse(null);
@@ -71,6 +51,30 @@ public class CustomUserDetailsService implements UserDetailsService {
                     List.of(new SimpleGrantedAuthority("ROLE_" + role))
             );
         }
+
+        //Customer
+
+        CustomerLead customer =
+                leadRepository.findByCustomerEmail(email)
+                        .orElse(null);
+
+        if (customer != null) {
+
+            String role = customer.getRole() != null
+                    ? customer.getRole().name()
+                    : "CUSTOMER";
+
+            return new CustomUserDetails(
+                    customer.getId(),
+                    customer.getCustomerName(),
+                    customer.getCustomerEmail(),
+                    customer.getCustomerPassword(),
+                    List.of(new SimpleGrantedAuthority("ROLE_" + role))
+            );
+        }
+
+
+
 
         // DEALER
         Dealer dealer = dealerRepository.findByEmail(email).orElse(null);

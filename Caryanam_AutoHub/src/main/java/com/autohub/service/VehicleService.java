@@ -22,10 +22,13 @@ public interface VehicleService {
     VehicleResponseDTO updateVehicleStatus(Long id, VehicleStatusRequestDTO request);
 
     void deleteVehicle(Long id);
+
     List<VehicleResponseDTO> getAllVehicleByDealerId(Long dealerId);
 
     VehicleResponseDTO getVehicleById(Long vehicleId);
 
+
+    List<VehicleResponseDTO> getAllVehicle();
 
 }
 

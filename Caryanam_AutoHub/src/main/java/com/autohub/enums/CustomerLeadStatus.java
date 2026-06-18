@@ -1,6 +1,6 @@
 package com.autohub.enums;
 
-public enum LeadStatus {
+public enum CustomerLeadStatus {
     NEW,
     CONTACTED,
     CONVERTED

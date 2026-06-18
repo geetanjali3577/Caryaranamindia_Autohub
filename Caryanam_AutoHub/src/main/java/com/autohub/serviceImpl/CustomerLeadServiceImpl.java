@@ -1,17 +1,18 @@
 package com.autohub.serviceImpl;
 
 import com.autohub.dto.*;
+import com.autohub.entity.CustomerLead;
 import com.autohub.entity.Dealer;
-import com.autohub.entity.Lead;
 import com.autohub.entity.Vehicle;
-import com.autohub.enums.DealerStatus;
-import com.autohub.enums.LeadStatus;
+import com.autohub.enums.CustomerLeadStatus;
+import com.autohub.enums.Role;
 import com.autohub.exception.ResourceNotFoundException;
+import com.autohub.repository.CustomerLeadRepository;
 import com.autohub.repository.DealerRepository;
-import com.autohub.repository.LeadRepository;
 import com.autohub.repository.VehicleRepository;
-import com.autohub.service.LeadService;
+import com.autohub.service.CustomerLeadService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,16 +23,18 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class LeadServiceImpl implements LeadService {
+public class CustomerLeadServiceImpl implements CustomerLeadService {
 
-    private final LeadRepository leadRepository;
+    private final CustomerLeadRepository leadRepository;
 
     private final VehicleRepository vehicleRepository;
 
     private final DealerRepository dealerRepository;
 
+    private final PasswordEncoder passwordEncoder;
+
     @Override
-    public LeadResponseDTO createLead(Long vehicleId, LeadRequestDTO leadRequestDTO) {
+    public CustomerLeadResponseDTO createLead(Long vehicleId, CustomerLeadRequestDTO leadRequestDTO) {
 
         Vehicle vehicle = vehicleRepository.findById(vehicleId).orElseThrow(() ->
                 new ResourceNotFoundException("Vehicle not found with id: " + vehicleId));
@@ -40,44 +43,49 @@ public class LeadServiceImpl implements LeadService {
         Dealer dealer = dealerRepository.findById(dealerId)
                          .orElseThrow(() ->  new ResourceNotFoundException("Dealer not found"));
 
-        Lead lead = new Lead();
+        CustomerLead lead = new CustomerLead();
         lead.setCustomerName(leadRequestDTO.getCustomerName());
         lead.setCustomerMobile(leadRequestDTO.getCustomerMobile());
         lead.setCustomerEmail(leadRequestDTO.getCustomerEmail());
         lead.setCustomerCity(leadRequestDTO.getCustomerCity());
-        lead.setLeadStatus(LeadStatus.NEW);
+        lead.setCustomerPassword(passwordEncoder.encode(leadRequestDTO.getCustomerPassword()));
+        lead.setLeadStatus(CustomerLeadStatus.NEW);
+        lead.setRole(Role.CUSTOMER);
         lead.setEnquiryDate(LocalDateTime.now());
+        lead.setAccountCreatedAt(LocalDateTime.now());
         lead.setVehicle(vehicle);
         lead.setDealer(dealer);
 
-        Lead saved = leadRepository.save(lead);
+        CustomerLead saved = leadRepository.save(lead);
 
 
-        return LeadResponseDTO.builder()
+        return CustomerLeadResponseDTO.builder()
                 .id(saved.getId())
                 .customerName(saved.getCustomerName())
                 .customerMobile(saved.getCustomerMobile())
                 .customerEmail(saved.getCustomerEmail())
                 .customerCity(saved.getCustomerCity())
+                .customerPassword(saved.getCustomerPassword())
                 .vehicleName(saved.getVehicle().getBrand() + " "+ saved.getVehicle().getModel())
                 .enquiryDate(saved.getEnquiryDate())
+                .accountCreateAt(saved.getAccountCreatedAt())
+                .role(saved.getRole())
                 .dealer(saved.getDealer().getId())
-                .leadStatus(saved.getLeadStatus())
                 .build();
 
     }
 
     @Override
-    public List<LeadResponseDTO> getDealerLeads(Long dealerId) {
+    public List<CustomerLeadResponseDTO> getDealerLeads(Long dealerId) {
 
-        List<Lead> leads = leadRepository.findByDealerId(dealerId);
+        List<CustomerLead> leads = leadRepository.findByDealerId(dealerId);
 
         if (leads.isEmpty()) {
             throw new ResourceNotFoundException(
                     "No leads found for dealer id : " + dealerId);
         }
         return leads.stream()
-                .map(lead -> LeadResponseDTO.builder()
+                .map(lead -> CustomerLeadResponseDTO.builder()
                         .id(lead.getId())
                         .customerName(lead.getCustomerName())
                         .customerMobile(lead.getCustomerMobile())
@@ -93,9 +101,9 @@ public class LeadServiceImpl implements LeadService {
     }
 
     @Override
-    public LeadResponseDTO updateLeadStatus(Long leadId, LeadStatusRequestDTO requestDTO) {
+    public CustomerLeadResponseDTO updateLeadStatus(Long leadId, CustomerLeadStatusRequestDTO requestDTO) {
 
-        Lead lead = leadRepository.findById(leadId)
+        CustomerLead lead = leadRepository.findById(leadId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Dealer not found"));
 
@@ -105,20 +113,20 @@ public class LeadServiceImpl implements LeadService {
             throw new RuntimeException("Status is required");
         }
 
-        LeadStatus newStatus;
+        CustomerLeadStatus newStatus;
 
         try {
-            newStatus = LeadStatus.valueOf(
+            newStatus = CustomerLeadStatus.valueOf(
                     requestDTO.getStatus().trim().toUpperCase());
         } catch (Exception e) {
             throw new RuntimeException(
                     "Invalid status. Only PENDING or CONTACTED or CONVERTED are allowed");
         }
 
-        LeadStatus currentStatus = lead.getLeadStatus();
+        CustomerLeadStatus currentStatus = lead.getLeadStatus();
 
         if (currentStatus == null) {
-            currentStatus = LeadStatus.NEW;
+            currentStatus = CustomerLeadStatus.NEW;
         }
 
         if (currentStatus.equals(newStatus)) {
@@ -128,9 +136,9 @@ public class LeadServiceImpl implements LeadService {
 
         lead.setLeadStatus(newStatus);
 
-        Lead saved = leadRepository.save(lead);
+        CustomerLead saved = leadRepository.save(lead);
 
-        return LeadResponseDTO.builder()
+        return CustomerLeadResponseDTO.builder()
                 .id(saved.getId())
                 .customerName(saved.getCustomerName())
                 .customerMobile(saved.getCustomerMobile())

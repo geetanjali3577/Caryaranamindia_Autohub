@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class LeadRequestDTO {
+public class CustomerLeadRequestDTO {
 
     @NotBlank(message = "Customer Name is Required")
     private String customerName;
@@ -17,5 +17,8 @@ public class LeadRequestDTO {
 
     @NotBlank(message = "Customer City is Required")
     private String customerCity;
+
+    @NotBlank(message = "Password is Required")
+    private String customerPassword;
 
 }

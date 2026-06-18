@@ -1,9 +1,9 @@
 package com.autohub.serviceImpl;
 
+import com.autohub.entity.CustomerLead;
 import com.autohub.entity.Dealer;
-import com.autohub.entity.Lead;
 import com.autohub.entity.Vehicle;
-import com.autohub.enums.LeadStatus;
+import com.autohub.enums.CustomerLeadStatus;
 import com.autohub.repository.*;
 import com.autohub.service.ReportService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ import java.util.List;
 public class ReportServiceImpl implements ReportService {
 
     private final DealerRepository dealerRepository;
-    private final LeadRepository leadRepository;
+    private final CustomerLeadRepository leadRepository;
     private final VehicleRepository vehicleRepository;
     private final PaymentRepository paymentRepository;
 
@@ -46,7 +46,7 @@ public class ReportServiceImpl implements ReportService {
             long convertedLeads =
                     leadRepository.countByDealerIdAndLeadStatus(
                             dealer.getId(),
-                            LeadStatus.CONVERTED);
+                            CustomerLeadStatus.CONVERTED);
 
             csv.append(dealer.getId()).append(",")
                     .append(dealer.getBusinessName()).append(",")
@@ -65,7 +65,7 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public ResponseEntity<Resource> leadConversionReport() {
 
-        List<Lead> leads = leadRepository.findAll();
+        List<CustomerLead> leads = leadRepository.findAll();
 
         StringBuilder csv = new StringBuilder();
 
@@ -73,7 +73,7 @@ public class ReportServiceImpl implements ReportService {
                 "LeadId,CustomerName,Mobile,City,Status\n"
         );
 
-        for (Lead lead : leads) {
+        for (CustomerLead lead : leads) {
 
             csv.append(lead.getId()).append(",")
                     .append(lead.getCustomerName()).append(",")

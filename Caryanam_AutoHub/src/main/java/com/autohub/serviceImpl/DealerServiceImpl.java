@@ -9,8 +9,6 @@ import com.autohub.exception.ResourceNotFoundException;
 import com.autohub.repository.*;
 import com.autohub.service.DealerService;
 
-import com.autohub.service.LeadService;
-import com.autohub.service.VehicleViewService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,7 +38,7 @@ public class DealerServiceImpl implements DealerService {
 
     private final DealerRepository dealerRepository;
     private final VehicleRepository vehicleRepository;
-    private final LeadRepository leadRepository;
+    private final CustomerLeadRepository leadRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final ModelMapper modelMapper;

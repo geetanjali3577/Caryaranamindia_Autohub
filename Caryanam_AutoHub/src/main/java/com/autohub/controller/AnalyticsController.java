@@ -3,7 +3,7 @@ package com.autohub.controller;
 import com.autohub.dto.MonthlyLeadAnalyticsDTO;
 import com.autohub.dto.MonthlyViewDTO;
 import com.autohub.dto.ResponseDto;
-import com.autohub.service.LeadService;
+import com.autohub.service.CustomerLeadService;
 import com.autohub.service.VehicleViewService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AnalyticsController {
 
-    private final LeadService leadService;
+    private final CustomerLeadService leadService;
     private final VehicleViewService vehicleViewService;
 
     // ================= Month wise Vehicle View on vehicle - Analytics For Dealer =================

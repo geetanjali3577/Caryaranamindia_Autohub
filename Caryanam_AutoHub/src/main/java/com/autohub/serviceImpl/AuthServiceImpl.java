@@ -4,12 +4,11 @@ import com.autohub.configuration.JwtUtil;
 import com.autohub.dto.LoginRequestDTO;
 import com.autohub.dto.LoginResponseDTO;
 import com.autohub.entity.Admin;
+import com.autohub.entity.CustomerLead;
 import com.autohub.entity.Dealer;
-import com.autohub.entity.User;
-import com.autohub.enums.DealerStatus;
 import com.autohub.repository.AdminRepository;
+import com.autohub.repository.CustomerLeadRepository;
 import com.autohub.repository.DealerRepository;
-import com.autohub.repository.UserRepository;
 import com.autohub.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -26,9 +26,10 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
-    private final UserRepository userRepository;
     private final DealerRepository dealerRepository;
     private final AdminRepository adminRepository;
+
+    private final CustomerLeadRepository leadRepository;
 
     // TOKEN BLACKLIST
     private static final Set<String> tokenBlacklist = new HashSet<>();
@@ -43,10 +44,20 @@ public class AuthServiceImpl implements AuthService {
         // EMAIL EXISTS CHECK
         // =====================================
 
-        boolean emailExists =
-                userRepository.existsByEmail(request.getEmail())
-                        || dealerRepository.existsByEmail(request.getEmail())
-                        || adminRepository.existsByEmail(request.getEmail());
+        boolean emailExists = dealerRepository.existsByEmail(request.getEmail())
+                        || adminRepository.existsByEmail(request.getEmail())
+                        || leadRepository.existsByCustomerEmail(request.getEmail());
+
+        System.out.println("Email = " + request.getEmail());
+
+        System.out.println("Dealer Exists = "
+                + dealerRepository.existsByEmail(request.getEmail()));
+
+        System.out.println("Admin Exists = "
+                + adminRepository.existsByEmail(request.getEmail()));
+
+        System.out.println("Customer Exists = "
+                + leadRepository.existsByCustomerEmail(request.getEmail()));
 
         if (!emailExists) {
 
@@ -76,52 +87,22 @@ public class AuthServiceImpl implements AuthService {
             );
         }
 
-        // =====================================
-        // USER LOGIN
-        // =====================================
-
-        User user =
-                userRepository
-                        .findByEmail(request.getEmail())
-                        .orElse(null);
-
-        if (user != null) {
-
-            String token =
-                    jwtUtil.generateToken(
-                            user.getUserId(),
-                            user.getFullName(),
-                            user.getEmail(),
-                            user.getRole()
-                    );
-
-            return new LoginResponseDTO(token);
-        }
 
         // =====================================
         // DEALER LOGIN
         // =====================================
 
-        Dealer dealer =
-                dealerRepository
-                        .findByEmail(request.getEmail())
-                        .orElse(null);
+        Optional<Dealer> dealerOpt =
+                dealerRepository.findByEmail(request.getEmail());
 
-        if (dealer != null) {
+        if (dealerOpt.isPresent()) {
 
-            // DEALER STATUS CHECK
-            if (dealer.getDealerAccountStatus() == DealerStatus.PENDING) {
-
-                throw new RuntimeException(
-                        "Dealer account is inactive. Please contact admin."
-                );
-            }
-
+            Dealer dealer = dealerOpt.get();
 
             String token = jwtUtil.generateToken(
                     dealer.getId(),
-                    dealer.getOwnerName(), // name
-                    dealer.getEmail(),     // username/subject
+                    dealer.getOwnerName(),
+                    dealer.getEmail(),
                     dealer.getRole()
             );
 
@@ -132,25 +113,44 @@ public class AuthServiceImpl implements AuthService {
         // ADMIN LOGIN
         // =====================================
 
-        Admin admin =
-                adminRepository
-                        .findByEmail(request.getEmail())
-                        .orElse(null);
+        Optional<Admin> adminOpt =
+                adminRepository.findByEmail(request.getEmail());
 
-        if (admin != null) {
+        if (adminOpt.isPresent()) {
 
-            String token =
-                    jwtUtil.generateToken(
+            Admin admin = adminOpt.get();
 
-                            admin.getAdminId(),
-                            admin.getFullName(),
-                            admin.getEmail(),
-                            admin.getRole()
-
-                    );
+            String token = jwtUtil.generateToken(
+                    admin.getAdminId(),
+                    admin.getFullName(),
+                    admin.getEmail(),
+                    admin.getRole()
+            );
 
             return new LoginResponseDTO(token);
         }
+        // =====================================
+        // CUSTOMER LOGIN
+        // =====================================
+
+        Optional<CustomerLead> customerOpt =
+                leadRepository.findByCustomerEmail(request.getEmail());
+
+        if (customerOpt.isPresent()) {
+
+            CustomerLead customer = customerOpt.get();
+
+            String token = jwtUtil.generateToken(
+                    customer.getId(),
+                    customer.getCustomerName(),
+                    customer.getCustomerEmail(),
+                    customer.getRole()
+            );
+
+            return new LoginResponseDTO(token);
+        }
+
+
 
         throw new RuntimeException(
                 "Login Failed"

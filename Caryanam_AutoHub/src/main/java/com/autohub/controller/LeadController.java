@@ -1,7 +1,7 @@
 package com.autohub.controller;
 
 import com.autohub.dto.*;
-import com.autohub.service.LeadService;
+import com.autohub.service.CustomerLeadService;
 import com.autohub.service.VehicleViewService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -15,19 +15,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LeadController {
 
-    private final LeadService leadService;
+    private final CustomerLeadService leadService;
 
     private final VehicleViewService vehicleViewService;
 
-    // =============== ADD NEW LEAD ON VEHICLE FROM CUSTOMER =====================
+    // =============== ADD NEW CUSTOMER REGISTRATION OR LEAD ON VEHICLE FROM CUSTOMER =====================
 
     @PostMapping("/generate-lead/{vehicleId}")
-    @Operation(summary = "Add new lead on vehicle from customer/user API ")
-    public ResponseEntity<ResponseDto<LeadResponseDTO>> createNewLead(
+    @Operation(summary = "Add new lead and registration customer on vehicle from customer/user API ")
+    public ResponseEntity<ResponseDto<CustomerLeadResponseDTO>> createCustomerLead(
             @PathVariable Long vehicleId,
-            @RequestBody LeadRequestDTO requestDTO) {
+            @RequestBody CustomerLeadRequestDTO requestDTO) {
 
-        LeadResponseDTO lead = leadService.createLead(vehicleId, requestDTO);
+        CustomerLeadResponseDTO lead = leadService.createLead(vehicleId, requestDTO);
 
 
         return ResponseEntity.ok(new ResponseDto<>(200,"New lead created successfully",lead));
@@ -46,29 +46,38 @@ public class LeadController {
         return ResponseEntity.ok(new ResponseDto<>(200,"New View Added successfully",vehicleById));
     }
 
-    // ================= ALL LEADS OF CUSTOMER =================
+    // ================= ALL CUSTOMER OR LEADS OF CUSTOMER FOR DEALER =================
 
     @GetMapping("/all-leads/{dealerId}")
     @Operation(summary = "Get all leads of customer/user API ")
-    public ResponseEntity<ResponseDto<List<LeadResponseDTO>>> getCustomerLeads(
+    public ResponseEntity<ResponseDto<List<CustomerLeadResponseDTO>>> getCustomerLeads(
             @PathVariable Long dealerId) {
 
-        List<LeadResponseDTO> response = leadService.getDealerLeads(dealerId);
+        List<CustomerLeadResponseDTO> response = leadService.getDealerLeads(dealerId);
 
         return ResponseEntity.ok(new ResponseDto<>(200,"Customer All Leads Fetched Successfully",response)
         );
     }
 
-    // ================= UPDATE LEADS STATUS=================
+    // ================= UPDATE REGISTRATION OR LEADS STATUS=================
 
     @PutMapping("/lead-status/{leadId}")
     @Operation(summary = "Update lead status API (NEW, CONTACTED, CONVERTED)  ")
-    public ResponseEntity<ResponseDto<LeadResponseDTO>> updateLeadStatus(
+    public ResponseEntity<ResponseDto<CustomerLeadResponseDTO>> updateLeadStatus(
             @PathVariable Long leadId,
-            @RequestBody LeadStatusRequestDTO requestDTO) {
-        LeadResponseDTO response = leadService.updateLeadStatus(leadId, requestDTO);
+            @RequestBody CustomerLeadStatusRequestDTO requestDTO) {
+        CustomerLeadResponseDTO response = leadService.updateLeadStatus(leadId, requestDTO);
 
         return ResponseEntity.ok(new ResponseDto<>(200,"Lead status successfully",response));
+    }
+
+    // =============== ADD VIEW ON VEHICLE FROM CUSTOMER =====================
+
+    @GetMapping("/customer-dashboard")
+    @Operation(summary = "Customer Dashboard")
+    public ResponseEntity<?> getCustomerDashboard() {
+
+        return ResponseEntity.ok("Customer Dashboard Fetch Successfully");
     }
 
 }

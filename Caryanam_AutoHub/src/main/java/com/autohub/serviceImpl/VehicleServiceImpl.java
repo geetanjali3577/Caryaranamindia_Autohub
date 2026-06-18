@@ -11,7 +11,6 @@ import com.autohub.enums.VehicleStatus;
 import com.autohub.exception.ResourceNotFoundException;
 import com.autohub.repository.*;
 import com.autohub.service.VehicleService;
-import com.autohub.service.VehicleViewService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -24,7 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -36,7 +34,7 @@ public class VehicleServiceImpl implements VehicleService {
    private final DealerRepository dealerRepository;
    private final ModelMapper modelMapper;
    private final VehicleMediaRepository mediaRepository;
-   private final LeadRepository leadRepository;
+   private final CustomerLeadRepository leadRepository;
    private final PaymentRepository paymentRepository;
    private final VehicleViewRepository vehicleViewRepository;
 
@@ -451,5 +449,61 @@ public class VehicleServiceImpl implements VehicleService {
                                 .toList()
                 )
                 .build();
+    }
+
+    @Override
+    public List<VehicleResponseDTO> getAllVehicle() {
+
+        List<Vehicle> vehicles = vehicleRepository.findAll();
+
+        if (vehicles.isEmpty()) {
+            throw new ResourceNotFoundException("Dealer has no vehicles");
+        }
+
+        return vehicles.stream()
+                .map(vehicle -> VehicleResponseDTO.builder()
+                        .id(vehicle.getId())
+                        .dealerId(vehicle.getDealer().getId())
+                        .brand(vehicle.getBrand())
+                        .model(vehicle.getModel())
+                        .variant(vehicle.getVariant())
+                        .registrationYear(vehicle.getRegistrationYear())
+                        .askingPrice(vehicle.getAskingPrice())
+                        .kilometerDriven(vehicle.getKilometerDriven())
+                        .fuelType(vehicle.getFuelType())
+                        .transmission(vehicle.getTransmission())
+                        .ownershipDetails(vehicle.getOwnershipDetails())
+                        .insuranceStatus(vehicle.getInsuranceStatus())
+                        .vehicleDescription(vehicle.getVehicleDescription())
+                        .city(vehicle.getCity())
+                        .dealerContactName(vehicle.getDealerContactName())
+                        .dealerContactNumber(vehicle.getDealerContactNumber())
+                        .dealerContactEmail(vehicle.getDealerContactEmail())
+                        .vehicleStatus(vehicle.getVehicleStatus())
+                        .createdAt(vehicle.getCreatedAt())
+                        .images(
+                                vehicle.getMediaList() == null
+                                        ? List.of()
+                                        : vehicle.getMediaList().stream()
+                                        .filter(media -> "IMAGE".equalsIgnoreCase(media.getMediaType()))
+                                        //.map(VehicleMedia::getFilePath)
+                                        .map(media -> "http://localhost:"+port+"/" +
+                                                media.getFilePath().replace("\\", "/"))
+                                        .toList()
+                        )
+
+                        .videos(
+                                vehicle.getMediaList() == null
+                                        ? List.of()
+                                        : vehicle.getMediaList().stream()
+                                        .filter(media -> "VIDEO".equalsIgnoreCase(media.getMediaType()))
+                                        //.map(VehicleMedia::getFilePath)
+                                        .map(media ->"http://localhost:"+port+ "/" +
+                                                media.getFilePath().replace("\\", "/"))
+                                        .toList()
+                        )
+
+                        .build())
+                .toList();
     }
 }

@@ -6,7 +6,6 @@ import com.autohub.dto.VehicleResponseDTO;
 import com.autohub.dto.VehicleStatusRequestDTO;
 import com.autohub.enums.VehicleStatus;
 import com.autohub.service.VehicleService;
-import com.autohub.service.VehicleViewService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +18,7 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.List;
+
 @RestController
 @RequestMapping("/api/vehicle")
 @RequiredArgsConstructor
@@ -26,8 +26,6 @@ public class VehicleController {
 
     private final VehicleService vehicleService;
 
-
-    private final VehicleViewService vehicleViewService;
 
     // ================= ADD VEHICLE INFO=================
 
@@ -93,6 +91,8 @@ public class VehicleController {
         return new ResponseEntity<>(new ResponseDto<>(201,"Vehicle Delete Successfully",null),HttpStatus.OK);
     }
 
+
+
     // ================= GET ALL VEHICLE BY DEALER ID=================
     @GetMapping("/dealer/{dealerId}")
     @Operation(summary = "Get all vehicle by dealer id API")
@@ -105,7 +105,7 @@ public class VehicleController {
         return ResponseEntity.ok(
                 new ResponseDto<>(
                         200,
-                        "Vehicles fetched successfully",
+                        "All Vehicles By Dealer Id fetched successfully",
                         response));
     }
 
@@ -123,7 +123,22 @@ public class VehicleController {
         return ResponseEntity.ok(
                 new ResponseDto<>(
                         200,
-                        "Vehicle fetched successfully",
+                        "Vehicle By Vehicle Id fetched successfully",
+                        response));
+    }
+
+
+    // ================= GET ALL VEHICLE =================
+    @GetMapping("/all-vehicle")
+    @Operation(summary = "Get all vehicle API")
+    public ResponseEntity<ResponseDto<List<VehicleResponseDTO>>> getAllVehicle() {
+
+        List<VehicleResponseDTO> response =vehicleService.getAllVehicle();
+
+        return ResponseEntity.ok(
+                new ResponseDto<>(
+                        200,
+                        "All Vehicles fetched successfully",
                         response));
     }
 

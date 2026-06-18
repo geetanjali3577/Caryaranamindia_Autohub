@@ -1,6 +1,7 @@
 package com.autohub.dto;
 
-import com.autohub.enums.LeadStatus;
+import com.autohub.enums.CustomerLeadStatus;
+import com.autohub.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LeadResponseDTO {
+public class CustomerLeadResponseDTO {
 
     private Long id;
 
@@ -26,7 +27,13 @@ public class LeadResponseDTO {
 
     private LocalDateTime enquiryDate;
 
-    private LeadStatus leadStatus;
+    private String customerPassword;
+
+    private LocalDateTime accountCreateAt;
+
+    private Role role;
+
+    private CustomerLeadStatus leadStatus;
 
     private String vehicleName;
 
