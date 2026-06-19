@@ -71,6 +71,9 @@ public class Vehicle {
 
     private  String dealerContactEmail;
 
+    private String dealerWhatsappNumber;
+
+    private String dealerBussinessName;
     @ManyToOne
     @JoinColumn(name = "dealer_id")
     private Dealer dealer;

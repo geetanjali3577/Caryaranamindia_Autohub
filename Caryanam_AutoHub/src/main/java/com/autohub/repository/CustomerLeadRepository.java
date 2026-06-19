@@ -46,6 +46,9 @@ public interface CustomerLeadRepository extends JpaRepository<CustomerLead,Long>
     // Total Leads
     long countByDealerId(Long dealerId);
 
+    //Count of leads
+    long count();
+
 
 
 

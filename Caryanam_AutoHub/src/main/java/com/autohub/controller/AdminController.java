@@ -47,13 +47,26 @@ public class AdminController {
         return ResponseEntity.ok(adminService.allDealer());
     }
 
-    // ================= GET ALL COUNT OF DEALER =================
+    // ================= TOTAL COUNT OF DEALER =================
     @GetMapping("/dealer/count")
     public ResponseEntity<DealerCountResponseDTO> getTotalDealerCount() {
 
         return ResponseEntity.ok(
                 adminService.getTotalDealerCount()
         );
+    }
+    // ================= TOTAL COUNT OF PENDING DEALER =================
+    @GetMapping("/pending/count")
+    public ResponseEntity<PendingDealerCountResponseDTO> getPendingDealerCount() {
+
+        return ResponseEntity.ok( adminService.getPendingDealerCount() );
+    }
+
+    // ================= TOTAL COUNT OF VEHICLE =================
+    @GetMapping("/vehicle/count")
+    public ResponseEntity<VehicleCountResponseDTO> getTotalVehicleCount() {
+
+        return ResponseEntity.ok(adminService.getTotalVehicleCount());
     }
 
     // ================= GET ALL LEADS =================
@@ -64,5 +77,15 @@ public class AdminController {
                 adminService.getAllCustomerLeads()
         );
     }
+
+    // ================= TOTAL COUNT OF  LEADS =================
+    @GetMapping("/customer-lead/count")
+    public ResponseEntity<CustomerLeadCountResponseDTO> getTotalCustomerLeadCount() {
+
+        return ResponseEntity.ok(
+                adminService.getTotalCustomerLeadCount()
+        );
+    }
+
 
 }

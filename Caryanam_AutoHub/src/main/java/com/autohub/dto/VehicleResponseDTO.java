@@ -53,6 +53,10 @@ public class VehicleResponseDTO {
 
     private  String dealerContactEmail;
 
+    private String dealerWhatsappNumber;
+
+    private String dealerBussinessName;
+
     private List<String> images;
 
     private List<String> videos;

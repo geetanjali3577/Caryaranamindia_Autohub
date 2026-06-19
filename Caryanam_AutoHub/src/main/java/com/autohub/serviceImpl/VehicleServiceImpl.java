@@ -424,6 +424,8 @@ public class VehicleServiceImpl implements VehicleService {
                 .city(vehicle.getCity())
                 .dealerContactName(vehicle.getDealerContactName())
                 .dealerContactNumber(vehicle.getDealerContactNumber())
+                .dealerWhatsappNumber(vehicle.getDealerWhatsappNumber())
+                .dealerBussinessName(vehicle.getDealerBussinessName())
                 .dealerContactEmail(vehicle.getDealerContactEmail())
                 .vehicleStatus(vehicle.getVehicleStatus())
                 .createdAt(vehicle.getCreatedAt())

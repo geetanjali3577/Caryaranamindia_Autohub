@@ -30,4 +30,6 @@ public interface DealerRepository extends JpaRepository<Dealer, Long> {
 
     long count();
 
+    long countByDealerAccountStatus(DealerStatus dealerAccountStatus);
+
 }

@@ -3,10 +3,12 @@ package com.autohub.serviceImpl;
 import com.autohub.dto.*;
 import com.autohub.entity.CustomerLead;
 import com.autohub.entity.Dealer;
+import com.autohub.enums.DealerStatus;
 import com.autohub.exception.ResourceNotFoundException;
 import com.autohub.repository.AdminRepository;
 import com.autohub.repository.CustomerLeadRepository;
 import com.autohub.repository.DealerRepository;
+import com.autohub.repository.VehicleRepository;
 import com.autohub.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,8 +21,9 @@ public class AdminServiceImpl implements AdminService {
 
     private final DealerRepository dealerRepository;
 
-
     private final CustomerLeadRepository customerLeadRepository;
+
+    private final VehicleRepository vehicleRepository;
 
 
     //All dealer
@@ -81,6 +84,33 @@ public class AdminServiceImpl implements AdminService {
                         .vehicleName(lead.getVehicle().getVariant())
                         .build())
                 .toList();
+    }
+
+
+    @Override
+    public PendingDealerCountResponseDTO getPendingDealerCount() {
+
+        long count = dealerRepository.countByDealerAccountStatus(DealerStatus.PENDING);
+
+        return PendingDealerCountResponseDTO.builder()
+                .totalPendingDealers(count)
+                .build();
+    }
+
+    @Override
+    public VehicleCountResponseDTO getTotalVehicleCount() {
+
+        return VehicleCountResponseDTO.builder()
+                .totalVehicles(vehicleRepository.count())
+                .build();
+    }
+
+    @Override
+    public CustomerLeadCountResponseDTO getTotalCustomerLeadCount() {
+
+        return CustomerLeadCountResponseDTO.builder()
+                .totalCustomerLeads(customerLeadRepository.count())
+                .build();
     }
 
 }

@@ -1,9 +1,6 @@
 package com.autohub.service;
 
-import com.autohub.dto.AllCustomerLeadResponseDTO;
-import com.autohub.dto.CustomerLeadResponseDTO;
-import com.autohub.dto.DealerCountResponseDTO;
-import com.autohub.dto.DealerResponseDTO;
+import com.autohub.dto.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,10 +8,22 @@ import java.util.List;
 @Service
 public interface AdminService {
 
+    //ALl DEALER
     List<DealerResponseDTO> allDealer();
 
+    //COUNT OF DEALER
     DealerCountResponseDTO getTotalDealerCount();
 
+    //ALL LEADS
     List<AllCustomerLeadResponseDTO> getAllCustomerLeads();
+
+    //COUNT PENDING DEALER
+    PendingDealerCountResponseDTO getPendingDealerCount();
+
+    //COUNT VEHICLE
+    VehicleCountResponseDTO getTotalVehicleCount();
+
+    //COUNT LEADS
+    CustomerLeadCountResponseDTO getTotalCustomerLeadCount();
 
 }
