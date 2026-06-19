@@ -97,7 +97,9 @@ public class AuthServiceImpl implements AuthService {
                     dealer.getId(),
                     dealer.getOwnerName(),
                     dealer.getEmail(),
-                    dealer.getRole()
+                    dealer.getRole(),
+                    dealer.getMobile(),
+                    dealer.getCity()
             );
 
             return new LoginResponseDTO(token);
@@ -118,7 +120,9 @@ public class AuthServiceImpl implements AuthService {
                     admin.getAdminId(),
                     admin.getFullName(),
                     admin.getEmail(),
-                    admin.getRole()
+                    admin.getRole(),
+                    admin.getMobileNumber(),
+                    admin.getCity()
             );
 
             return new LoginResponseDTO(token);
@@ -138,7 +142,9 @@ public class AuthServiceImpl implements AuthService {
                     customer.getId(),
                     customer.getCustomerName(),
                     customer.getEmail(),
-                    customer.getRole()
+                    customer.getRole(),
+                    customer.getMobile(),
+                    customer.getCustomerCity()
             );
 
             return new LoginResponseDTO(token);

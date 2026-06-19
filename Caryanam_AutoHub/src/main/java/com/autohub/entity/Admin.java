@@ -17,6 +17,8 @@ public class Admin {
 
     private String mobileNumber;
 
+    private String city;
+
     @Column(unique = true, nullable = false)
     private String email;
 

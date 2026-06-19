@@ -1,5 +1,6 @@
 package com.autohub.dto;
 
+import com.autohub.entity.Vehicle;
 import com.autohub.enums.CustomerLeadStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,5 +28,5 @@ public class AllCustomerLeadResponseDTO {
 
     private CustomerLeadStatus leadStatus;
 
-    private String vehicleName;
+    private Vehicle vehicleName;
 }

@@ -43,5 +43,10 @@ public class VehicleRequestDTO {
     @NotBlank(message = "Vehicle Description is Required")
     private String vehicleDescription;
 
+//    private String dealerWhatsappNumber;
+//
+//    private String dealerBussinessName;
+
+
 
 }

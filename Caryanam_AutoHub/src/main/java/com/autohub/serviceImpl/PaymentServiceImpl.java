@@ -1,6 +1,7 @@
 package com.autohub.serviceImpl;
 
 import com.autohub.dto.PaymentRequestDTO;
+import com.autohub.dto.PaymentResponseDTO;
 import com.autohub.dto.ResponseDto;
 import com.autohub.entity.Dealer;
 import com.autohub.entity.Payment;
@@ -57,12 +58,24 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setTransactionId(UUID.randomUUID().toString());
         payment.setPaymentStatus((PaymentStatus.PENDING));
 
-        paymentRepository.save(payment);
+        Payment savedPayment = paymentRepository.save(payment);
+
+
+
 
         return new ResponseDto<>(
                 200,
                 "Payment Created Successfully",
-                payment
+                PaymentResponseDTO.builder()
+                        .paymentId(savedPayment.getPaymentId())
+                        .dealer(savedPayment.getDealer())
+                        .businessName(savedPayment.getDealer().getBusinessName())
+                        .subscriptionPlan(savedPayment.getSubscriptionPlan())
+                        .amount(savedPayment.getAmount())
+                        .transactionId(savedPayment.getTransactionId())
+                        .paymentStatus(savedPayment.getPaymentStatus())
+                        .paymentDate(savedPayment.getPaymentDate())
+                        .build()
         );
     }
 

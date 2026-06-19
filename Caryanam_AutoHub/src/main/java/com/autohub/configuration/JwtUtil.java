@@ -26,7 +26,9 @@ public class JwtUtil {
             Long id,
             String name,
             String username,
-            Role role
+            Role role,
+            String mobileNumber,
+            String city
             ) {
 
         return Jwts.builder()
@@ -35,6 +37,8 @@ public class JwtUtil {
                 .claim("id", id)
                 .claim("name", name)
                 .claim("role", role.name())
+                .claim("mobileNumber",mobileNumber)
+                .claim("city",city)
                 .setIssuedAt(new Date())
                 .setExpiration(
                         new Date(System.currentTimeMillis() + 1000 * 60 * 60)

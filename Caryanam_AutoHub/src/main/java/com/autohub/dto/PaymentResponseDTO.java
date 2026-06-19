@@ -1,34 +1,34 @@
-package com.autohub.entity;
+package com.autohub.dto;
 
+import com.autohub.entity.Dealer;
 import com.autohub.enums.PaymentStatus;
 import com.autohub.enums.SubscriptionPlan;
-import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "payments")
 @Data
-public class Payment {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class PaymentResponseDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long paymentId;
 
-    @Enumerated(EnumType.STRING)
+    private Dealer dealer;
+
+    private String businessName;
+
     private SubscriptionPlan subscriptionPlan;
 
     private Double amount;
 
     private String transactionId;
 
-    @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
 
     private LocalDateTime paymentDate;
-
-    @ManyToOne
-    @JoinColumn(name = "dealer_id")
-    private Dealer dealer;
 }

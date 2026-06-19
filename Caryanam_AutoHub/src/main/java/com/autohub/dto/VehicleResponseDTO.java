@@ -55,7 +55,7 @@ public class VehicleResponseDTO {
 
     private String dealerWhatsappNumber;
 
-    private String dealerBussinessName;
+    private String dealerBusinessName;
 
     private List<String> images;
 
