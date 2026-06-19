@@ -28,4 +28,6 @@ public interface DealerRepository extends JpaRepository<Dealer, Long> {
             """)
     List<Object[]> getTopCitiesReport();
 
+    long count();
+
 }

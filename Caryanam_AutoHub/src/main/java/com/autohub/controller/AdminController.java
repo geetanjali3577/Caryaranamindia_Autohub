@@ -1,9 +1,7 @@
 package com.autohub.controller;
 
-import com.autohub.dto.DealerAccountStatusRequestDTO;
-import com.autohub.dto.DealerResponseDTO;
-import com.autohub.dto.DealerSubscriptionResponseDTO;
-import com.autohub.dto.ResponseDto;
+import com.autohub.dto.*;
+import com.autohub.service.AdminService;
 import com.autohub.service.DealerService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +16,8 @@ import java.util.List;
 public class AdminController {
 
     private final DealerService dealerService;
+
+    private final AdminService adminService;
 
     // ================= CHANGE DEALER ACCOUNT STATUS :  APPROVED, PENDING =================
     @PutMapping("/dealer-status/{dealerId}")
@@ -39,4 +39,30 @@ public class AdminController {
         List<DealerSubscriptionResponseDTO> data = dealerService.getSubscriptions();
         return ResponseEntity.ok(new ResponseDto<>(200, "All Purchase Subscriptions  fetched of Dealer Fetch Successfully", data));
     }
+
+
+    // ================= GET ALL DEALER =================
+    @GetMapping("/all-dealers")
+    public ResponseEntity<List<DealerResponseDTO>> getAllDealers() {
+        return ResponseEntity.ok(adminService.allDealer());
+    }
+
+    // ================= GET ALL COUNT OF DEALER =================
+    @GetMapping("/dealer/count")
+    public ResponseEntity<DealerCountResponseDTO> getTotalDealerCount() {
+
+        return ResponseEntity.ok(
+                adminService.getTotalDealerCount()
+        );
+    }
+
+    // ================= GET ALL LEADS =================
+    @GetMapping("/all-leads")
+    public ResponseEntity<List<AllCustomerLeadResponseDTO>> getAllCustomerLeads() {
+
+        return ResponseEntity.ok(
+                adminService.getAllCustomerLeads()
+        );
+    }
+
 }
