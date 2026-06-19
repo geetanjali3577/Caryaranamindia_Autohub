@@ -12,13 +12,7 @@ public class CustomerLeadRequestDTO {
     @NotBlank(message = "Customer Mobile is Required")
     private String customerMobile;
 
-    @NotBlank(message = "Customer Email is Required")
-    private String customerEmail;
-
     @NotBlank(message = "Customer City is Required")
     private String customerCity;
-
-    @NotBlank(message = "Password is Required")
-    private String customerPassword;
 
 }

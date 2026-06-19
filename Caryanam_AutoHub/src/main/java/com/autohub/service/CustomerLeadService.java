@@ -11,6 +11,7 @@ import java.util.List;
 @Service
 public interface CustomerLeadService {
 
+
     CustomerLeadResponseDTO createLead(Long vehicleId, CustomerLeadRequestDTO leadRequestDTO);
 
     List<CustomerLeadResponseDTO> getDealerLeads(Long dealerId);

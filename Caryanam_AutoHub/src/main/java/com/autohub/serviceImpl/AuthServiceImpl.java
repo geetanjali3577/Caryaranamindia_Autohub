@@ -4,10 +4,12 @@ import com.autohub.configuration.JwtUtil;
 import com.autohub.dto.LoginRequestDTO;
 import com.autohub.dto.LoginResponseDTO;
 import com.autohub.entity.Admin;
+import com.autohub.entity.Customer;
 import com.autohub.entity.CustomerLead;
 import com.autohub.entity.Dealer;
 import com.autohub.repository.AdminRepository;
 import com.autohub.repository.CustomerLeadRepository;
+import com.autohub.repository.CustomerRepository;
 import com.autohub.repository.DealerRepository;
 import com.autohub.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +31,9 @@ public class AuthServiceImpl implements AuthService {
     private final DealerRepository dealerRepository;
     private final AdminRepository adminRepository;
 
-    private final CustomerLeadRepository leadRepository;
+    //private final CustomerLeadRepository leadRepository;
+
+    private final CustomerRepository customerRepository;
 
     // TOKEN BLACKLIST
     private static final Set<String> tokenBlacklist = new HashSet<>();
@@ -46,18 +50,8 @@ public class AuthServiceImpl implements AuthService {
 
         boolean emailExists = dealerRepository.existsByEmail(request.getEmail())
                         || adminRepository.existsByEmail(request.getEmail())
-                        || leadRepository.existsByCustomerEmail(request.getEmail());
+                        || customerRepository.existsByEmail(request.getEmail());
 
-        System.out.println("Email = " + request.getEmail());
-
-        System.out.println("Dealer Exists = "
-                + dealerRepository.existsByEmail(request.getEmail()));
-
-        System.out.println("Admin Exists = "
-                + adminRepository.existsByEmail(request.getEmail()));
-
-        System.out.println("Customer Exists = "
-                + leadRepository.existsByCustomerEmail(request.getEmail()));
 
         if (!emailExists) {
 
@@ -133,17 +127,17 @@ public class AuthServiceImpl implements AuthService {
         // CUSTOMER LOGIN
         // =====================================
 
-        Optional<CustomerLead> customerOpt =
-                leadRepository.findByCustomerEmail(request.getEmail());
 
-        if (customerOpt.isPresent()) {
+        Optional<Customer> byEmail = customerRepository.findByEmail(request.getEmail());
 
-            CustomerLead customer = customerOpt.get();
+        if (byEmail.isPresent()) {
+
+            Customer customer = byEmail.get();
 
             String token = jwtUtil.generateToken(
                     customer.getId(),
                     customer.getCustomerName(),
-                    customer.getCustomerEmail(),
+                    customer.getEmail(),
                     customer.getRole()
             );
 

@@ -5,11 +5,13 @@ import java.util.List;
 
 import com.autohub.entity.Admin;
 
+import com.autohub.entity.Customer;
 import com.autohub.entity.CustomerLead;
 import com.autohub.entity.Dealer;
 import com.autohub.repository.AdminRepository;
 
 import com.autohub.repository.CustomerLeadRepository;
+import com.autohub.repository.CustomerRepository;
 import com.autohub.repository.DealerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -26,7 +28,9 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private final DealerRepository dealerRepository;
 
-    private final CustomerLeadRepository leadRepository;
+    //private final CustomerLeadRepository leadRepository;
+
+    private final CustomerRepository customerRepository;
 
 
     @Override
@@ -54,8 +58,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         //Customer
 
-        CustomerLead customer =
-                leadRepository.findByCustomerEmail(email)
+        Customer customer =
+                customerRepository.findByEmail(email)
                         .orElse(null);
 
         if (customer != null) {
@@ -67,8 +71,8 @@ public class CustomUserDetailsService implements UserDetailsService {
             return new CustomUserDetails(
                     customer.getId(),
                     customer.getCustomerName(),
-                    customer.getCustomerEmail(),
-                    customer.getCustomerPassword(),
+                    customer.getEmail(),
+                    customer.getPassword(),
                     List.of(new SimpleGrantedAuthority("ROLE_" + role))
             );
         }

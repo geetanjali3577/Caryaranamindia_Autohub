@@ -46,9 +46,7 @@ public interface CustomerLeadRepository extends JpaRepository<CustomerLead,Long>
     // Total Leads
     long countByDealerId(Long dealerId);
 
-    Optional<CustomerLead> findByCustomerEmail(String email);
 
-    boolean existsByCustomerEmail(String email);
 
 
 }

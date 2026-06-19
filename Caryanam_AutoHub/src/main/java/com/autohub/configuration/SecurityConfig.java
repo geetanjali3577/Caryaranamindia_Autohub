@@ -54,6 +54,7 @@ public class SecurityConfig {
                                 //Permit All
                                 .requestMatchers(
                                         "/api/auth/**"
+                                        ,"/api/customer/**"
                                         ,"/api/dealer/register/**"
                                         ,"/api/lead/generate-lead/**"
                                         ,"/api/lead/generate-view/**"

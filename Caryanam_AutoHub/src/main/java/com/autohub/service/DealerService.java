@@ -1,11 +1,12 @@
 package com.autohub.service;
 
 import com.autohub.dto.*;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
-
+@Service
 public interface DealerService {
 
     DealerResponseDTO registerDealer(DealerRegisterDTO dto, MultipartFile dealerLogo,MultipartFile showroomImage);

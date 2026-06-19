@@ -9,29 +9,33 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "Customer-Leads")
+@Table(name = "Customer-Registration")
 @Data
-public class CustomerLead {
+public class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String customerName;
 
-    private String customerMobile;
+    @Column(nullable = false)
+    private String mobile;
 
+    @Column(nullable = false)
     private String customerCity;
 
+    @Column(unique = true)
+    private String email;
+
+    @Column(nullable = false)
+    private String password;
+
     @CreationTimestamp
-    private LocalDateTime enquiryDate;
+    private LocalDateTime accountCreatedAt;
 
     @Enumerated(EnumType.STRING)
-    private CustomerLeadStatus leadStatus;
+    private Role role;
 
-    @ManyToOne
-    private Vehicle vehicle;
-
-    @ManyToOne
-    private Dealer dealer;
 }

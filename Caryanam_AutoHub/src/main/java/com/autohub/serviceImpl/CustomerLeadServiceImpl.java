@@ -5,7 +5,6 @@ import com.autohub.entity.CustomerLead;
 import com.autohub.entity.Dealer;
 import com.autohub.entity.Vehicle;
 import com.autohub.enums.CustomerLeadStatus;
-import com.autohub.enums.Role;
 import com.autohub.exception.ResourceNotFoundException;
 import com.autohub.repository.CustomerLeadRepository;
 import com.autohub.repository.DealerRepository;
@@ -31,7 +30,7 @@ public class CustomerLeadServiceImpl implements CustomerLeadService {
 
     private final DealerRepository dealerRepository;
 
-    private final PasswordEncoder passwordEncoder;
+
 
     @Override
     public CustomerLeadResponseDTO createLead(Long vehicleId, CustomerLeadRequestDTO leadRequestDTO) {
@@ -46,13 +45,9 @@ public class CustomerLeadServiceImpl implements CustomerLeadService {
         CustomerLead lead = new CustomerLead();
         lead.setCustomerName(leadRequestDTO.getCustomerName());
         lead.setCustomerMobile(leadRequestDTO.getCustomerMobile());
-        lead.setCustomerEmail(leadRequestDTO.getCustomerEmail());
         lead.setCustomerCity(leadRequestDTO.getCustomerCity());
-        lead.setCustomerPassword(passwordEncoder.encode(leadRequestDTO.getCustomerPassword()));
         lead.setLeadStatus(CustomerLeadStatus.NEW);
-        lead.setRole(Role.CUSTOMER);
         lead.setEnquiryDate(LocalDateTime.now());
-        lead.setAccountCreatedAt(LocalDateTime.now());
         lead.setVehicle(vehicle);
         lead.setDealer(dealer);
 
@@ -63,13 +58,9 @@ public class CustomerLeadServiceImpl implements CustomerLeadService {
                 .id(saved.getId())
                 .customerName(saved.getCustomerName())
                 .customerMobile(saved.getCustomerMobile())
-                .customerEmail(saved.getCustomerEmail())
                 .customerCity(saved.getCustomerCity())
-                .customerPassword(saved.getCustomerPassword())
                 .vehicleName(saved.getVehicle().getBrand() + " "+ saved.getVehicle().getModel())
                 .enquiryDate(saved.getEnquiryDate())
-                .accountCreateAt(saved.getAccountCreatedAt())
-                .role(saved.getRole())
                 .dealer(saved.getDealer().getId())
                 .build();
 
@@ -89,7 +80,6 @@ public class CustomerLeadServiceImpl implements CustomerLeadService {
                         .id(lead.getId())
                         .customerName(lead.getCustomerName())
                         .customerMobile(lead.getCustomerMobile())
-                        .customerEmail(lead.getCustomerEmail())
                         .customerCity(lead.getCustomerCity())
                         .vehicleName(lead.getVehicle().getBrand() + " "+ lead.getVehicle().getModel())
                         .dealer(lead.getDealer().getId())
@@ -142,7 +132,6 @@ public class CustomerLeadServiceImpl implements CustomerLeadService {
                 .id(saved.getId())
                 .customerName(saved.getCustomerName())
                 .customerMobile(saved.getCustomerMobile())
-                .customerEmail(saved.getCustomerEmail())
                 .customerCity(saved.getCustomerCity())
                 .vehicleName(saved.getVehicle().getBrand() + " "+ saved.getVehicle().getModel())
                 .enquiryDate(saved.getEnquiryDate())
