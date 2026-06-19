@@ -142,4 +142,20 @@ public class VehicleController {
                         response));
     }
 
+    // ================= GET ALL FEATURED ONLY 10 VEHICLE =================
+    @GetMapping("/featured")
+    public ResponseEntity<List<VehicleResponseDTO>> getLatestFeaturedVehicles() {
+
+        return ResponseEntity.ok(vehicleService.getLatestFeaturedVehicles()
+        );
+    }
+    // ================= GET ALL LATEST ADDED ONLY 10 VEHICLE =================
+    @GetMapping("/latest-vehicles")
+    public ResponseEntity<List<VehicleResponseDTO>> getLatestVehicles() {
+
+        return ResponseEntity.ok(
+                vehicleService.getLatestVehicles()
+        );
+    }
+
 }

@@ -27,4 +27,10 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
 
     List<Vehicle> findByDealerId(Long dealerId);
 
+    List<Vehicle> findTop10ByVehicleStatusOrderByIdDesc(VehicleStatus vehicleStatus);
+
+    //List<Vehicle> findTop10ByVehicleStatusOrderByCreatedAtDesc(VehicleStatus vehicleStatus);
+
+    List<Vehicle> findTop10ByOrderByCreatedAtDesc();
+
 }

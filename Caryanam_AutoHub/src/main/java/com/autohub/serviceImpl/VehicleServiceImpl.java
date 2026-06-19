@@ -517,4 +517,116 @@ public class VehicleServiceImpl implements VehicleService {
                         .build())
                 .toList();
     }
+
+    @Override
+    public List<VehicleResponseDTO> getLatestFeaturedVehicles() {
+
+        List<Vehicle> vehicles = vehicleRepository
+                .findTop10ByVehicleStatusOrderByIdDesc(
+                        VehicleStatus.FEATURED);
+
+        return vehicles.stream()
+                .map(vehicle -> VehicleResponseDTO.builder()
+                        .id(vehicle.getId())
+                        .dealerId(vehicle.getDealer().getId())
+                        .brand(vehicle.getBrand())
+                        .model(vehicle.getModel())
+                        .variant(vehicle.getVariant())
+                        .registrationYear(vehicle.getRegistrationYear())
+                        .askingPrice(vehicle.getAskingPrice())
+                        .kilometerDriven(vehicle.getKilometerDriven())
+                        .fuelType(vehicle.getFuelType())
+                        .transmission(vehicle.getTransmission())
+                        .ownershipDetails(vehicle.getOwnershipDetails())
+                        .insuranceStatus(vehicle.getInsuranceStatus())
+                        .vehicleDescription(vehicle.getVehicleDescription())
+                        .city(vehicle.getCity())
+                        .dealerContactName(vehicle.getDealer().getOwnerName())
+                        .dealerContactNumber(vehicle.getDealer().getMobile())
+                        .dealerWhatsappNumber(vehicle.getDealer().getWhatsapp())
+                        .dealerBusinessName(vehicle.getDealer().getBusinessName())
+                        .dealerContactEmail(vehicle.getDealer().getEmail())
+                        .vehicleStatus(vehicle.getVehicleStatus())
+                        .createdAt(vehicle.getCreatedAt())
+                        .images(
+                                vehicle.getMediaList() == null
+                                        ? List.of()
+                                        : vehicle.getMediaList().stream()
+                                        .filter(media -> "IMAGE".equalsIgnoreCase(media.getMediaType()))
+                                        //.map(VehicleMedia::getFilePath)
+                                        .map(media -> "http://localhost:"+port+"/" +
+                                                media.getFilePath().replace("\\", "/"))
+                                        .toList()
+                        )
+
+                        .videos(
+                                vehicle.getMediaList() == null
+                                        ? List.of()
+                                        : vehicle.getMediaList().stream()
+                                        .filter(media -> "VIDEO".equalsIgnoreCase(media.getMediaType()))
+                                        //.map(VehicleMedia::getFilePath)
+                                        .map(media ->"http://localhost:"+port+ "/" +
+                                                media.getFilePath().replace("\\", "/"))
+                                        .toList()
+                        )
+
+                        .build())
+                .toList();
+    }
+
+    @Override
+    public List<VehicleResponseDTO> getLatestVehicles() {
+
+        List<Vehicle> vehicles =
+                vehicleRepository.findTop10ByOrderByCreatedAtDesc();
+
+        return vehicles.stream()
+                .map(vehicle -> VehicleResponseDTO.builder()
+                        .id(vehicle.getId())
+                        .dealerId(vehicle.getDealer().getId())
+                        .brand(vehicle.getBrand())
+                        .model(vehicle.getModel())
+                        .variant(vehicle.getVariant())
+                        .registrationYear(vehicle.getRegistrationYear())
+                        .askingPrice(vehicle.getAskingPrice())
+                        .kilometerDriven(vehicle.getKilometerDriven())
+                        .fuelType(vehicle.getFuelType())
+                        .transmission(vehicle.getTransmission())
+                        .ownershipDetails(vehicle.getOwnershipDetails())
+                        .insuranceStatus(vehicle.getInsuranceStatus())
+                        .vehicleDescription(vehicle.getVehicleDescription())
+                        .city(vehicle.getCity())
+                        .dealerContactName(vehicle.getDealer().getOwnerName())
+                        .dealerContactNumber(vehicle.getDealer().getMobile())
+                        .dealerWhatsappNumber(vehicle.getDealer().getWhatsapp())
+                        .dealerBusinessName(vehicle.getDealer().getBusinessName())
+                        .dealerContactEmail(vehicle.getDealer().getEmail())
+                        .vehicleStatus(vehicle.getVehicleStatus())
+                        .createdAt(vehicle.getCreatedAt())
+                        .images(
+                                vehicle.getMediaList() == null
+                                        ? List.of()
+                                        : vehicle.getMediaList().stream()
+                                        .filter(media -> "IMAGE".equalsIgnoreCase(media.getMediaType()))
+                                        //.map(VehicleMedia::getFilePath)
+                                        .map(media -> "http://localhost:"+port+"/" +
+                                                media.getFilePath().replace("\\", "/"))
+                                        .toList()
+                        )
+
+                        .videos(
+                                vehicle.getMediaList() == null
+                                        ? List.of()
+                                        : vehicle.getMediaList().stream()
+                                        .filter(media -> "VIDEO".equalsIgnoreCase(media.getMediaType()))
+                                        //.map(VehicleMedia::getFilePath)
+                                        .map(media ->"http://localhost:"+port+ "/" +
+                                                media.getFilePath().replace("\\", "/"))
+                                        .toList()
+                        )
+
+                        .build())
+                .toList();
+    }
+
 }

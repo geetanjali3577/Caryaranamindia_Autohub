@@ -30,6 +30,10 @@ public interface VehicleService {
 
     List<VehicleResponseDTO> getAllVehicle();
 
-}
+    List<VehicleResponseDTO> getLatestFeaturedVehicles();
+
+    List<VehicleResponseDTO> getLatestVehicles();
+
+  }
 
 
