@@ -4,10 +4,7 @@ import com.autohub.dto.VehicleRequestDTO;
 import com.autohub.dto.VehicleResponseDTO;
 import com.autohub.dto.VehicleStatusRequestDTO;
 import com.autohub.entity.*;
-import com.autohub.enums.DealerStatus;
-import com.autohub.enums.PaymentStatus;
-import com.autohub.enums.SubscriptionPlan;
-import com.autohub.enums.VehicleStatus;
+import com.autohub.enums.*;
 import com.autohub.exception.ResourceNotFoundException;
 import com.autohub.repository.*;
 import com.autohub.service.VehicleService;
@@ -149,6 +146,7 @@ public class VehicleServiceImpl implements VehicleService {
                 .dealerBusinessName(dealer.getBusinessName())
                 .dealerContactEmail(dealer.getEmail())
                 .vehicleStatus(VehicleStatus.ACTIVE)
+                .vehicleType(vehicleRequestDTO.getVehicleType())
                 .createdAt(LocalDateTime.now())
                 .build();
 
@@ -282,6 +280,7 @@ public class VehicleServiceImpl implements VehicleService {
                 .dealerBusinessName(vehicle.getDealer().getBusinessName())
                 .dealerContactEmail(vehicle.getDealer().getEmail())
                 .vehicleStatus(savedVehicle.getVehicleStatus())
+                .vehicleType(savedVehicle.getVehicleType())
                 .createdAt(savedVehicle.getCreatedAt())
                 .images(image)
                 .videos(video)
@@ -410,6 +409,8 @@ public class VehicleServiceImpl implements VehicleService {
                 .toList();
     }
 
+
+
     @Override
     public VehicleResponseDTO getVehicleById(Long vehicleId) {
 
@@ -465,120 +466,15 @@ public class VehicleServiceImpl implements VehicleService {
                 .build();
     }
 
-
-//    @Override
-//    public Page<VehicleResponseDTO> getAllVehicle(
-//            String brand,
-//            String city,
-//            String model,
-//            Double minPrice,
-//            Double maxPrice,
-//            int page,
-//            int size,
-//            String sortBy,
-//            String sortDir
-//    ) {
-//
-//        Sort sort = sortDir.equalsIgnoreCase("desc")
-//                ? Sort.by(sortBy).ascending()
-//                : Sort.by(sortBy).descending();
-//
-//        Pageable pageable = PageRequest.of(page, size, sort);
-//
-//        Specification<Vehicle> spec = (root, query, cb) ->
-//                root.get("vehicleStatus")
-//                        .in(VehicleStatus.ACTIVE, VehicleStatus.FEATURED);
-//
-//
-//        if (brand != null && !brand.isBlank()) {
-//            spec = spec.and((root, query, cb) ->
-//                    cb.equal(root.get("brand"), brand));
-//        }
-//
-//        if (city != null && !city.isBlank()) {
-//            spec = spec.and((root, query, cb) ->
-//                    cb.equal(root.get("city"), city));
-//        }
-//
-//        if (model != null && !model.isBlank()) {
-//            spec = spec.and((root, query, cb) ->
-//                    cb.equal(root.get("fuelType"), model));
-//        }
-//
-//        if (minPrice != null) {
-//            spec = spec.and((root, query, cb) ->
-//                    cb.greaterThanOrEqualTo(
-//                            root.get("askingPrice"),
-//                            minPrice
-//                    ));
-//        }
-//
-//        if (maxPrice != null) {
-//            spec = spec.and((root, query, cb) ->
-//                    cb.lessThanOrEqualTo(
-//                            root.get("askingPrice"),
-//                            maxPrice
-//                    ));
-//        }
-//
-//        Page<Vehicle> vehicles = vehicleRepository.findAll(spec, pageable);
-//
-//        if (vehicles.isEmpty()) {
-//            throw new ResourceNotFoundException("No vehicles found");
-//        }
-//
-//        return vehicles.map(vehicle -> VehicleResponseDTO.builder()
-//                .id(vehicle.getId())
-//                .dealerId(vehicle.getDealer().getId())
-//                .brand(vehicle.getBrand())
-//                .model(vehicle.getModel())
-//                .variant(vehicle.getVariant())
-//                .registrationYear(vehicle.getRegistrationYear())
-//                .askingPrice(vehicle.getAskingPrice())
-//                .kilometerDriven(vehicle.getKilometerDriven())
-//                .fuelType(vehicle.getFuelType())
-//                .transmission(vehicle.getTransmission())
-//                .ownershipDetails(vehicle.getOwnershipDetails())
-//                .insuranceStatus(vehicle.getInsuranceStatus())
-//                .vehicleDescription(vehicle.getVehicleDescription())
-//                .city(vehicle.getCity())
-//                .dealerContactName(vehicle.getDealer().getOwnerName())
-//                .dealerContactNumber(vehicle.getDealer().getMobile())
-//                .dealerWhatsappNumber(vehicle.getDealer().getWhatsapp())
-//                .dealerBusinessName(vehicle.getDealer().getBusinessName())
-//                .dealerContactEmail(vehicle.getDealer().getEmail())
-//                .vehicleStatus(vehicle.getVehicleStatus())
-//                .createdAt(vehicle.getCreatedAt())
-//
-//                .images(
-//                        vehicle.getMediaList() == null
-//                                ? List.of()
-//                                : vehicle.getMediaList().stream()
-//                                .filter(media -> "IMAGE".equalsIgnoreCase(media.getMediaType()))
-//                                .map(media -> "http://localhost:" + port + "/" +
-//                                        media.getFilePath().replace("\\", "/"))
-//                                .toList()
-//                )
-//
-//                .videos(
-//                        vehicle.getMediaList() == null
-//                                ? List.of()
-//                                : vehicle.getMediaList().stream()
-//                                .filter(media -> "VIDEO".equalsIgnoreCase(media.getMediaType()))
-//                                .map(media -> "http://localhost:" + port + "/" +
-//                                        media.getFilePath().replace("\\", "/"))
-//                                .toList()
-//                )
-//                .build());
-//    }
-
     @Override
-    public Page<VehicleResponseDTO> getAllVehicle(int page, int size) {
+    public Page<VehicleResponseDTO> getAllNonPremiumVehicle(int page, int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
         Page<Vehicle> vehicles =
-                vehicleRepository.findAllActiveAndFeaturedVehicles(pageable);
+                vehicleRepository.findAllActiveAndFeaturedVehicles(
+                        VehicleType.NON_PREMIUM,
+                        pageable);
 
         if (vehicles.isEmpty()) {
             throw new ResourceNotFoundException("No vehicles found");
@@ -605,6 +501,7 @@ public class VehicleServiceImpl implements VehicleService {
                 .dealerBusinessName(vehicle.getDealer().getBusinessName())
                 .dealerContactEmail(vehicle.getDealer().getEmail())
                 .vehicleStatus(vehicle.getVehicleStatus())
+                .vehicleType(vehicle.getVehicleType())
                 .createdAt(vehicle.getCreatedAt())
 
                 .images(
@@ -628,6 +525,68 @@ public class VehicleServiceImpl implements VehicleService {
                 )
                 .build());
     }
+
+
+    @Override
+    public Page<VehicleResponseDTO> getAllPremiumVehicle(int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Vehicle> vehicles =
+                vehicleRepository.findAllActiveAndFeaturedVehicles(
+                        VehicleType.PREMIUM,
+                        pageable);
+
+        if (vehicles.isEmpty()) {
+            throw new ResourceNotFoundException("No vehicles found");
+        }
+
+        return vehicles.map(vehicle -> VehicleResponseDTO.builder()
+                .id(vehicle.getId())
+                .dealerId(vehicle.getDealer().getId())
+                .brand(vehicle.getBrand())
+                .model(vehicle.getModel())
+                .variant(vehicle.getVariant())
+                .registrationYear(vehicle.getRegistrationYear())
+                .askingPrice(vehicle.getAskingPrice())
+                .kilometerDriven(vehicle.getKilometerDriven())
+                .fuelType(vehicle.getFuelType())
+                .transmission(vehicle.getTransmission())
+                .ownershipDetails(vehicle.getOwnershipDetails())
+                .insuranceStatus(vehicle.getInsuranceStatus())
+                .vehicleDescription(vehicle.getVehicleDescription())
+                .city(vehicle.getCity())
+                .dealerContactName(vehicle.getDealer().getOwnerName())
+                .dealerContactNumber(vehicle.getDealer().getMobile())
+                .dealerWhatsappNumber(vehicle.getDealer().getWhatsapp())
+                .dealerBusinessName(vehicle.getDealer().getBusinessName())
+                .dealerContactEmail(vehicle.getDealer().getEmail())
+                .vehicleStatus(vehicle.getVehicleStatus())
+                .vehicleType(vehicle.getVehicleType())
+                .createdAt(vehicle.getCreatedAt())
+
+                .images(
+                        vehicle.getMediaList() == null
+                                ? List.of()
+                                : vehicle.getMediaList().stream()
+                                .filter(media -> "IMAGE".equalsIgnoreCase(media.getMediaType()))
+                                .map(media -> "http://localhost:" + port + "/" +
+                                        media.getFilePath().replace("\\", "/"))
+                                .toList()
+                )
+
+                .videos(
+                        vehicle.getMediaList() == null
+                                ? List.of()
+                                : vehicle.getMediaList().stream()
+                                .filter(media -> "VIDEO".equalsIgnoreCase(media.getMediaType()))
+                                .map(media -> "http://localhost:" + port + "/" +
+                                        media.getFilePath().replace("\\", "/"))
+                                .toList()
+                )
+                .build());
+    }
+
 
     @Override
     public List<VehicleResponseDTO> getLatestFeaturedVehicles() {

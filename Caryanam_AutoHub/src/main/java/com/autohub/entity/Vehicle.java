@@ -1,6 +1,7 @@
 package com.autohub.entity;
 
 import com.autohub.enums.VehicleStatus;
+import com.autohub.enums.VehicleType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -60,8 +61,8 @@ public class Vehicle {
     @Enumerated(EnumType.STRING)
     private VehicleStatus vehicleStatus;
 
-//    @Enumerated(EnumType.STRING)
-//    private VehicleType vehicleType;//premium or non-premium
+    @Enumerated(EnumType.STRING)
+    private VehicleType vehicleType;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

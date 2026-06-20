@@ -32,7 +32,9 @@ public interface VehicleService {
 
     List<VehicleResponseDTO> getLatestVehicles();
 
-    Page<VehicleResponseDTO> getAllVehicle(int page, int size);
+    Page<VehicleResponseDTO> getAllNonPremiumVehicle(int page, int size);
+
+    Page<VehicleResponseDTO> getAllPremiumVehicle(int page, int size);
 
   }
 

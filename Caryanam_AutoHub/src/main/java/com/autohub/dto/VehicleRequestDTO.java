@@ -1,5 +1,6 @@
 package com.autohub.dto;
 
+import com.autohub.enums.VehicleType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -43,9 +44,9 @@ public class VehicleRequestDTO {
     @NotBlank(message = "Vehicle Description is Required")
     private String vehicleDescription;
 
-//    private String dealerWhatsappNumber;
-//
-//    private String dealerBussinessName;
+    @NotNull(message = "Vehicle Type is Required")
+    private VehicleType vehicleType;
+
 
 
 

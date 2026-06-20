@@ -172,50 +172,20 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    public RevenueCountResponseDTO getTotalRevenue() {
+
+        return RevenueCountResponseDTO.builder()
+                .totalRevenue(paymentRepository.getTotalRevenue())
+                .build();
+    }
+
+    @Override
     public CustomerLeadCountResponseDTO getTotalCustomerLeadCount() {
 
         return CustomerLeadCountResponseDTO.builder()
                 .totalCustomerLeads(customerLeadRepository.count())
                 .build();
     }
-//
-//    @Override
-//    public List<AdminMonthlyAnalyticsDTO> getMonthlyDealerRegistrations() {
-//
-//        return dealerRepository.getMonthlyDealerRegistrations()
-//                .stream()
-//                .map(obj -> new AdminMonthlyAnalyticsDTO(
-//                        Month.of((Integer) obj[0]).name(),
-//                        (Long) obj[1]
-//                ))
-//                .toList();
-//    }
-//
-//
-//    @Override
-//    public List<AdminMonthlyAnalyticsDTO> getMonthlyLeads() {
-//
-//        return customerLeadRepository.getMonthlyLeads()
-//                .stream()
-//                .map(obj -> new AdminMonthlyAnalyticsDTO(
-//                        Month.of((Integer) obj[0]).name(),
-//                        (Long) obj[1]
-//                ))
-//                .toList();
-//    }
-//
-//    @Override
-//    public List<AdminMonthlyAnalyticsDTO> getMonthlyRevenue() {
-//
-//        return paymentRepository.getMonthlyRevenue()
-//                .stream()
-//                .map(obj -> new AdminMonthlyAnalyticsDTO(
-//                        Month.of((Integer) obj[0]).name(),
-//                        (long) ((Number) obj[1]).doubleValue()
-//                ))
-//                .toList();
-//    }
-
 
     @Override
     public List<AdminMonthlyLeadAnalyticsDTO> getMonthlyLead() {

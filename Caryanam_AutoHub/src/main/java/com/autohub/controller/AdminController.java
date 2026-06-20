@@ -102,6 +102,10 @@ public class AdminController {
         );
     }
 
+    @GetMapping("/total-revenue/count")
+    public ResponseEntity<RevenueCountResponseDTO> getTotalRevenue() {
+        return ResponseEntity.ok(adminService.getTotalRevenue());
+    }
 
     // Month-wise Dealer Registrations
     @GetMapping("/monthly-dealer-registrations")

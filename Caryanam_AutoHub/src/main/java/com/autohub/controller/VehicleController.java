@@ -129,14 +129,25 @@ public class VehicleController {
     }
 
 
-    // ================= GET ALL ACTIVE AND FEATURES VEHICLE WITH PAGINATION =================
-    @GetMapping("/all-vehicle")
-    public ResponseEntity<Page<VehicleResponseDTO>> getAllVehicle(
+    // ================= GET ALL ACTIVE AND FEATURES AND NON-PREMIUM VEHICLE WITH PAGINATION =================
+    @GetMapping("/non-premium/all-vehicle")
+    public ResponseEntity<Page<VehicleResponseDTO>> getAllNonPremiumVehicle(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "7") int size
     ) {
         return ResponseEntity.ok(
-                vehicleService.getAllVehicle(page, size)
+                vehicleService.getAllNonPremiumVehicle(page, size)
+        );
+    }
+
+    // ================= GET ALL ACTIVE AND FEATURES AND PREMIUM VEHICLE WITH PAGINATION =================
+    @GetMapping("/premium/all-vehicle")
+    public ResponseEntity<Page<VehicleResponseDTO>> getAllPremiumVehicle(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "7") int size
+    ) {
+        return ResponseEntity.ok(
+                vehicleService.getAllPremiumVehicle(page, size)
         );
     }
 

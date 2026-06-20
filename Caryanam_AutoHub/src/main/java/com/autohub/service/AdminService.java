@@ -29,6 +29,9 @@ public interface AdminService {
     //COUNT LEADS
     CustomerLeadCountResponseDTO getTotalCustomerLeadCount();
 
+    //Count Revenue
+    RevenueCountResponseDTO getTotalRevenue();
+
     List<AdminMonthlyDealerAnalyticsDTO> getMonthlyDealerAnalytics();
 
     List<AdminMonthlyLeadAnalyticsDTO> getMonthlyLead();

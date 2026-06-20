@@ -1,6 +1,7 @@
 package com.autohub.dto;
 
 import com.autohub.enums.VehicleStatus;
+import com.autohub.enums.VehicleType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -44,6 +45,8 @@ public class VehicleResponseDTO {
     private String vehicleDescription;
 
     private VehicleStatus vehicleStatus;
+
+    private VehicleType vehicleType;
 
     private LocalDateTime createdAt;
 
