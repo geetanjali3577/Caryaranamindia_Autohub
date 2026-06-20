@@ -27,4 +27,14 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
             GROUP BY p.subscriptionPlan
             """)
     List<Object[]> getRevenueByPlanReport();
+
+    //Admin dashboard
+    @Query("""
+    SELECT MONTH(p.paymentDate),
+           SUM(p.amount)
+    FROM Payment p
+    GROUP BY MONTH(p.paymentDate)
+    ORDER BY MONTH(p.paymentDate)
+""")
+    List<Object[]> getMonthlyRevenueAnalytics();
 }

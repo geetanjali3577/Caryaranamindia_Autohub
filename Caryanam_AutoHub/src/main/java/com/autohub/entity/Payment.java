@@ -4,6 +4,7 @@ import com.autohub.enums.PaymentStatus;
 import com.autohub.enums.SubscriptionPlan;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -26,6 +27,7 @@ public class Payment {
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
 
+    @CreationTimestamp
     private LocalDateTime paymentDate;
 
     @ManyToOne

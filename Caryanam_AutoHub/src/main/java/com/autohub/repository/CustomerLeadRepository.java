@@ -49,6 +49,15 @@ public interface CustomerLeadRepository extends JpaRepository<CustomerLead,Long>
     //Count of leads
     long count();
 
+    //Admin dashboard
+    @Query("""
+    SELECT MONTH(cl.enquiryDate),
+           COUNT(cl)
+    FROM CustomerLead cl
+    GROUP BY MONTH(cl.enquiryDate)
+    ORDER BY MONTH(cl.enquiryDate)
+""")
+    List<Object[]> getMonthlyLeadAnalytics();
 
 
 

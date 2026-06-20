@@ -103,7 +103,39 @@ public class AdminController {
     }
 
 
+    // Month-wise Dealer Registrations
+    @GetMapping("/monthly-dealer-registrations")
+    public ResponseEntity<List<AdminMonthlyDealerAnalyticsDTO>> getMonthlyDealerAnalytics() {
+
+        return ResponseEntity.ok(
+                adminService.getMonthlyDealerAnalytics()
+        );
+    }
+
+    // Month-wise Leads
+    @GetMapping("/monthly-leads")
+    public ResponseEntity<List<AdminMonthlyLeadAnalyticsDTO>> getMonthlyLead() {
+
+        return ResponseEntity.ok(
+                adminService.getMonthlyLead()
+        );
+    }
+
+    // Month-wise Revenue
+    @GetMapping("/monthly-revenue")
+    public ResponseEntity<List<AdminMonthlyRevenueDTO>> getRevenueAnalytics() {
+
+        return ResponseEntity.ok(
+                adminService.getMonthlyRevenueAnalytics()
+        );
+    }
 
 
 
 }
+
+
+
+
+
+

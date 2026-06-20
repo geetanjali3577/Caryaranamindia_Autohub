@@ -32,4 +32,14 @@ public interface DealerRepository extends JpaRepository<Dealer, Long> {
 
     long countByDealerAccountStatus(DealerStatus dealerAccountStatus);
 
+    //Admin dashboard
+    @Query("""
+    SELECT MONTH(d.createdAt),
+           COUNT(d)
+    FROM Dealer d
+    GROUP BY MONTH(d.createdAt)
+    ORDER BY MONTH(d.createdAt)
+""")
+    List<Object[]> getMonthlyDealerAnalytics();
+
 }
