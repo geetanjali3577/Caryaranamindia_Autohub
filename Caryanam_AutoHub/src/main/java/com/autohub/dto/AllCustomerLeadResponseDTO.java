@@ -28,5 +28,5 @@ public class AllCustomerLeadResponseDTO {
 
     private CustomerLeadStatus leadStatus;
 
-    private Vehicle vehicleName;
+    private String vehicleName;
 }

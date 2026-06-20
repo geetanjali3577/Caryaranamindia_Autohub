@@ -10,6 +10,7 @@ import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "Dealer_Reg")
@@ -87,6 +88,9 @@ public class Dealer {
     private LocalDateTime subscriptionStartDate;
 
     private LocalDateTime subscriptionEndDate;
+
+//    @OneToMany(mappedBy = "dealer")
+//    private List<Payment> payments;
 
 
 }

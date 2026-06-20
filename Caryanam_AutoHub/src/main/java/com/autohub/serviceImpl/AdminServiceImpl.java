@@ -81,7 +81,7 @@ public class AdminServiceImpl implements AdminService {
                         .customerCity(lead.getCustomerCity())
                         .leadStatus(lead.getLeadStatus())
                         .enquiryDate(lead.getEnquiryDate())
-                        .vehicleName(lead.getVehicle())
+                        .vehicleName(lead.getVehicle().getBrand()+" "+lead.getVehicle().getBrand()+" "+lead.getVehicle().getRegistrationYear())
                         .build())
                 .toList();
     }

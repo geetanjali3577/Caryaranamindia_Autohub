@@ -10,6 +10,8 @@ public class DealerSubscriptionResponseDTO {
 
     private Long dealerId;
 
+    private Long paymentId;
+
     private String dealerName;
 
     private LocalDateTime subscriptionStartDate;

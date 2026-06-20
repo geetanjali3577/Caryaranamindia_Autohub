@@ -27,7 +27,6 @@ public interface VehicleService {
 
     VehicleResponseDTO getVehicleById(Long vehicleId);
 
-
     List<VehicleResponseDTO> getAllVehicle();
 
     List<VehicleResponseDTO> getLatestFeaturedVehicles();

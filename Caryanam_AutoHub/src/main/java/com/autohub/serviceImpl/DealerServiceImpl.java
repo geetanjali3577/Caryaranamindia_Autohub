@@ -505,6 +505,13 @@ public DealerResponseDTO registerDealer(DealerRegisterDTO dto, MultipartFile dea
                     dto.setDealerId(dealer.getId());
                     dto.setDealerName(dealer.getBusinessName());
                     dto.setSubscriptionStartDate(dealer.getSubscriptionStartDate());
+                    Optional<Payment> payment =
+                            paymentRepository.findTopByDealerIdOrderByPaymentIdDesc(dealer.getId());
+
+                    dto.setPaymentId(
+                            payment.map(Payment::getPaymentId).orElse(null)
+                    );
+
                     dto.setSubscriptionEndDate(dealer.getSubscriptionEndDate());
 
                     dto.setSubscriptionActive( dealer.getSubscriptionActive());

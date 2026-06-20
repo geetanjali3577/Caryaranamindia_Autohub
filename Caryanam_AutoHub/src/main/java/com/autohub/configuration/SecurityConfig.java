@@ -74,7 +74,7 @@ public class SecurityConfig {
                                         ,"/api/payment/admin/history"
                                         ,"/api/payment/dealer/**"
                                         ,"/api/admin/reports/**"
-                                        ,"/api/vehicle/all-vehicle"
+//                                        ,"/api/admin/all-vehicle"
                                         ,"/api/admin/all-dealers"
                                         ,"/api/admin/dealer/count"
 

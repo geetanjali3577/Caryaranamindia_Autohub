@@ -463,7 +463,7 @@ public class VehicleServiceImpl implements VehicleService {
     @Override
     public List<VehicleResponseDTO> getAllVehicle() {
 
-        List<Vehicle> vehicles = vehicleRepository.findAll();
+        List<Vehicle> vehicles = vehicleRepository.findAllActiveAndFeaturedVehicles();
 
         if (vehicles.isEmpty()) {
             throw new ResourceNotFoundException("Dealer has no vehicles");
@@ -576,11 +576,19 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public List<VehicleResponseDTO> getLatestVehicles() {
+//
+//        List<Vehicle> vehicles =
+//                vehicleRepository.findLatestActiveAndFeaturedVehicles();
 
         List<Vehicle> vehicles =
-                vehicleRepository.findTop10ByOrderByCreatedAtDesc();
+                vehicleRepository.findTop10ByVehicleStatusInOrderByCreatedAtDesc(
+                        List.of(VehicleStatus.ACTIVE,VehicleStatus.FEATURED)
+                );
 
         return vehicles.stream()
+                .filter(vehicle ->
+                        vehicle.getVehicleStatus() == VehicleStatus.ACTIVE
+                                || vehicle.getVehicleStatus() == VehicleStatus.FEATURED)
                 .map(vehicle -> VehicleResponseDTO.builder()
                         .id(vehicle.getId())
                         .dealerId(vehicle.getDealer().getId())

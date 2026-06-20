@@ -73,9 +73,7 @@ public class AdminController {
     @GetMapping("/all-leads")
     public ResponseEntity<List<AllCustomerLeadResponseDTO>> getAllCustomerLeads() {
 
-        return ResponseEntity.ok(
-                adminService.getAllCustomerLeads()
-        );
+        return ResponseEntity.ok(adminService.getAllCustomerLeads());
     }
 
     // ================= TOTAL COUNT OF  LEADS =================

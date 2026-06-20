@@ -29,8 +29,27 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
 
     List<Vehicle> findTop10ByVehicleStatusOrderByIdDesc(VehicleStatus vehicleStatus);
 
-    //List<Vehicle> findTop10ByVehicleStatusOrderByCreatedAtDesc(VehicleStatus vehicleStatus);
 
     List<Vehicle> findTop10ByOrderByCreatedAtDesc();
+
+    @Query("""
+    SELECT v
+    FROM Vehicle v
+    WHERE v.vehicleStatus IN ('ACTIVE', 'FEATURED')
+    """)
+    List<Vehicle> findAllActiveAndFeaturedVehicles();
+
+//    @Query(value = """
+//        SELECT *
+//        FROM vehicle_info
+//        WHERE vehicle_status IN ('ACTIVE', 'FEATURED')
+//        ORDER BY created_at DESC
+//        LIMIT 10
+//        """, nativeQuery = true)
+//    List<Vehicle> findLatestActiveAndFeaturedVehicles();
+
+    List<Vehicle> findTop10ByVehicleStatusInOrderByCreatedAtDesc(
+            List<VehicleStatus> statuses
+    );
 
 }
