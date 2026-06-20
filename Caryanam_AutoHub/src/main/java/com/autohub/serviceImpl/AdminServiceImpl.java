@@ -3,6 +3,7 @@ package com.autohub.serviceImpl;
 import com.autohub.dto.*;
 import com.autohub.entity.CustomerLead;
 import com.autohub.entity.Dealer;
+import com.autohub.entity.Vehicle;
 import com.autohub.enums.DealerStatus;
 import com.autohub.exception.ResourceNotFoundException;
 import com.autohub.repository.AdminRepository;
@@ -11,6 +12,7 @@ import com.autohub.repository.DealerRepository;
 import com.autohub.repository.VehicleRepository;
 import com.autohub.service.AdminService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +26,9 @@ public class AdminServiceImpl implements AdminService {
     private final CustomerLeadRepository customerLeadRepository;
 
     private final VehicleRepository vehicleRepository;
+
+    @Value("${server.port}")
+    private String port;
 
 
     //All dealer
@@ -68,6 +73,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
 
+    //All leads
     @Override
     public List<AllCustomerLeadResponseDTO> getAllCustomerLeads() {
 
@@ -86,7 +92,7 @@ public class AdminServiceImpl implements AdminService {
                 .toList();
     }
 
-
+    //All pending dealer
     @Override
     public PendingDealerCountResponseDTO getPendingDealerCount() {
 
@@ -95,6 +101,63 @@ public class AdminServiceImpl implements AdminService {
         return PendingDealerCountResponseDTO.builder()
                 .totalPendingDealers(count)
                 .build();
+    }
+
+    @Override
+    public List<VehicleResponseDTO> getAllVehicle() {
+        List<Vehicle> vehicles = vehicleRepository.findAll();
+
+        if (vehicles.isEmpty()) {
+            throw new ResourceNotFoundException("No Vehicles");
+        }
+
+        return vehicles.stream()
+                .map(vehicle -> VehicleResponseDTO.builder()
+                        .id(vehicle.getId())
+                        .dealerId(vehicle.getDealer().getId())
+                        .brand(vehicle.getBrand())
+                        .model(vehicle.getModel())
+                        .variant(vehicle.getVariant())
+                        .registrationYear(vehicle.getRegistrationYear())
+                        .askingPrice(vehicle.getAskingPrice())
+                        .kilometerDriven(vehicle.getKilometerDriven())
+                        .fuelType(vehicle.getFuelType())
+                        .transmission(vehicle.getTransmission())
+                        .ownershipDetails(vehicle.getOwnershipDetails())
+                        .insuranceStatus(vehicle.getInsuranceStatus())
+                        .vehicleDescription(vehicle.getVehicleDescription())
+                        .city(vehicle.getCity())
+                        .dealerContactName(vehicle.getDealer().getOwnerName())
+                        .dealerContactNumber(vehicle.getDealer().getMobile())
+                        .dealerWhatsappNumber(vehicle.getDealer().getWhatsapp())
+                        .dealerBusinessName(vehicle.getDealer().getBusinessName())
+                        .dealerContactEmail(vehicle.getDealer().getEmail())
+                        .vehicleStatus(vehicle.getVehicleStatus())
+                        .createdAt(vehicle.getCreatedAt())
+                        .images(
+                                vehicle.getMediaList() == null
+                                        ? List.of()
+                                        : vehicle.getMediaList().stream()
+                                        .filter(media -> "IMAGE".equalsIgnoreCase(media.getMediaType()))
+                                        //.map(VehicleMedia::getFilePath)
+                                        .map(media -> "http://localhost:"+port+"/" +
+                                                media.getFilePath().replace("\\", "/"))
+                                        .toList()
+                        )
+
+                        .videos(
+                                vehicle.getMediaList() == null
+                                        ? List.of()
+                                        : vehicle.getMediaList().stream()
+                                        .filter(media -> "VIDEO".equalsIgnoreCase(media.getMediaType()))
+                                        //.map(VehicleMedia::getFilePath)
+                                        .map(media ->"http://localhost:"+port+ "/" +
+                                                media.getFilePath().replace("\\", "/"))
+                                        .toList()
+                        )
+
+                        .build())
+                .toList();
     }
 
     @Override

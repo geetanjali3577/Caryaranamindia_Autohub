@@ -1,6 +1,7 @@
 package com.autohub.controller;
 
 import com.autohub.dto.*;
+import com.autohub.repository.VehicleRepository;
 import com.autohub.service.AdminService;
 import com.autohub.service.DealerService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,6 +19,8 @@ public class AdminController {
     private final DealerService dealerService;
 
     private final AdminService adminService;
+
+    private final VehicleRepository vehicleRepository;
 
     // ================= CHANGE DEALER ACCOUNT STATUS :  APPROVED, PENDING =================
     @PutMapping("/dealer-status/{dealerId}")
@@ -62,6 +65,20 @@ public class AdminController {
         return ResponseEntity.ok( adminService.getPendingDealerCount() );
     }
 
+    // ================= TOTAL VEHICLE =================
+    @GetMapping("/all-vehicle")
+    @Operation(summary = "Get all vehicle API")
+    public ResponseEntity<ResponseDto<List<VehicleResponseDTO>>> getAllVehicle() {
+
+        List<VehicleResponseDTO> response =adminService.getAllVehicle();
+
+        return ResponseEntity.ok(
+                new ResponseDto<>(
+                        200,
+                        "All Vehicles fetched successfully",
+                        response));
+    }
+
     // ================= TOTAL COUNT OF VEHICLE =================
     @GetMapping("/vehicle/count")
     public ResponseEntity<VehicleCountResponseDTO> getTotalVehicleCount() {
@@ -84,6 +101,9 @@ public class AdminController {
                 adminService.getTotalCustomerLeadCount()
         );
     }
+
+
+
 
 
 }

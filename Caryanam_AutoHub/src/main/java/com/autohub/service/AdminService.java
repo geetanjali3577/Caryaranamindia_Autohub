@@ -20,6 +20,9 @@ public interface AdminService {
     //COUNT PENDING DEALER
     PendingDealerCountResponseDTO getPendingDealerCount();
 
+    //ALL VEHICLE
+    List<VehicleResponseDTO> getAllVehicle();
+
     //COUNT VEHICLE
     VehicleCountResponseDTO getTotalVehicleCount();
 

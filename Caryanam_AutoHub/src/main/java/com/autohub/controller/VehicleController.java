@@ -128,7 +128,7 @@ public class VehicleController {
     }
 
 
-    // ================= GET ALL VEHICLE =================
+    // ================= GET ALL ACTIVE AND FEATURES VEHICLE =================
     @GetMapping("/all-vehicle")
     @Operation(summary = "Get all vehicle API")
     public ResponseEntity<ResponseDto<List<VehicleResponseDTO>>> getAllVehicle() {

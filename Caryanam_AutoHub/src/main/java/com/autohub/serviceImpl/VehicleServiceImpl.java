@@ -141,7 +141,7 @@ public class VehicleServiceImpl implements VehicleService {
                 .dealerContactName(dealer.getOwnerName())
                 .dealerContactNumber(dealer.getMobile())
                 .dealerWhatsappNumber(dealer.getWhatsapp())
-                .dealerBussinessName(dealer.getBusinessName())
+                .dealerBusinessName(dealer.getBusinessName())
                 .dealerContactEmail(dealer.getEmail())
                 .vehicleStatus(VehicleStatus.ACTIVE)
                 .createdAt(LocalDateTime.now())

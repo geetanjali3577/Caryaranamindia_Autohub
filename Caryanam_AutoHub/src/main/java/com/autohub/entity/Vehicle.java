@@ -60,10 +60,12 @@ public class Vehicle {
     @Enumerated(EnumType.STRING)
     private VehicleStatus vehicleStatus;
 
+//    @Enumerated(EnumType.STRING)
+//    private VehicleType vehicleType;//premium or non-premium
+
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
-
 
     private String dealerContactName;
 
@@ -73,7 +75,7 @@ public class Vehicle {
 
     private String dealerWhatsappNumber;
 
-    private String dealerBussinessName;
+    private String dealerBusinessName;
 
     @ManyToOne
     @JoinColumn(name = "dealer_id")
