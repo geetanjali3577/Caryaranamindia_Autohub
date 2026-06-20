@@ -15,6 +15,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -460,62 +465,168 @@ public class VehicleServiceImpl implements VehicleService {
                 .build();
     }
 
-    @Override
-    public List<VehicleResponseDTO> getAllVehicle() {
 
-        List<Vehicle> vehicles = vehicleRepository.findAllActiveAndFeaturedVehicles();
+//    @Override
+//    public Page<VehicleResponseDTO> getAllVehicle(
+//            String brand,
+//            String city,
+//            String model,
+//            Double minPrice,
+//            Double maxPrice,
+//            int page,
+//            int size,
+//            String sortBy,
+//            String sortDir
+//    ) {
+//
+//        Sort sort = sortDir.equalsIgnoreCase("desc")
+//                ? Sort.by(sortBy).ascending()
+//                : Sort.by(sortBy).descending();
+//
+//        Pageable pageable = PageRequest.of(page, size, sort);
+//
+//        Specification<Vehicle> spec = (root, query, cb) ->
+//                root.get("vehicleStatus")
+//                        .in(VehicleStatus.ACTIVE, VehicleStatus.FEATURED);
+//
+//
+//        if (brand != null && !brand.isBlank()) {
+//            spec = spec.and((root, query, cb) ->
+//                    cb.equal(root.get("brand"), brand));
+//        }
+//
+//        if (city != null && !city.isBlank()) {
+//            spec = spec.and((root, query, cb) ->
+//                    cb.equal(root.get("city"), city));
+//        }
+//
+//        if (model != null && !model.isBlank()) {
+//            spec = spec.and((root, query, cb) ->
+//                    cb.equal(root.get("fuelType"), model));
+//        }
+//
+//        if (minPrice != null) {
+//            spec = spec.and((root, query, cb) ->
+//                    cb.greaterThanOrEqualTo(
+//                            root.get("askingPrice"),
+//                            minPrice
+//                    ));
+//        }
+//
+//        if (maxPrice != null) {
+//            spec = spec.and((root, query, cb) ->
+//                    cb.lessThanOrEqualTo(
+//                            root.get("askingPrice"),
+//                            maxPrice
+//                    ));
+//        }
+//
+//        Page<Vehicle> vehicles = vehicleRepository.findAll(spec, pageable);
+//
+//        if (vehicles.isEmpty()) {
+//            throw new ResourceNotFoundException("No vehicles found");
+//        }
+//
+//        return vehicles.map(vehicle -> VehicleResponseDTO.builder()
+//                .id(vehicle.getId())
+//                .dealerId(vehicle.getDealer().getId())
+//                .brand(vehicle.getBrand())
+//                .model(vehicle.getModel())
+//                .variant(vehicle.getVariant())
+//                .registrationYear(vehicle.getRegistrationYear())
+//                .askingPrice(vehicle.getAskingPrice())
+//                .kilometerDriven(vehicle.getKilometerDriven())
+//                .fuelType(vehicle.getFuelType())
+//                .transmission(vehicle.getTransmission())
+//                .ownershipDetails(vehicle.getOwnershipDetails())
+//                .insuranceStatus(vehicle.getInsuranceStatus())
+//                .vehicleDescription(vehicle.getVehicleDescription())
+//                .city(vehicle.getCity())
+//                .dealerContactName(vehicle.getDealer().getOwnerName())
+//                .dealerContactNumber(vehicle.getDealer().getMobile())
+//                .dealerWhatsappNumber(vehicle.getDealer().getWhatsapp())
+//                .dealerBusinessName(vehicle.getDealer().getBusinessName())
+//                .dealerContactEmail(vehicle.getDealer().getEmail())
+//                .vehicleStatus(vehicle.getVehicleStatus())
+//                .createdAt(vehicle.getCreatedAt())
+//
+//                .images(
+//                        vehicle.getMediaList() == null
+//                                ? List.of()
+//                                : vehicle.getMediaList().stream()
+//                                .filter(media -> "IMAGE".equalsIgnoreCase(media.getMediaType()))
+//                                .map(media -> "http://localhost:" + port + "/" +
+//                                        media.getFilePath().replace("\\", "/"))
+//                                .toList()
+//                )
+//
+//                .videos(
+//                        vehicle.getMediaList() == null
+//                                ? List.of()
+//                                : vehicle.getMediaList().stream()
+//                                .filter(media -> "VIDEO".equalsIgnoreCase(media.getMediaType()))
+//                                .map(media -> "http://localhost:" + port + "/" +
+//                                        media.getFilePath().replace("\\", "/"))
+//                                .toList()
+//                )
+//                .build());
+//    }
+
+    @Override
+    public Page<VehicleResponseDTO> getAllVehicle(int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Vehicle> vehicles =
+                vehicleRepository.findAllActiveAndFeaturedVehicles(pageable);
 
         if (vehicles.isEmpty()) {
-            throw new ResourceNotFoundException("Dealer has no vehicles");
+            throw new ResourceNotFoundException("No vehicles found");
         }
 
-        return vehicles.stream()
-                .map(vehicle -> VehicleResponseDTO.builder()
-                        .id(vehicle.getId())
-                        .dealerId(vehicle.getDealer().getId())
-                        .brand(vehicle.getBrand())
-                        .model(vehicle.getModel())
-                        .variant(vehicle.getVariant())
-                        .registrationYear(vehicle.getRegistrationYear())
-                        .askingPrice(vehicle.getAskingPrice())
-                        .kilometerDriven(vehicle.getKilometerDriven())
-                        .fuelType(vehicle.getFuelType())
-                        .transmission(vehicle.getTransmission())
-                        .ownershipDetails(vehicle.getOwnershipDetails())
-                        .insuranceStatus(vehicle.getInsuranceStatus())
-                        .vehicleDescription(vehicle.getVehicleDescription())
-                        .city(vehicle.getCity())
-                        .dealerContactName(vehicle.getDealer().getOwnerName())
-                        .dealerContactNumber(vehicle.getDealer().getMobile())
-                        .dealerWhatsappNumber(vehicle.getDealer().getWhatsapp())
-                        .dealerBusinessName(vehicle.getDealer().getBusinessName())
-                        .dealerContactEmail(vehicle.getDealer().getEmail())
-                        .vehicleStatus(vehicle.getVehicleStatus())
-                        .createdAt(vehicle.getCreatedAt())
-                        .images(
-                                vehicle.getMediaList() == null
-                                        ? List.of()
-                                        : vehicle.getMediaList().stream()
-                                        .filter(media -> "IMAGE".equalsIgnoreCase(media.getMediaType()))
-                                        //.map(VehicleMedia::getFilePath)
-                                        .map(media -> "http://localhost:"+port+"/" +
-                                                media.getFilePath().replace("\\", "/"))
-                                        .toList()
-                        )
+        return vehicles.map(vehicle -> VehicleResponseDTO.builder()
+                .id(vehicle.getId())
+                .dealerId(vehicle.getDealer().getId())
+                .brand(vehicle.getBrand())
+                .model(vehicle.getModel())
+                .variant(vehicle.getVariant())
+                .registrationYear(vehicle.getRegistrationYear())
+                .askingPrice(vehicle.getAskingPrice())
+                .kilometerDriven(vehicle.getKilometerDriven())
+                .fuelType(vehicle.getFuelType())
+                .transmission(vehicle.getTransmission())
+                .ownershipDetails(vehicle.getOwnershipDetails())
+                .insuranceStatus(vehicle.getInsuranceStatus())
+                .vehicleDescription(vehicle.getVehicleDescription())
+                .city(vehicle.getCity())
+                .dealerContactName(vehicle.getDealer().getOwnerName())
+                .dealerContactNumber(vehicle.getDealer().getMobile())
+                .dealerWhatsappNumber(vehicle.getDealer().getWhatsapp())
+                .dealerBusinessName(vehicle.getDealer().getBusinessName())
+                .dealerContactEmail(vehicle.getDealer().getEmail())
+                .vehicleStatus(vehicle.getVehicleStatus())
+                .createdAt(vehicle.getCreatedAt())
 
-                        .videos(
-                                vehicle.getMediaList() == null
-                                        ? List.of()
-                                        : vehicle.getMediaList().stream()
-                                        .filter(media -> "VIDEO".equalsIgnoreCase(media.getMediaType()))
-                                        //.map(VehicleMedia::getFilePath)
-                                        .map(media ->"http://localhost:"+port+ "/" +
-                                                media.getFilePath().replace("\\", "/"))
-                                        .toList()
-                        )
+                .images(
+                        vehicle.getMediaList() == null
+                                ? List.of()
+                                : vehicle.getMediaList().stream()
+                                .filter(media -> "IMAGE".equalsIgnoreCase(media.getMediaType()))
+                                .map(media -> "http://localhost:" + port + "/" +
+                                        media.getFilePath().replace("\\", "/"))
+                                .toList()
+                )
 
-                        .build())
-                .toList();
+                .videos(
+                        vehicle.getMediaList() == null
+                                ? List.of()
+                                : vehicle.getMediaList().stream()
+                                .filter(media -> "VIDEO".equalsIgnoreCase(media.getMediaType()))
+                                .map(media -> "http://localhost:" + port + "/" +
+                                        media.getFilePath().replace("\\", "/"))
+                                .toList()
+                )
+                .build());
     }
 
     @Override

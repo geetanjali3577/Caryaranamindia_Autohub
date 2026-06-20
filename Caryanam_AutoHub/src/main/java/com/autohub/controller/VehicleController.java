@@ -9,6 +9,7 @@ import com.autohub.service.VehicleService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -128,18 +129,15 @@ public class VehicleController {
     }
 
 
-    // ================= GET ALL ACTIVE AND FEATURES VEHICLE =================
+    // ================= GET ALL ACTIVE AND FEATURES VEHICLE WITH PAGINATION =================
     @GetMapping("/all-vehicle")
-    @Operation(summary = "Get all vehicle API")
-    public ResponseEntity<ResponseDto<List<VehicleResponseDTO>>> getAllVehicle() {
-
-        List<VehicleResponseDTO> response =vehicleService.getAllVehicle();
-
+    public ResponseEntity<Page<VehicleResponseDTO>> getAllVehicle(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "7") int size
+    ) {
         return ResponseEntity.ok(
-                new ResponseDto<>(
-                        200,
-                        "All Vehicles fetched successfully",
-                        response));
+                vehicleService.getAllVehicle(page, size)
+        );
     }
 
     // ================= GET ALL FEATURED ONLY 10 VEHICLE =================

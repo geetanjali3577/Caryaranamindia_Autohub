@@ -4,6 +4,7 @@ import com.autohub.dto.VehicleRequestDTO;
 import com.autohub.dto.VehicleResponseDTO;
 import com.autohub.dto.VehicleStatusRequestDTO;
 import com.autohub.entity.Vehicle;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,11 +28,11 @@ public interface VehicleService {
 
     VehicleResponseDTO getVehicleById(Long vehicleId);
 
-    List<VehicleResponseDTO> getAllVehicle();
-
     List<VehicleResponseDTO> getLatestFeaturedVehicles();
 
     List<VehicleResponseDTO> getLatestVehicles();
+
+    Page<VehicleResponseDTO> getAllVehicle(int page, int size);
 
   }
 
