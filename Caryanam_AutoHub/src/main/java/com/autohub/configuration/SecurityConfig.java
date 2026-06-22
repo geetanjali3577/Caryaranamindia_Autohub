@@ -59,8 +59,10 @@ public class SecurityConfig {
                                         ,"/api/lead/generate-lead/**"
                                         ,"/api/lead/generate-view/**"
                                         ,"/api/vehicle/dealer/**"
-                                        ,"/api/vehicle/**"
-                                        ,"/api/vehicle/all-vehicle"
+                                        ,"/api/vehicle/featured"
+                                        ,"/api/vehicle/latest-vehicles"
+                                        ,"/api/vehicle/non-premium/all-vehicle"
+                                        ,"/api/vehicle/premium/all-vehicle"
                                         ,"/uploads/**"
                                         ,"/swagger-ui/**",
                                         "/swagger-ui.html",
@@ -82,18 +84,18 @@ public class SecurityConfig {
 
                                 //DEALER API
                                 .requestMatchers(
-                                        "/api/dealer/**"
-                                        ,"/api/vehicle/add/**"
-                                        ,"/api/vehicle/update/**"
-                                        ,"/api/vehicle/status/**"
-                                        ,"/api/vehicle/delete/**"
-                                        ,"/api/lead/all-leads/**"
-                                        ,"/api/lead/lead-status/**"
-                                        ,"/api/payment/subscription/purchase"
-                                        ,"/api/analytics/**"
+                                        "/api/lead/**",
+                                        "/api/dealer/**",
+                                        "/api/vehicle/add/**",
+                                        "/api/vehicle/update/**",
+                                        "/api/vehicle/status/**",
+                                        "/api/vehicle/delete/**",
+                                        "/api/payment/subscription/purchase",
+                                        "/api/analytics/**"
+                                        ,"/api/wishlist/dealer/**"
                                 ).hasRole("DEALER")
 
-                                .requestMatchers("/api/lead/customer-dashboard"
+                                .requestMatchers("/api/lead/customer-dashboard","/api/wishlist/**"
                                 ).hasRole("CUSTOMER")
 
 

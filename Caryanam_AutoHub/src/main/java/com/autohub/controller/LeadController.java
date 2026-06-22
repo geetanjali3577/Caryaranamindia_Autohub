@@ -71,7 +71,7 @@ public class LeadController {
         return ResponseEntity.ok(new ResponseDto<>(200,"Lead status successfully",response));
     }
 
-    // =============== ADD VIEW ON VEHICLE FROM CUSTOMER =====================
+    // =============== ADD CUSTOMER DASHBOARD =====================
 
     @GetMapping("/customer-dashboard")
     @Operation(summary = "Customer Dashboard")

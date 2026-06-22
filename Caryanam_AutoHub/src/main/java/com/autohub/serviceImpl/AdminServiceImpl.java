@@ -127,7 +127,7 @@ public class AdminServiceImpl implements AdminService {
                         .fuelType(vehicle.getFuelType())
                         .transmission(vehicle.getTransmission())
                         .ownershipDetails(vehicle.getOwnershipDetails())
-                        .insuranceStatus(vehicle.getInsuranceStatus())
+                        .insuranceStatus(String.valueOf(vehicle.getInsuranceStatus()))
                         .vehicleDescription(vehicle.getVehicleDescription())
                         .city(vehicle.getCity())
                         .dealerContactName(vehicle.getDealer().getOwnerName())

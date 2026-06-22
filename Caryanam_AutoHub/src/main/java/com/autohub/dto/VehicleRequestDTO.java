@@ -1,5 +1,6 @@
 package com.autohub.dto;
 
+import com.autohub.enums.InsuranceStatus;
 import com.autohub.enums.VehicleType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -36,7 +37,7 @@ public class VehicleRequestDTO {
     private String ownershipDetails;
 
     @NotBlank(message = "Insurance Status is Required")
-    private String insuranceStatus;
+    private InsuranceStatus insuranceStatus;
 
     @NotBlank(message = "City is Required")
     private String city;

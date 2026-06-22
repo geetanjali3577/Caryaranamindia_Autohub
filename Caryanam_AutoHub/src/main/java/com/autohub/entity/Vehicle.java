@@ -1,5 +1,6 @@
 package com.autohub.entity;
 
+import com.autohub.enums.InsuranceStatus;
 import com.autohub.enums.VehicleStatus;
 import com.autohub.enums.VehicleType;
 import jakarta.persistence.*;
@@ -49,8 +50,8 @@ public class Vehicle {
     @Column(nullable = false)
     private String ownershipDetails;
 
-    @Column(nullable = false)
-    private String insuranceStatus;
+    @Enumerated(EnumType.STRING)
+    private InsuranceStatus insuranceStatus;
 
     @Column(nullable = false)
     private String city;
