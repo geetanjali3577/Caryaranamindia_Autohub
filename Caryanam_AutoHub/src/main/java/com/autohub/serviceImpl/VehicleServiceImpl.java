@@ -382,6 +382,7 @@ public class VehicleServiceImpl implements VehicleService {
                         .dealerBusinessName(vehicle.getDealer().getBusinessName())
                         .dealerContactEmail(vehicle.getDealer().getEmail())
                         .vehicleStatus(vehicle.getVehicleStatus())
+                        .vehicleType(vehicle.getVehicleType())
                         .createdAt(vehicle.getCreatedAt())
                         .images(
                                 vehicle.getMediaList() == null
@@ -441,6 +442,7 @@ public class VehicleServiceImpl implements VehicleService {
                 .dealerBusinessName(vehicle.getDealer().getBusinessName())
                 .dealerContactEmail(vehicle.getDealer().getEmail())
                 .vehicleStatus(vehicle.getVehicleStatus())
+                .vehicleType(vehicle.getVehicleType())
                 .createdAt(vehicle.getCreatedAt())
                 .images(
                         vehicle.getMediaList() == null
@@ -617,6 +619,7 @@ public class VehicleServiceImpl implements VehicleService {
                         .dealerBusinessName(vehicle.getDealer().getBusinessName())
                         .dealerContactEmail(vehicle.getDealer().getEmail())
                         .vehicleStatus(vehicle.getVehicleStatus())
+                        .vehicleType(vehicle.getVehicleType())
                         .createdAt(vehicle.getCreatedAt())
                         .images(
                                 vehicle.getMediaList() == null
@@ -634,7 +637,7 @@ public class VehicleServiceImpl implements VehicleService {
                                         ? List.of()
                                         : vehicle.getMediaList().stream()
                                         .filter(media -> "VIDEO".equalsIgnoreCase(media.getMediaType()))
-                                        //.map(VehicleMedia::getFilePath)
+
                                         .map(media ->"http://localhost:"+port+ "/" +
                                                 media.getFilePath().replace("\\", "/"))
                                         .toList()
@@ -646,9 +649,7 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public List<VehicleResponseDTO> getLatestVehicles() {
-//
-//        List<Vehicle> vehicles =
-//                vehicleRepository.findLatestActiveAndFeaturedVehicles();
+
 
         List<Vehicle> vehicles =
                 vehicleRepository.findTop10ByVehicleStatusInOrderByCreatedAtDesc(
@@ -680,6 +681,7 @@ public class VehicleServiceImpl implements VehicleService {
                         .dealerBusinessName(vehicle.getDealer().getBusinessName())
                         .dealerContactEmail(vehicle.getDealer().getEmail())
                         .vehicleStatus(vehicle.getVehicleStatus())
+                        .vehicleType(vehicle.getVehicleType())
                         .createdAt(vehicle.getCreatedAt())
                         .images(
                                 vehicle.getMediaList() == null
