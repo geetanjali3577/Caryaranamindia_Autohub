@@ -136,6 +136,7 @@ public class AdminServiceImpl implements AdminService {
                         .dealerBusinessName(vehicle.getDealer().getBusinessName())
                         .dealerContactEmail(vehicle.getDealer().getEmail())
                         .vehicleStatus(vehicle.getVehicleStatus())
+                        .vehicleType(vehicle.getVehicleType())
                         .createdAt(vehicle.getCreatedAt())
                         .images(
                                 vehicle.getMediaList() == null

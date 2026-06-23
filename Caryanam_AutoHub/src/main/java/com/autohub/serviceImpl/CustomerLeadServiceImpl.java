@@ -11,7 +11,6 @@ import com.autohub.repository.DealerRepository;
 import com.autohub.repository.VehicleRepository;
 import com.autohub.service.CustomerLeadService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -30,6 +29,8 @@ public class CustomerLeadServiceImpl implements CustomerLeadService {
 
     private final DealerRepository dealerRepository;
 
+    //private final WhatsAppService whatsAppService;
+
 
 
     @Override
@@ -37,6 +38,7 @@ public class CustomerLeadServiceImpl implements CustomerLeadService {
 
         Vehicle vehicle = vehicleRepository.findById(vehicleId).orElseThrow(() ->
                 new ResourceNotFoundException("Vehicle not found with id: " + vehicleId));
+
         Long dealerId = vehicle.getDealer().getId();
 
         Dealer dealer = dealerRepository.findById(dealerId)
@@ -53,6 +55,15 @@ public class CustomerLeadServiceImpl implements CustomerLeadService {
 
         CustomerLead saved = leadRepository.save(lead);
 
+        //Send Lead information to dealer via whatsapp
+//
+//        whatsAppService.sendMessage(
+//                vehicle.getDealer().getMobile(),
+//                "New Lead Generated\n\n" +
+//                        "Customer : " + lead.getCustomerName() +
+//                        "\nMobile : " + lead.getCustomerMobile() +
+//                        "\nVehicle : " + vehicle.getBrand()+ " "+vehicle.getModel()+" "+vehicle.getVariant()
+//        );
 
         return CustomerLeadResponseDTO.builder()
                 .id(saved.getId())
