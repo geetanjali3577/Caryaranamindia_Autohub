@@ -252,6 +252,7 @@ public DealerResponseDTO registerDealer(DealerRegisterDTO dto, MultipartFile dea
         dealer.setWhatsapp(dto.getWhatsapp());
         dealer.setAddress(dto.getAddress());
         dealer.setCity(dto.getCity());
+        dealer.setPinCode(dto.getPinCode());
         dealer.setState(dto.getState());
 
         Dealer save = dealerRepository.save(dealer);

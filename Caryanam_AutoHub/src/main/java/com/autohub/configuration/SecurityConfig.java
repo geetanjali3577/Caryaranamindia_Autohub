@@ -62,6 +62,8 @@ public class SecurityConfig {
                                         ,"/api/vehicle/latest-vehicles"
                                         ,"/api/vehicle/non-premium/all-vehicle"
                                         ,"/api/vehicle/premium/all-vehicle"
+                                        ,"/api/lead/generate-lead/**"
+                                        ,"/api/lead/generate-view/**"
                                         ,"/uploads/**"
                                         ,"/swagger-ui/**",
                                         "/swagger-ui.html",
@@ -96,8 +98,6 @@ public class SecurityConfig {
 
                                 .requestMatchers("/api/lead/customer-dashboard"
                                         ,"/api/wishlist/**"
-                                        ,"/api/lead/generate-lead/**"
-                                        ,"/api/lead/generate-view/**"
                                 ).hasRole("CUSTOMER")
 
 

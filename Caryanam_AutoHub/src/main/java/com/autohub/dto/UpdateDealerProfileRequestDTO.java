@@ -25,6 +25,9 @@ public class UpdateDealerProfileRequestDTO {
     @NotBlank(message = "City is Required")
     private String city;
 
+    @NotBlank(message = "Pin code is Required")
+    private String pinCode;
+
     @NotBlank(message = "State is Required")
     private String state;
 
