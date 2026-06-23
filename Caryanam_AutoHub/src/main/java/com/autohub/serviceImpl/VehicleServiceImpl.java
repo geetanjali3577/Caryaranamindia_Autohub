@@ -298,9 +298,11 @@ public class VehicleServiceImpl implements VehicleService {
         vehicle.setFuelType(request.getFuelType());
         vehicle.setTransmission(request.getTransmission());
         vehicle.setKilometerDriven(request.getKilometerDriven());
+        vehicle.setCity(request.getCity());
         vehicle.setOwnershipDetails(request.getOwnershipDetails());
         vehicle.setInsuranceStatus(request.getInsuranceStatus());
         vehicle.setAskingPrice(request.getAskingPrice());
+        vehicle.setVehicleType(request.getVehicleType());
         vehicle.setVehicleDescription(request.getVehicleDescription());
 
         Vehicle updatedVehicle = vehicleRepository.save(vehicle);
@@ -310,6 +312,7 @@ public class VehicleServiceImpl implements VehicleService {
                 .brand(updatedVehicle.getBrand())
                 .model(updatedVehicle.getModel())
                 .variant(updatedVehicle.getVariant())
+                .city(updatedVehicle.getCity())
                 .registrationYear(updatedVehicle.getRegistrationYear())
                 .fuelType(updatedVehicle.getFuelType())
                 .transmission(updatedVehicle.getTransmission())
@@ -317,6 +320,7 @@ public class VehicleServiceImpl implements VehicleService {
                 .ownershipDetails(updatedVehicle.getOwnershipDetails())
                 .insuranceStatus(String.valueOf(updatedVehicle.getInsuranceStatus()))
                 .askingPrice(updatedVehicle.getAskingPrice())
+                .vehicleType(updatedVehicle.getVehicleType())
                 .vehicleDescription(updatedVehicle.getVehicleDescription())
                 .build();
     }
