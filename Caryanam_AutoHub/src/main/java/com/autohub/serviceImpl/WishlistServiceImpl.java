@@ -6,11 +6,13 @@ import com.autohub.entity.Customer;
 import com.autohub.entity.Vehicle;
 import com.autohub.entity.Wishlist;
 import com.autohub.exception.ResourceNotFoundException;
+import com.autohub.exception.WishlistAlreadyExistsException;
 import com.autohub.repository.CustomerRepository;
 import com.autohub.repository.VehicleRepository;
 import com.autohub.repository.WishlistRepository;
 import com.autohub.service.WishlistService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,9 +23,11 @@ import java.util.List;
 public class WishlistServiceImpl implements WishlistService {
 
     private final WishlistRepository wishlistRepository;
-//    private final CustomerLeadRepository customerRepository;
     private final CustomerRepository customerRepository;
     private final VehicleRepository vehicleRepository;
+
+    @Value("${server.port}")
+    private String port;
 
     @Override
     public String addToWishlist(Long customerId, Long vehicleId) {
@@ -38,12 +42,13 @@ public class WishlistServiceImpl implements WishlistService {
                                 new RuntimeException("Vehicle not found"));
 
         if (wishlistRepository.existsByCustomerAndVehicle(customer, vehicle)) {
-            return "Vehicle already added to wishlist";
+            throw new WishlistAlreadyExistsException("Vehicle already added to wishlist");
         }
 
         Wishlist wishlist = new Wishlist();
         wishlist.setCustomer(customer);
         wishlist.setVehicle(vehicle);
+        wishlist.setFlag(true);
         wishlist.setAddedAt(LocalDateTime.now());
 
         wishlistRepository.save(wishlist);
@@ -61,13 +66,27 @@ public class WishlistServiceImpl implements WishlistService {
 
         return wishlistRepository.findByCustomer(customer)
                 .stream()
-                .map(w -> new CustomerWishlistDTO(
-                        w.getVehicle().getId(),
-                        w.getVehicle().getBrand(),
-                        w.getVehicle().getModel()+" "+w.getVehicle().getVariant(),
-                        w.getVehicle().getAskingPrice(),
-                        w.getAddedAt()
-                ))
+                .map(w -> CustomerWishlistDTO.builder()
+                        .vehicleId(w.getVehicle().getId())
+                        .brand(w.getVehicle().getBrand())
+                        .flag(w.getFlag())
+                        .vehicleName(
+                                w.getVehicle().getModel() + " "
+                                        + w.getVehicle().getVariant()
+                        )
+                        .price(w.getVehicle().getAskingPrice())
+                        .addedAt(w.getAddedAt())
+                        .vehicleImage(
+                                w.getVehicle().getMediaList() == null
+                                        ? null
+                                        : w.getVehicle().getMediaList().stream()
+                                        .filter(media -> "IMAGE".equalsIgnoreCase(media.getMediaType()))
+                                        .findFirst()
+                                        .map(media -> "http://localhost:" + port + "/" +
+                                                media.getFilePath().replace("\\", "/"))
+                                        .orElse(null)
+                        )
+                        .build())
                 .toList();
     }
 

@@ -17,8 +17,6 @@ public interface WishlistRepository extends JpaRepository<Wishlist, Long> {
 
     List<Wishlist> findByCustomer(Customer customer);
 
-    List<Wishlist> findByVehicleDealerId(Long dealerId);
-
     @Query("""
     SELECT w
     FROM Wishlist w
@@ -26,5 +24,10 @@ public interface WishlistRepository extends JpaRepository<Wishlist, Long> {
 """)
     List<Wishlist> findDealerWishlist(
             @Param("dealerId") Long dealerId
+    );
+
+   boolean existsByCustomer_IdAndVehicle_Id(
+            Long customerId,
+            Long vehicleId
     );
 }

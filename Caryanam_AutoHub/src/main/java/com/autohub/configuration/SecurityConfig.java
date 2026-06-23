@@ -59,6 +59,7 @@ public class SecurityConfig {
                                         ,"/api/lead/generate-lead/**"
                                         ,"/api/lead/generate-view/**"
                                         ,"/api/vehicle/dealer/**"
+                                        ,"/api/vehicle/**"
                                         ,"/api/vehicle/featured"
                                         ,"/api/vehicle/latest-vehicles"
                                         ,"/api/vehicle/non-premium/all-vehicle"

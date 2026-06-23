@@ -60,6 +60,8 @@ public class VehicleResponseDTO {
 
     private String dealerBusinessName;
 
+    private boolean isWishList;
+
     private List<String> images;
 
     private List<String> videos;

@@ -49,4 +49,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ResponseDto> handleResourceNotFoundException(ResourceNotFoundException e) {
         return new ResponseEntity<>(new ResponseDto(404, e.getMessage(), null), HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(WishlistAlreadyExistsException.class)
+    public ResponseEntity<ResponseDto> handleWishlistAlreadyExists(WishlistAlreadyExistsException ex ) {
+
+        return new ResponseEntity<>(new ResponseDto(409, ex.getMessage(), null), HttpStatus.CONFLICT);
+    }
 }

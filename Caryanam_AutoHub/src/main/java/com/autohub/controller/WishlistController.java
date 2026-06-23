@@ -4,6 +4,7 @@ import com.autohub.dto.CustomerWishlistDTO;
 import com.autohub.dto.DealerWishlistDTO;
 import com.autohub.service.WishlistService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,22 +19,15 @@ public class WishlistController {
 
     //FOR CUSTOMER
     @PostMapping("/add-wishlist/{customerId}/{vehicleId}")
-    public ResponseEntity<String> addToWishlist(
-            @PathVariable Long customerId,
-            @PathVariable Long vehicleId) {
-
-        return ResponseEntity.ok(
-                wishlistService.addToWishlist(customerId, vehicleId)
-        );
+    public ResponseEntity<String> addToWishlist(@PathVariable Long customerId,@PathVariable Long vehicleId) {
+        return new ResponseEntity<>(wishlistService.addToWishlist(customerId, vehicleId), HttpStatus.OK);
     }
 
     //FOR CUSTOMER
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<List<CustomerWishlistDTO>> getCustomerWishlist(@PathVariable Long customerId) {
 
-        return ResponseEntity.ok(
-                wishlistService.getCustomerWishlist(customerId)
-        );
+        return new ResponseEntity<>(wishlistService.getCustomerWishlist(customerId), HttpStatus.OK);
     }
 
 
@@ -51,8 +45,6 @@ public class WishlistController {
     @DeleteMapping("/customer/remove/{customerId}/{vehicleId}")
     public ResponseEntity<String> removeWishlist( @PathVariable Long customerId,  @PathVariable Long vehicleId) {
 
-        return ResponseEntity.ok(
-                wishlistService.removeWishlist(customerId, vehicleId)
-        );
+        return new ResponseEntity<>(wishlistService.removeWishlist(customerId, vehicleId), HttpStatus.OK);
     }
 }

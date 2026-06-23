@@ -20,6 +20,8 @@ public class Wishlist {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long wishlistId;
 
+    private Boolean flag;
+
     @ManyToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;

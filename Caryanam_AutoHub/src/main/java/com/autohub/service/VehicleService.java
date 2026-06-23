@@ -28,13 +28,13 @@ public interface VehicleService {
 
     VehicleResponseDTO getVehicleById(Long vehicleId);
 
-    List<VehicleResponseDTO> getLatestFeaturedVehicles();
+    List<VehicleResponseDTO> getLatestFeaturedVehicles(Long customerId);
 
-    List<VehicleResponseDTO> getLatestVehicles();
+    List<VehicleResponseDTO> getLatestVehicles(Long customerId);
 
-    Page<VehicleResponseDTO> getAllNonPremiumVehicle(int page, int size);
+    Page<VehicleResponseDTO> getAllNonPremiumVehicle(Long customerId,int page, int size);
 
-    Page<VehicleResponseDTO> getAllPremiumVehicle(int page, int size);
+    Page<VehicleResponseDTO> getAllPremiumVehicle(Long customerId,int page, int size);
 
   }
 

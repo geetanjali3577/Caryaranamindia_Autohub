@@ -39,6 +39,7 @@ public class VehicleServiceImpl implements VehicleService {
    private final CustomerLeadRepository leadRepository;
    private final PaymentRepository paymentRepository;
    private final VehicleViewRepository vehicleViewRepository;
+   private final WishlistRepository wishlistRepository;
 
 
     @Value("${file.upload-dir}")
@@ -309,7 +310,20 @@ public class VehicleServiceImpl implements VehicleService {
 
         Vehicle updatedVehicle = vehicleRepository.save(vehicle);
 
-        return modelMapper.map(updatedVehicle, VehicleResponseDTO.class);
+        return VehicleResponseDTO.builder()
+                .id(updatedVehicle.getId())
+                .brand(updatedVehicle.getBrand())
+                .model(updatedVehicle.getModel())
+                .variant(updatedVehicle.getVariant())
+                .registrationYear(updatedVehicle.getRegistrationYear())
+                .fuelType(updatedVehicle.getFuelType())
+                .transmission(updatedVehicle.getTransmission())
+                .kilometerDriven(updatedVehicle.getKilometerDriven())
+                .ownershipDetails(updatedVehicle.getOwnershipDetails())
+                .insuranceStatus(String.valueOf(updatedVehicle.getInsuranceStatus()))
+                .askingPrice(updatedVehicle.getAskingPrice())
+                .vehicleDescription(updatedVehicle.getVehicleDescription())
+                .build();
     }
 
 
@@ -469,7 +483,7 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
-    public Page<VehicleResponseDTO> getAllNonPremiumVehicle(int page, int size) {
+    public Page<VehicleResponseDTO> getAllNonPremiumVehicle(Long customerId,int page, int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
@@ -505,7 +519,6 @@ public class VehicleServiceImpl implements VehicleService {
                 .vehicleStatus(vehicle.getVehicleStatus())
                 .vehicleType(vehicle.getVehicleType())
                 .createdAt(vehicle.getCreatedAt())
-
                 .images(
                         vehicle.getMediaList() == null
                                 ? List.of()
@@ -525,12 +538,20 @@ public class VehicleServiceImpl implements VehicleService {
                                         media.getFilePath().replace("\\", "/"))
                                 .toList()
                 )
+                .isWishList(
+                        wishlistRepository.existsByCustomer_IdAndVehicle_Id(
+                                customerId,
+                                vehicle.getId()
+                        )
+                )
                 .build());
+
+
     }
 
 
     @Override
-    public Page<VehicleResponseDTO> getAllPremiumVehicle(int page, int size) {
+    public Page<VehicleResponseDTO> getAllPremiumVehicle(Long customerId,int page, int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
@@ -586,12 +607,18 @@ public class VehicleServiceImpl implements VehicleService {
                                         media.getFilePath().replace("\\", "/"))
                                 .toList()
                 )
+                .isWishList(
+                        wishlistRepository.existsByCustomer_IdAndVehicle_Id(
+                                customerId,
+                                vehicle.getId()
+                        )
+                )
                 .build());
     }
 
 
     @Override
-    public List<VehicleResponseDTO> getLatestFeaturedVehicles() {
+    public List<VehicleResponseDTO> getLatestFeaturedVehicles(Long customerId) {
 
         List<Vehicle> vehicles = vehicleRepository
                 .findTop10ByVehicleStatusOrderByIdDesc(
@@ -642,13 +669,19 @@ public class VehicleServiceImpl implements VehicleService {
                                                 media.getFilePath().replace("\\", "/"))
                                         .toList()
                         )
+                        .isWishList(
+                                wishlistRepository.existsByCustomer_IdAndVehicle_Id(
+                                        customerId,
+                                        vehicle.getId()
+                                )
+                        )
 
                         .build())
                 .toList();
     }
 
     @Override
-    public List<VehicleResponseDTO> getLatestVehicles() {
+    public List<VehicleResponseDTO> getLatestVehicles(Long customerId) {
 
 
         List<Vehicle> vehicles =
@@ -703,6 +736,12 @@ public class VehicleServiceImpl implements VehicleService {
                                         .map(media ->"http://localhost:"+port+ "/" +
                                                 media.getFilePath().replace("\\", "/"))
                                         .toList()
+                        )
+                        .isWishList(
+                                wishlistRepository.existsByCustomer_IdAndVehicle_Id(
+                                        customerId,
+                                        vehicle.getId()
+                                )
                         )
 
                         .build())
