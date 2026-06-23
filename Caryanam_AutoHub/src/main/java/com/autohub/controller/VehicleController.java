@@ -132,7 +132,7 @@ public class VehicleController {
     // ================= GET ALL ACTIVE AND FEATURES AND NON-PREMIUM VEHICLE WITH PAGINATION =================
     @GetMapping("/non-premium/all-vehicle")
     public ResponseEntity<Page<VehicleResponseDTO>> getAllNonPremiumVehicle(
-            @RequestParam Long customerId,
+            @RequestParam(required = false) Long customerId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "7") int size
     ) {
@@ -144,7 +144,7 @@ public class VehicleController {
     // ================= GET ALL ACTIVE AND FEATURES AND PREMIUM VEHICLE WITH PAGINATION =================
     @GetMapping("/premium/all-vehicle")
     public ResponseEntity<Page<VehicleResponseDTO>> getAllPremiumVehicle(
-            @RequestParam Long customerId,
+            @RequestParam(required = false) Long customerId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "7") int size
     ) {
@@ -155,14 +155,14 @@ public class VehicleController {
 
     // ================= GET ALL FEATURED ONLY 10 VEHICLE =================
     @GetMapping("/featured")
-    public ResponseEntity<List<VehicleResponseDTO>> getLatestFeaturedVehicles(@RequestParam Long customerId) {
+    public ResponseEntity<List<VehicleResponseDTO>> getLatestFeaturedVehicles(@RequestParam(required = false) Long customerId) {
 
         return ResponseEntity.ok(vehicleService.getLatestFeaturedVehicles(customerId)
         );
     }
     // ================= GET ALL LATEST ADDED ONLY 10 VEHICLE =================
     @GetMapping("/latest-vehicles")
-    public ResponseEntity<List<VehicleResponseDTO>> getLatestVehicles(@RequestParam Long customerId) {
+    public ResponseEntity<List<VehicleResponseDTO>> getLatestVehicles(@RequestParam(required = false) Long customerId) {
 
         return ResponseEntity.ok(
                 vehicleService.getLatestVehicles(customerId)

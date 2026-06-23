@@ -10,13 +10,10 @@ import com.autohub.repository.*;
 import com.autohub.service.VehicleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,13 +31,11 @@ public class VehicleServiceImpl implements VehicleService {
 
    private final VehicleRepository vehicleRepository;
    private final DealerRepository dealerRepository;
-   private final ModelMapper modelMapper;
    private final VehicleMediaRepository mediaRepository;
    private final CustomerLeadRepository leadRepository;
    private final PaymentRepository paymentRepository;
    private final VehicleViewRepository vehicleViewRepository;
    private final WishlistRepository wishlistRepository;
-
 
     @Value("${file.upload-dir}")
     private String uploadDir;
