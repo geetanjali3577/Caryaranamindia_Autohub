@@ -46,6 +46,10 @@ public class VehicleResponseDTO {
 
     private VehicleStatus vehicleStatus;
 
+    private String dealerLogo;
+
+    private String dealerShowroomImage;
+
     private VehicleType vehicleType;
 
     private LocalDateTime createdAt;
@@ -59,6 +63,8 @@ public class VehicleResponseDTO {
     private String dealerWhatsappNumber;
 
     private String dealerBusinessName;
+
+    private int dealerYearsInBusiness;
 
     private boolean isWishList;
 

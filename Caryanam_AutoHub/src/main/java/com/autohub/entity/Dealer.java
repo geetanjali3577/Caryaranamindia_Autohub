@@ -30,7 +30,7 @@ public class Dealer {
     private String gstNumber;
 
     @Column(nullable = false)
-    private Integer yearsInBusiness;
+    private int yearsInBusiness;
 
     @Column(nullable = false)
     private String mobile;

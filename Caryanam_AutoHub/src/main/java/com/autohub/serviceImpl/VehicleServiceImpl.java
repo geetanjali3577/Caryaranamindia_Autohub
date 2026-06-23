@@ -454,9 +454,23 @@ public class VehicleServiceImpl implements VehicleService {
                 .dealerWhatsappNumber(vehicle.getDealer().getWhatsapp())
                 .dealerBusinessName(vehicle.getDealer().getBusinessName())
                 .dealerContactEmail(vehicle.getDealer().getEmail())
+                .dealerYearsInBusiness(vehicle.getDealer().getYearsInBusiness())
                 .vehicleStatus(vehicle.getVehicleStatus())
                 .vehicleType(vehicle.getVehicleType())
                 .createdAt(vehicle.getCreatedAt())
+                .dealerLogo(
+                        vehicle.getDealer().getDealerLogo() == null
+                                ? null
+                                : "http://localhost:" + port + "/" +
+                                vehicle.getDealer().getDealerLogo().replace("\\", "/")
+                )
+
+                .dealerShowroomImage(
+                        vehicle.getDealer().getShowroomImage() == null
+                                ? null
+                                : "http://localhost:" + port + "/" +
+                                vehicle.getDealer().getShowroomImage().replace("\\", "/")
+                )
                 .images(
                         vehicle.getMediaList() == null
                                 ? List.of()

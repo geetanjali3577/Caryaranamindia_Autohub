@@ -59,7 +59,18 @@ public class AdminServiceImpl implements AdminService {
                         .state(dealer.getState())
                         .pinCode(dealer.getPinCode())
                         .dealerLogo(dealer.getDealerLogo())
-                        .showroomImage(dealer.getShowroomImage())
+                        .showroomImage(
+                                dealer.getShowroomImage() == null
+                                        ? null
+                                        : "http://localhost:" + port + "/" +
+                                        dealer.getShowroomImage().replace("\\", "/")
+                        )
+                        .dealerLogo(
+                                dealer.getDealerLogo() == null
+                                        ? null
+                                        : "http://localhost:" + port + "/" +
+                                        dealer.getDealerLogo().replace("\\", "/")
+                        )
                         .dealerAccountStatus(dealer.getDealerAccountStatus())
                         .createdAt(dealer.getCreatedAt())
                         .build())

@@ -56,8 +56,6 @@ public class SecurityConfig {
                                         "/api/auth/**"
                                         ,"/api/customer/**"
                                         ,"/api/dealer/register/**"
-                                        ,"/api/lead/generate-lead/**"
-                                        ,"/api/lead/generate-view/**"
                                         ,"/api/vehicle/dealer/**"
                                         ,"/api/vehicle/**"
                                         ,"/api/vehicle/featured"
@@ -96,7 +94,10 @@ public class SecurityConfig {
                                         ,"/api/wishlist/dealer/**"
                                 ).hasRole("DEALER")
 
-                                .requestMatchers("/api/lead/customer-dashboard","/api/wishlist/**"
+                                .requestMatchers("/api/lead/customer-dashboard"
+                                        ,"/api/wishlist/**"
+                                        ,"/api/lead/generate-lead/**"
+                                        ,"/api/lead/generate-view/**"
                                 ).hasRole("CUSTOMER")
 
 
