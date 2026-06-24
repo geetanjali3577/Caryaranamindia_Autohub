@@ -102,27 +102,5 @@ public class DealerController {
         );
     }
 
-    // ================= FORGOT PASSWORD FOR DEALER =================
-    @PostMapping("/send-otp")
-    @Operation(summary = "Send OTP for Forgot Password API")
-    public ResponseEntity<String> sendOtp(@RequestParam String email) {
-        return ResponseEntity.ok(dealerService.sendOtp(email));
-    }
-
-    @PostMapping("/verify-otp")
-    @Operation(summary = "Verify OTP API ")
-    public ResponseEntity<String> verifyOtp(@RequestBody VerifyOtpDTO dto) {
-        return ResponseEntity.ok(dealerService.verifyOtp(dto));
-    }
-
-    @PostMapping("/reset-password")
-    @Operation(summary = "Change Password After Verify OTP API ")
-    public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordDTO dto) {
-        return ResponseEntity.ok(dealerService.resetPassword(dto));
-    }
-
-
-
-
 
 }

@@ -23,12 +23,6 @@ public interface DealerService {
 
     DealerProfileResponseDTO updateDealerProfile(Long id, UpdateDealerProfileRequestDTO dto);
 
-    String sendOtp(String email);
-
-    String verifyOtp(VerifyOtpDTO dto);
-
-    String resetPassword(ResetPasswordDTO dto);
-
     DashboardResponseDTO getDashboard(Long dealerId);
 
 }

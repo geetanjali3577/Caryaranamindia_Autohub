@@ -96,6 +96,7 @@ public class AdminServiceImpl implements AdminService {
         return allLeads.stream()
                 .map(lead -> AllCustomerLeadResponseDTO.builder()
                         .id(lead.getId())
+                        .uniqueLeadId(lead.getUniqueLeadId())
                         .customerName(lead.getCustomerName())
                         .customerMobile(lead.getCustomerMobile())
                         .customerCity(lead.getCustomerCity())

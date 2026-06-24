@@ -13,11 +13,10 @@ import com.autohub.service.CustomerLeadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +28,6 @@ public class CustomerLeadServiceImpl implements CustomerLeadService {
 
     private final DealerRepository dealerRepository;
 
-    //private final WhatsAppService whatsAppService;
 
 
 
@@ -44,7 +42,22 @@ public class CustomerLeadServiceImpl implements CustomerLeadService {
         Dealer dealer = dealerRepository.findById(dealerId)
                          .orElseThrow(() ->  new ResourceNotFoundException("Dealer not found"));
 
+        //Unique Lead ID
+
+        String timestamp = LocalDateTime.now()
+                .format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+
+        String uniquePart = UUID.randomUUID()
+                .toString()
+                .substring(0, 6)
+                .toUpperCase();
+
+        String uniqueLeadId = "CAPL" +timestamp +vehicle.getId()+dealerId+uniquePart;
+
+
+
         CustomerLead lead = new CustomerLead();
+        lead.setUniqueLeadId(uniqueLeadId);
         lead.setCustomerName(leadRequestDTO.getCustomerName());
         lead.setCustomerMobile(leadRequestDTO.getCustomerMobile());
         lead.setCustomerCity(leadRequestDTO.getCustomerCity());
@@ -67,8 +80,10 @@ public class CustomerLeadServiceImpl implements CustomerLeadService {
 
         return CustomerLeadResponseDTO.builder()
                 .id(saved.getId())
+                .uniqueLeadId(saved.getUniqueLeadId())
                 .customerName(saved.getCustomerName())
                 .customerMobile(saved.getCustomerMobile())
+                .leadStatus(saved.getLeadStatus())
                 .customerCity(saved.getCustomerCity())
                 .vehicleName(saved.getVehicle().getBrand() + " "+ saved.getVehicle().getModel())
                 .enquiryDate(saved.getEnquiryDate())
@@ -89,6 +104,7 @@ public class CustomerLeadServiceImpl implements CustomerLeadService {
         return leads.stream()
                 .map(lead -> CustomerLeadResponseDTO.builder()
                         .id(lead.getId())
+                        .uniqueLeadId(lead.getUniqueLeadId())
                         .customerName(lead.getCustomerName())
                         .customerMobile(lead.getCustomerMobile())
                         .customerCity(lead.getCustomerCity())
@@ -141,6 +157,7 @@ public class CustomerLeadServiceImpl implements CustomerLeadService {
 
         return CustomerLeadResponseDTO.builder()
                 .id(saved.getId())
+                .uniqueLeadId(saved.getUniqueLeadId())
                 .customerName(saved.getCustomerName())
                 .customerMobile(saved.getCustomerMobile())
                 .customerCity(saved.getCustomerCity())

@@ -18,6 +18,8 @@ public class AllCustomerLeadResponseDTO {
 
     private Long id;
 
+    private String uniqueLeadId;
+
     private String customerName;
 
     private String customerMobile;
