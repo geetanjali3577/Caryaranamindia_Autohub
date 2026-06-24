@@ -48,6 +48,12 @@ public class Vehicle {
     private String transmission;
 
     @Column(nullable = false)
+    private String rtoInformation;
+
+    @Column(nullable = false)
+    private boolean financeAvailability;
+
+    @Column(nullable = false)
     private String ownershipDetails;
 
     @Enumerated(EnumType.STRING)

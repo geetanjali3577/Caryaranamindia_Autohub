@@ -88,8 +88,6 @@ public class Dealer {
 
     private LocalDateTime subscriptionEndDate;
 
-//    @OneToMany(mappedBy = "dealer")
-//    private List<Payment> payments;
 
 
 }

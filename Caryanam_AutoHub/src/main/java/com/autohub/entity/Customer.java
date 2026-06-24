@@ -32,6 +32,12 @@ public class Customer {
     @Column(nullable = false)
     private String password;
 
+    private String otp;
+
+    private LocalDateTime otpGeneratedTime;
+
+    private Boolean isOtpVerified = false;
+
     @CreationTimestamp
     private LocalDateTime accountCreatedAt;
 

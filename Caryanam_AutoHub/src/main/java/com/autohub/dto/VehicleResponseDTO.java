@@ -2,6 +2,8 @@ package com.autohub.dto;
 
 import com.autohub.enums.VehicleStatus;
 import com.autohub.enums.VehicleType;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -65,6 +67,10 @@ public class VehicleResponseDTO {
     private String dealerBusinessName;
 
     private int dealerYearsInBusiness;
+
+    private String rtoInformation;
+
+    private Boolean financeAvailability;
 
     private boolean isWishList;
 

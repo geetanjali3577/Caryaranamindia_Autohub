@@ -4,6 +4,8 @@ import com.autohub.enums.Role;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 @Entity
 @Table(name = "adminReg")
@@ -23,6 +25,12 @@ public class Admin {
     private String email;
 
     private String password;
+
+    private String otp;
+
+    private LocalDateTime otpGeneratedTime;
+
+    private Boolean isOtpVerified = false;
 
     @Enumerated(EnumType.STRING)
     private Role role;

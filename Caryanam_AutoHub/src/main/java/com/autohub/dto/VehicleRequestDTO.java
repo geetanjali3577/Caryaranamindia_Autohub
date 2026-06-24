@@ -2,6 +2,7 @@ package com.autohub.dto;
 
 import com.autohub.enums.InsuranceStatus;
 import com.autohub.enums.VehicleType;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -41,6 +42,12 @@ public class VehicleRequestDTO {
 
     @NotBlank(message = "City is Required")
     private String city;
+
+    @NotBlank(message = "RTO Information is Required")
+    private String rtoInformation;
+
+    @NotNull(message = "Finance Availability is Required")
+    private Boolean financeAvailability;
 
     @NotBlank(message = "Vehicle Description is Required")
     private String vehicleDescription;

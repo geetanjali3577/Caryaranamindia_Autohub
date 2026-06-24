@@ -141,8 +141,11 @@ public class VehicleServiceImpl implements VehicleService {
                 .dealerWhatsappNumber(dealer.getWhatsapp())
                 .dealerBusinessName(dealer.getBusinessName())
                 .dealerContactEmail(dealer.getEmail())
+                .rtoInformation(vehicleRequestDTO.getRtoInformation())
+                .financeAvailability(vehicleRequestDTO.getFinanceAvailability())
                 .vehicleStatus(VehicleStatus.ACTIVE)
                 .vehicleType(vehicleRequestDTO.getVehicleType())
+
                 .createdAt(LocalDateTime.now())
                 .build();
 
@@ -278,6 +281,8 @@ public class VehicleServiceImpl implements VehicleService {
                 .vehicleStatus(savedVehicle.getVehicleStatus())
                 .vehicleType(savedVehicle.getVehicleType())
                 .createdAt(savedVehicle.getCreatedAt())
+                .rtoInformation(savedVehicle.getRtoInformation())
+                .financeAvailability(savedVehicle.isFinanceAvailability())
                 .images(image)
                 .videos(video)
                 .build();
@@ -396,6 +401,8 @@ public class VehicleServiceImpl implements VehicleService {
                         .dealerContactEmail(vehicle.getDealer().getEmail())
                         .vehicleStatus(vehicle.getVehicleStatus())
                         .vehicleType(vehicle.getVehicleType())
+                        .rtoInformation(vehicle.getRtoInformation())
+                        .financeAvailability(vehicle.isFinanceAvailability())
                         .createdAt(vehicle.getCreatedAt())
                         .images(
                                 vehicle.getMediaList() == null
@@ -456,6 +463,8 @@ public class VehicleServiceImpl implements VehicleService {
                 .dealerContactEmail(vehicle.getDealer().getEmail())
                 .dealerYearsInBusiness(vehicle.getDealer().getYearsInBusiness())
                 .vehicleStatus(vehicle.getVehicleStatus())
+                .rtoInformation(vehicle.getRtoInformation())
+                .financeAvailability(vehicle.isFinanceAvailability())
                 .vehicleType(vehicle.getVehicleType())
                 .createdAt(vehicle.getCreatedAt())
                 .dealerLogo(
@@ -532,6 +541,8 @@ public class VehicleServiceImpl implements VehicleService {
                 .vehicleStatus(vehicle.getVehicleStatus())
                 .vehicleType(vehicle.getVehicleType())
                 .createdAt(vehicle.getCreatedAt())
+                .rtoInformation(vehicle.getRtoInformation())
+                .financeAvailability(vehicle.isFinanceAvailability())
                 .images(
                         vehicle.getMediaList() == null
                                 ? List.of()
@@ -600,6 +611,8 @@ public class VehicleServiceImpl implements VehicleService {
                 .vehicleStatus(vehicle.getVehicleStatus())
                 .vehicleType(vehicle.getVehicleType())
                 .createdAt(vehicle.getCreatedAt())
+                .rtoInformation(vehicle.getRtoInformation())
+                .financeAvailability(vehicle.isFinanceAvailability())
 
                 .images(
                         vehicle.getMediaList() == null
@@ -661,6 +674,8 @@ public class VehicleServiceImpl implements VehicleService {
                         .vehicleStatus(vehicle.getVehicleStatus())
                         .vehicleType(vehicle.getVehicleType())
                         .createdAt(vehicle.getCreatedAt())
+                        .rtoInformation(vehicle.getRtoInformation())
+                        .financeAvailability(vehicle.isFinanceAvailability())
                         .images(
                                 vehicle.getMediaList() == null
                                         ? List.of()
@@ -729,6 +744,8 @@ public class VehicleServiceImpl implements VehicleService {
                         .vehicleStatus(vehicle.getVehicleStatus())
                         .vehicleType(vehicle.getVehicleType())
                         .createdAt(vehicle.getCreatedAt())
+                        .rtoInformation(vehicle.getRtoInformation())
+                        .financeAvailability(vehicle.isFinanceAvailability())
                         .images(
                                 vehicle.getMediaList() == null
                                         ? List.of()

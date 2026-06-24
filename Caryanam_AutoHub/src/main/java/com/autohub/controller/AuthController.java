@@ -1,8 +1,6 @@
 package com.autohub.controller;
 
-import com.autohub.dto.LoginRequestDTO;
-import com.autohub.dto.LoginResponseDTO;
-import com.autohub.dto.ResponseDto;
+import com.autohub.dto.*;
 import com.autohub.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
@@ -162,5 +160,33 @@ public class AuthController {
                         null
                 )
         );
+    }
+
+    // =====================================================
+    // FORGOT PASSWORD FOR ADMIN, DEALER, CUSTOMER API
+    // =====================================================
+
+    @PostMapping("/send-otp")
+    public ResponseEntity<String> sendOtp(
+            @RequestParam String email) {
+
+        return ResponseEntity.ok(
+                authService.sendOtp(email));
+    }
+
+    @PostMapping("/verify-otp")
+    public ResponseEntity<String> verifyOtp(
+            @RequestBody VerifyOtpDTO dto) {
+
+        return ResponseEntity.ok(
+                authService.verifyOtp(dto));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(
+            @RequestBody ResetPasswordDTO dto) {
+
+        return ResponseEntity.ok(
+                authService.resetPassword(dto));
     }
 }
