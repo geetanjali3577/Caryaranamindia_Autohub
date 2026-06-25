@@ -95,8 +95,8 @@ public class VehicleServiceImpl implements VehicleService {
             }
         }
 
-        //Minimum 10 image required to add vehicle
-        if (images == null || images.size() < 10) {
+        //Minimum 5 image required to add vehicle
+        if (images == null || images.size() < 5) {
             throw new RuntimeException(
                     "Minimum 10 images are required");
         }
@@ -307,6 +307,8 @@ public class VehicleServiceImpl implements VehicleService {
         vehicle.setOwnershipDetails(request.getOwnershipDetails());
         vehicle.setInsuranceStatus(request.getInsuranceStatus());
         vehicle.setAskingPrice(request.getAskingPrice());
+        vehicle.setRtoInformation(request.getRtoInformation());
+        vehicle.setFinanceAvailability(request.getFinanceAvailability());
         vehicle.setVehicleType(request.getVehicleType());
         vehicle.setVehicleDescription(request.getVehicleDescription());
 
@@ -365,6 +367,8 @@ public class VehicleServiceImpl implements VehicleService {
         vehicleViewRepository.deleteByVehicleId(vehicle.getId());
 
         vehicleRepository.deleteById(vehicle.getId());
+
+
 
     }
 

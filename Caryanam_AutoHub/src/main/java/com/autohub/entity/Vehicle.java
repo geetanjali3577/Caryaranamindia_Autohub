@@ -45,16 +45,16 @@ public class Vehicle {
     private String fuelType;
 
     @Column(nullable = false)
-    private String transmission;
+    private String transmission;// automatic / normal
 
     @Column(nullable = false)
-    private String rtoInformation;
+    private String rtoInformation;// mh12
 
     @Column(nullable = false)
-    private boolean financeAvailability;
+    private boolean financeAvailability; //
 
     @Column(nullable = false)
-    private String ownershipDetails;
+    private String ownershipDetails;// 1st or 2nd
 
     @Enumerated(EnumType.STRING)
     private InsuranceStatus insuranceStatus;
