@@ -434,8 +434,6 @@ public class VehicleServiceImpl implements VehicleService {
                 .toList();
     }
 
-
-
     @Override
     public VehicleResponseDTO getVehicleById(Long vehicleId) {
 

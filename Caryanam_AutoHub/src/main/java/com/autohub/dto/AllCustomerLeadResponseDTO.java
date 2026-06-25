@@ -26,6 +26,8 @@ public class AllCustomerLeadResponseDTO {
 
     private String customerCity;
 
+    private String dealerName;
+
     private LocalDateTime enquiryDate;
 
     private CustomerLeadStatus leadStatus;

@@ -100,6 +100,7 @@ public class AdminServiceImpl implements AdminService {
                         .customerName(lead.getCustomerName())
                         .customerMobile(lead.getCustomerMobile())
                         .customerCity(lead.getCustomerCity())
+                        .dealerName(lead.getDealer().getOwnerName())
                         .leadStatus(lead.getLeadStatus())
                         .enquiryDate(lead.getEnquiryDate())
                         .vehicleName(lead.getVehicle().getBrand()+" "+lead.getVehicle().getBrand()+" "+lead.getVehicle().getRegistrationYear())
