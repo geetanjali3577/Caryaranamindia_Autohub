@@ -226,7 +226,7 @@ public class VehicleServiceImpl implements VehicleService {
 
         if (videos != null && !videos.isEmpty()) {
 
-            long maxVideoSize = 100 * 1024 * 1024; // 100 MB
+            long maxVideoSize = 10 * 1024 * 1024; // 10 MB
 
             for (MultipartFile file : videos) {
 
@@ -239,7 +239,7 @@ public class VehicleServiceImpl implements VehicleService {
                                 || contentType.equalsIgnoreCase("video/x-msvideo"))) {
 
                     throw new RuntimeException(
-                            "Only MP4, MOV and AVI videos are allowed");
+                            "Minimum 1 video allowed with size under 10 mb Only MP4, MOV and AVI videos are allowed");
                 }
 
                 // Empty File Validation

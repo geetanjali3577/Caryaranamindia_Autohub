@@ -6,6 +6,7 @@ import com.autohub.dto.WhatsAppTemplateResponse;
 import com.autohub.exception.WhatsAppApiException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.retry.RetryCallback;
 import org.springframework.retry.RetryContext;
@@ -59,6 +60,7 @@ public class WhatsAppClient {
                                 objectMapper.readValue(responseJson, WhatsAppTemplateResponse.class);
 
                         log.info("WhatsApp message sent successfully. messageId=[{}]", parsed.firstMessageId());
+
 
                         return new WhatsAppApiCallResult(true, requestJson, responseJson,
                                 parsed.firstMessageId(), null);
