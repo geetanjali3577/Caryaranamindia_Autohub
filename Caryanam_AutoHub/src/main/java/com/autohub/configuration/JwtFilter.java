@@ -34,10 +34,10 @@ public class JwtFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
 
         // WebSocket endpoints bypass
-        if (path.startsWith("/chat")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+//        if (path.startsWith("/chat")) {
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
 
         if (
                 path.startsWith("/api/auth/login") ||

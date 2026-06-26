@@ -96,7 +96,7 @@ public class VehicleServiceImpl implements VehicleService {
         }
 
         //Minimum 5 image required to add vehicle
-        if (images == null || images.size() < 5) {
+        if (images == null || images.size() < 10) {
             throw new RuntimeException(
                     "Minimum 10 images are required");
         }
@@ -155,7 +155,33 @@ public class VehicleServiceImpl implements VehicleService {
 
         if (images != null && !images.isEmpty()) {
 
+            long maxImageSize = 10 * 1024 * 1024; // 10 MB
+
             for (MultipartFile file : images) {
+
+                String contentType = file.getContentType();
+
+                // Image Type Validation
+                if (contentType == null ||
+                        !(contentType.equalsIgnoreCase("image/jpeg")
+                                || contentType.equalsIgnoreCase("image/jpg")
+                                || contentType.equalsIgnoreCase("image/png"))) {
+
+                    throw new RuntimeException(
+                            "Only JPG, JPEG and PNG images are allowed");
+                }
+
+                // Empty File Validation
+                if (file.isEmpty()) {
+                    throw new RuntimeException(
+                            "Image file cannot be empty");
+                }
+
+                // File Size Validation
+                if (file.getSize() > maxImageSize) {
+                    throw new RuntimeException(
+                            "Image size cannot exceed 10 MB");
+                }
 
                 String imageFolder =
                         uploadDir +
@@ -200,7 +226,33 @@ public class VehicleServiceImpl implements VehicleService {
 
         if (videos != null && !videos.isEmpty()) {
 
+            long maxVideoSize = 100 * 1024 * 1024; // 100 MB
+
             for (MultipartFile file : videos) {
+
+                String contentType = file.getContentType();
+
+                // Video Type Validation
+                if (contentType == null ||
+                        !(contentType.equalsIgnoreCase("video/mp4")
+                                || contentType.equalsIgnoreCase("video/quicktime")
+                                || contentType.equalsIgnoreCase("video/x-msvideo"))) {
+
+                    throw new RuntimeException(
+                            "Only MP4, MOV and AVI videos are allowed");
+                }
+
+                // Empty File Validation
+                if (file.isEmpty()) {
+                    throw new RuntimeException(
+                            "Video file cannot be empty");
+                }
+
+                // File Size Validation
+                if (file.getSize() > maxVideoSize) {
+                    throw new RuntimeException(
+                            "Video size cannot exceed 100 MB");
+                }
 
                 String videoFolder =
                         uploadDir +

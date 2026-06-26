@@ -48,7 +48,7 @@ public class DealerServiceImpl implements DealerService {
 
 
     @Override
-public DealerResponseDTO registerDealer(DealerRegisterDTO dto, MultipartFile dealerLogo, MultipartFile showroomImage) {
+    public DealerResponseDTO registerDealer(DealerRegisterDTO dto, MultipartFile dealerLogo, MultipartFile showroomImage) {
 
     if (dealerRepository.existsByEmail(dto.getEmail())) {
         throw new RuntimeException("Email already registered");
@@ -66,8 +66,8 @@ public DealerResponseDTO registerDealer(DealerRegisterDTO dto, MultipartFile dea
     dealer.setOwnerName(dto.getOwnerName());
     dealer.setGstNumber(dto.getGstNumber());
     dealer.setYearsInBusiness(dto.getYearsInBusiness());
-    dealer.setMobile(dto.getMobile());
-    dealer.setWhatsapp(dto.getWhatsapp());
+    dealer.setMobile("91"+dto.getMobile());
+    dealer.setWhatsapp("91"+dto.getWhatsapp());
     dealer.setEmail(dto.getEmail());
     dealer.setPassword(passwordEncoder.encode(dto.getPassword()));
     dealer.setAddress(dto.getAddress());
