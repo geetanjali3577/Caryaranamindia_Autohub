@@ -57,12 +57,16 @@ public class AuthServiceImpl implements AuthService {
         // EMAIL EXISTS CHECK
         // =====================================
 
-        boolean emailExists = dealerRepository.existsByEmail(request.getEmail())
-                        || adminRepository.existsByEmail(request.getEmail())
-                        || customerRepository.existsByEmail(request.getEmail());
+//        boolean emailExists = dealerRepository.existsByEmail(request.getEmail())
+//                        || adminRepository.existsByEmail(request.getEmail())
+//                        || customerRepository.existsByEmail(request.getEmail());
+
+        boolean exists = dealerRepository.existsByMobile(request.getMobile())
+                || adminRepository.existsByMobile(request.getMobile())
+                || customerRepository.existsByMobile(request.getMobile());
 
 
-        if (!emailExists) {
+        if (!exists) {
 
             throw new RuntimeException(
                     "Account not found. Please register first."
@@ -78,7 +82,7 @@ public class AuthServiceImpl implements AuthService {
             authenticationManager.authenticate(
 
                     new UsernamePasswordAuthenticationToken(
-                            request.getEmail(),
+                            request.getMobile(),
                             request.getPassword()
                     )
             );
@@ -95,8 +99,11 @@ public class AuthServiceImpl implements AuthService {
         // DEALER LOGIN
         // =====================================
 
+//        Optional<Dealer> dealerOpt =
+//                dealerRepository.findByEmail(request.getEmail());
+
         Optional<Dealer> dealerOpt =
-                dealerRepository.findByEmail(request.getEmail());
+                dealerRepository.findByMobile(request.getMobile());
 
         if (dealerOpt.isPresent()) {
 
@@ -105,7 +112,7 @@ public class AuthServiceImpl implements AuthService {
             String token = jwtUtil.generateToken(
                     dealer.getId(),
                     dealer.getOwnerName(),
-                    dealer.getEmail(),
+                    dealer.getMobile(),
                     dealer.getRole(),
                     dealer.getMobile(),
                     dealer.getCity()
@@ -125,8 +132,11 @@ public class AuthServiceImpl implements AuthService {
         // ADMIN LOGIN
         // =====================================
 
+//        Optional<Admin> adminOpt =
+//                adminRepository.findByEmail(request.getEmail());
+
         Optional<Admin> adminOpt =
-                adminRepository.findByEmail(request.getEmail());
+                adminRepository.findByMobile(request.getMobile());
 
         if (adminOpt.isPresent()) {
 
@@ -135,9 +145,9 @@ public class AuthServiceImpl implements AuthService {
             String token = jwtUtil.generateToken(
                     admin.getAdminId(),
                     admin.getFullName(),
-                    admin.getEmail(),
+                    admin.getMobile(),
                     admin.getRole(),
-                    admin.getMobileNumber(),
+                    admin.getMobile(),
                     admin.getCity()
             );
 
@@ -155,16 +165,17 @@ public class AuthServiceImpl implements AuthService {
         // =====================================
 
 
-        Optional<Customer> byEmail = customerRepository.findByEmail(request.getEmail());
+//        Optional<Customer> byEmail = customerRepository.findByEmail(request.getEmail());
+        Optional<Customer> byMobile = customerRepository.findByMobile(request.getMobile());
 
-        if (byEmail.isPresent()) {
+        if (byMobile.isPresent()) {
 
-            Customer customer = byEmail.get();
+            Customer customer = byMobile.get();
 
             String token = jwtUtil.generateToken(
                     customer.getId(),
                     customer.getCustomerName(),
-                    customer.getEmail(),
+                    customer.getMobile(),
                     customer.getRole(),
                     customer.getMobile(),
                     customer.getCustomerCity()

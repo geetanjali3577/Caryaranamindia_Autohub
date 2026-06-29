@@ -24,6 +24,8 @@ public class AuthController {
     public ResponseEntity<ResponseDto<LoginResponseDTO>> login(
             @RequestBody LoginRequestDTO request) {
 
+        System.out.println("Mobile : " + request.getMobile());
+
         // REQUEST BODY VALIDATION
         if (request == null) {
 
@@ -35,6 +37,20 @@ public class AuthController {
                     ));
         }
 
+        if (request.getMobile() == null
+                || request.getMobile().trim().isEmpty()) {
+            if (!request.getMobile()
+                    .matches("^[6-9]\\d{9}$")) {
+
+                return ResponseEntity.badRequest()
+                        .body(new ResponseDto<>(
+                                400,
+                                "Invalid Mobile Number",
+                                null
+                        ));
+            }
+        }
+/*
         // EMAIL VALIDATION
         if (request.getEmail() == null
                 || request.getEmail().trim().isEmpty()) {
@@ -69,7 +85,7 @@ public class AuthController {
                             null
                     ));
         }
-
+*/
         // PASSWORD VALIDATION
         if (request.getPassword() == null
                 || request.getPassword().trim().isEmpty()) {

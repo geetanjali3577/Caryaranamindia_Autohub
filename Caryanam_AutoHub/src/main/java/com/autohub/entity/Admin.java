@@ -17,7 +17,7 @@ public class Admin {
 
     private String fullName;
 
-    private String mobileNumber;
+    private String mobile;
 
     private String city;
 

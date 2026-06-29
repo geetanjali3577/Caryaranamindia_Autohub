@@ -25,7 +25,7 @@ public class AdminConfig implements CommandLineRunner {
 
             admin.setFullName("Admin");
             admin.setEmail("admin@gmail.com");
-            admin.setMobileNumber("9823357421");
+            admin.setMobile("9823357421");
             admin.setCity("Pune");
             admin.setPassword(passwordEncoder.encode("admin@123"));
             admin.setRole(Role.ADMIN);

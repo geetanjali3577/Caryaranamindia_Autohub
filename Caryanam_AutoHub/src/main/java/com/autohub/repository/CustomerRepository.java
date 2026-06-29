@@ -1,6 +1,7 @@
 package com.autohub.repository;
 
 import com.autohub.entity.Customer;
+import com.autohub.entity.Dealer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,5 +15,7 @@ public interface CustomerRepository extends JpaRepository<Customer,Long> {
     boolean existsByEmail(String email);
 
     boolean existsByMobile(String mobileNumber);
+
+    Optional<Customer> findByMobile(String mobile);
 
 }

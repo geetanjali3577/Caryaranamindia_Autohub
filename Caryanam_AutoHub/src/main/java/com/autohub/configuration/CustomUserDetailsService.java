@@ -32,12 +32,13 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 
     @Override
-    public CustomUserDetails loadUserByUsername(String email)
+    public CustomUserDetails loadUserByUsername(String mobile)
             throws UsernameNotFoundException {
 
 
         // ADMIN
-        Admin admin = adminRepository.findByEmail(email).orElse(null);
+//        Admin admin = adminRepository.findByEmail(email).orElse(null);
+        Admin admin = adminRepository.findByMobile(mobile).orElse(null);
 
         if (admin != null) {
 
@@ -49,22 +50,24 @@ public class CustomUserDetailsService implements UserDetailsService {
                     admin.getAdminId(),
                     admin.getFullName(),
                     admin.getEmail(),
+                    admin.getMobile(),
                     admin.getPassword(),
                     role,
                     List.of(
-                            new SimpleGrantedAuthority(
-                                    "ROLE_" + role
-                            )
+                            new SimpleGrantedAuthority("ROLE_" + role)
                     )
             );
         }
 
         //Customer
 
-        Customer customer =
-                customerRepository.findByEmail(email)
-                        .orElse(null);
+//        Customer customer =
+//                customerRepository.findByEmail(email)
+//                        .orElse(null);
 
+        Customer customer =
+                customerRepository.findByMobile(mobile)
+                        .orElse(null);
         if (customer != null) {
 
             String role = customer.getRole() != null
@@ -75,12 +78,11 @@ public class CustomUserDetailsService implements UserDetailsService {
                     customer.getId(),
                     customer.getCustomerName(),
                     customer.getEmail(),
+                    customer.getMobile(),
                     customer.getPassword(),
                     role,
                     List.of(
-                            new SimpleGrantedAuthority(
-                                    "ROLE_" + role
-                            )
+                            new SimpleGrantedAuthority("ROLE_" + role)
                     )
             );
         }
@@ -88,8 +90,10 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 
 
-        // DEALER
-        Dealer dealer = dealerRepository.findByEmail(email).orElse(null);
+//        // DEALER
+//        Dealer dealer = dealerRepository.findByEmail(email).orElse(null);
+
+        Dealer dealer = dealerRepository.findByMobile(mobile).orElse(null);
 
         if (dealer != null) {
 
@@ -101,18 +105,17 @@ public class CustomUserDetailsService implements UserDetailsService {
                     dealer.getId(),
                     dealer.getOwnerName(),
                     dealer.getEmail(),
+                    dealer.getMobile(),
                     dealer.getPassword(),
                     role,
                     List.of(
-                            new SimpleGrantedAuthority(
-                                    "ROLE_" + role
-                            )
+                            new SimpleGrantedAuthority("ROLE_" + role)
                     )
             );
         }
 
         throw new UsernameNotFoundException(
-                "User not found with email: " + email
+                "User not found with mobile: " + mobile
         );
     }
 }

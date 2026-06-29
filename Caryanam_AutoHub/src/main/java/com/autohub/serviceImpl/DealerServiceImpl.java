@@ -66,8 +66,8 @@ public class DealerServiceImpl implements DealerService {
     dealer.setOwnerName(dto.getOwnerName());
     dealer.setGstNumber(dto.getGstNumber());
     dealer.setYearsInBusiness(dto.getYearsInBusiness());
-    dealer.setMobile("91"+dto.getMobile());
-    dealer.setWhatsapp("91"+dto.getWhatsapp());
+    dealer.setMobile(dto.getMobile());
+    dealer.setWhatsapp(dto.getWhatsapp());
     dealer.setEmail(dto.getEmail());
     dealer.setPassword(passwordEncoder.encode(dto.getPassword()));
     dealer.setAddress(dto.getAddress());
