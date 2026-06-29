@@ -11,19 +11,26 @@ public class CustomUserDetails implements UserDetails {
     private String name;
     private String email;
     private String password;
+    private String role;
     private Collection<? extends GrantedAuthority> authorities;
 
-    public CustomUserDetails(Long id,
-                             String name,
-                             String email,
-                             String password,
-                             Collection<? extends GrantedAuthority> authorities) {
+    public CustomUserDetails(
+            Long id,
+            String name,
+            String email,
+            String password,
+            String role,
+            Collection<? extends GrantedAuthority> authorities) {
 
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
+        this.role = role;
         this.authorities = authorities;
+    }
+    public String getRole() {
+        return role;
     }
 
     public Long getId() {

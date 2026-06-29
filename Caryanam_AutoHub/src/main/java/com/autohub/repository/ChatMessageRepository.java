@@ -1,0 +1,42 @@
+package com.autohub.repository;
+import com.autohub.entity.ChatMessage;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
+
+public interface ChatMessageRepository
+        extends JpaRepository<ChatMessage,Long> {
+
+    List<ChatMessage>
+    findByRoomIdOrderBySentAtAsc(
+            String roomId
+    );
+
+    Long countByReceiverIdAndReceiverRoleAndIsReadFalse(
+            Long receiverId,
+            String receiverRole
+    );
+
+    @Modifying
+    @Query("""
+UPDATE ChatMessage c
+SET c.isRead = true,
+    c.readAt = CURRENT_TIMESTAMP
+WHERE c.roomId = :roomId
+AND c.receiverId = :receiverId
+AND c.receiverRole = :receiverRole
+AND c.isRead = false
+""")
+    int markAsRead(
+            String roomId,
+            Long receiverId,
+            String receiverRole
+    );
+
+    List<ChatMessage> findByRoomIdOrderBySentAtDesc(
+            String roomId
+    );
+
+}

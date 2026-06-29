@@ -28,8 +28,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private final DealerRepository dealerRepository;
 
-    //private final CustomerLeadRepository leadRepository;
-
     private final CustomerRepository customerRepository;
 
 
@@ -52,7 +50,12 @@ public class CustomUserDetailsService implements UserDetailsService {
                     admin.getFullName(),
                     admin.getEmail(),
                     admin.getPassword(),
-                    List.of(new SimpleGrantedAuthority("ROLE_" + role))
+                    role,
+                    List.of(
+                            new SimpleGrantedAuthority(
+                                    "ROLE_" + role
+                            )
+                    )
             );
         }
 
@@ -73,7 +76,12 @@ public class CustomUserDetailsService implements UserDetailsService {
                     customer.getCustomerName(),
                     customer.getEmail(),
                     customer.getPassword(),
-                    List.of(new SimpleGrantedAuthority("ROLE_" + role))
+                    role,
+                    List.of(
+                            new SimpleGrantedAuthority(
+                                    "ROLE_" + role
+                            )
+                    )
             );
         }
 
@@ -94,7 +102,12 @@ public class CustomUserDetailsService implements UserDetailsService {
                     dealer.getOwnerName(),
                     dealer.getEmail(),
                     dealer.getPassword(),
-                    List.of(new SimpleGrantedAuthority("ROLE_" + role))
+                    role,
+                    List.of(
+                            new SimpleGrantedAuthority(
+                                    "ROLE_" + role
+                            )
+                    )
             );
         }
 

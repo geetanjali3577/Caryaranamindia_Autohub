@@ -2,10 +2,7 @@ package com.autohub.serviceImpl;
 
 import com.autohub.dto.CustomerRegistrationRequestDTO;
 import com.autohub.dto.CustomerRegistrationResponseDTO;
-import com.autohub.dto.DealerResponseDTO;
 import com.autohub.entity.Customer;
-import com.autohub.entity.Dealer;
-import com.autohub.enums.DealerStatus;
 import com.autohub.enums.Role;
 import com.autohub.repository.CustomerRepository;
 import com.autohub.service.CustomerService;

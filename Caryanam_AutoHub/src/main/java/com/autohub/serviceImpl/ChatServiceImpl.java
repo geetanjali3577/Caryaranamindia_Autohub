@@ -1,0 +1,346 @@
+package com.autohub.serviceImpl;
+
+import com.autohub.configuration.CustomUserDetails;
+import com.autohub.dto.ChatMessageRequest;
+import com.autohub.dto.ChatMessageResponse;
+import com.autohub.dto.ChatUserResponse;
+import com.autohub.entity.ChatMessage;
+import com.autohub.entity.ChatRoom;
+import com.autohub.repository.*;
+import com.autohub.service.ChatService;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+
+@Service
+@RequiredArgsConstructor
+public class ChatServiceImpl
+        implements ChatService {
+
+    private final ChatRoomRepository roomRepository;
+
+    private final ChatMessageRepository messageRepository;
+
+    private final AdminRepository adminRepository;
+
+    private final DealerRepository dealerRepository;
+
+    private final CustomerRepository customerRepository;
+
+    private final SimpMessagingTemplate messagingTemplate;
+
+
+    @Override
+    public void sendMessage(
+            Long senderId,
+            String senderRole,
+            ChatMessageRequest request) {
+
+        System.out.println("========== CHAT REQUEST ==========");
+        System.out.println("SenderId     = " + senderId);
+        System.out.println("SenderRole   = " + senderRole);
+        System.out.println("ReceiverId   = " + request.getReceiverId());
+        System.out.println("ReceiverRole = " + request.getReceiverRole());
+        System.out.println("Content      = " + request.getContent());
+        System.out.println("==================================");
+
+        String roomId = generateRoomId(
+                senderId,
+                senderRole,
+                request.getReceiverId(),
+                request.getReceiverRole()
+        );
+
+        createRoomIfNotExists(
+                roomId,
+                senderId,
+                senderRole,
+                request.getReceiverId(),
+                request.getReceiverRole()
+        );
+
+        ChatMessage message = new ChatMessage();
+
+        message.setRoomId(roomId);
+        message.setSenderId(senderId);
+        message.setSenderRole(senderRole);
+
+        message.setReceiverId(
+                request.getReceiverId()
+        );
+
+        message.setReceiverRole(
+                request.getReceiverRole()
+        );
+
+        message.setContent(
+                request.getContent()
+        );
+
+        ChatMessage saved =
+                messageRepository.save(message);
+
+        ChatMessageResponse response =
+                ChatMessageResponse.builder()
+                        .roomId(saved.getRoomId())
+                        .senderId(saved.getSenderId())
+                        .senderRole(saved.getSenderRole())
+                        .receiverId(saved.getReceiverId())
+                        .receiverRole(saved.getReceiverRole())
+                        .content(saved.getContent())
+                        .isRead(saved.getIsRead())
+                        .sentAt(saved.getSentAt())
+                        .readAt(saved.getReadAt())
+                        .build();
+
+        // Receiver la message
+        messagingTemplate.convertAndSend(
+                "/queue/"
+                        + saved.getReceiverRole()
+                        + "_"
+                        + saved.getReceiverId(),
+                response
+        );
+
+        // Sender la pan live message disava
+        messagingTemplate.convertAndSend(
+                "/queue/" + senderRole + "_" + senderId,
+                response
+        );
+    }
+
+
+    @Override
+    public List<ChatMessage> getHistory(
+            String roomId) {
+
+        return messageRepository
+                .findByRoomIdOrderBySentAtAsc(
+                        roomId
+                );
+    }
+
+    @Override
+    public String generateRoomId(
+            Long senderId,
+            String senderRole,
+            Long receiverId,
+            String receiverRole) {
+
+        List<String> users =
+                new ArrayList<>();
+
+        users.add(
+                senderRole + "_" + senderId
+        );
+
+        users.add(
+                receiverRole + "_" + receiverId
+        );
+
+        Collections.sort(users);
+
+        return users.get(0)
+                + "_"
+                + users.get(1);
+    }
+
+
+    private void createRoomIfNotExists(
+            String roomId,
+            Long senderId,
+            String senderRole,
+            Long receiverId,
+            String receiverRole) {
+
+        roomRepository.findByRoomId(roomId)
+                .orElseGet(() -> {
+
+                    ChatRoom room = new ChatRoom();
+
+                    room.setRoomId(roomId);
+                    room.setUser1Id(senderId);
+                    room.setUser1Role(senderRole);
+                    room.setUser2Id(receiverId);
+                    room.setUser2Role(receiverRole);
+
+                    return roomRepository.save(room);
+                });
+    }
+
+
+    private void validateChat(
+            String senderRole,
+            String receiverRole){
+
+        if("CUSTOMER".equals(senderRole)
+                &&
+                "CUSTOMER".equals(receiverRole)){
+
+            throw new RuntimeException(
+                    "Customer cannot chat with another customer"
+            );
+        }
+    }
+
+    @Override
+    public List<ChatUserResponse> getAvailableUsers(
+            Long userId,
+            String role) {
+
+        System.out.println(
+                "ROLE RECEIVED = "
+                        + role
+        );
+
+        List<ChatUserResponse> users =
+                new ArrayList<>();
+
+        if(role.equals("ADMIN")) {
+
+            dealerRepository.findAll()
+                    .forEach(dealer ->
+                            users.add(
+                                    ChatUserResponse.builder()
+                                            .id(dealer.getId())
+                                            .name(dealer.getOwnerName())
+                                            .role("DEALER")
+                                            .build()
+                            ));
+
+            customerRepository.findAll()
+                    .forEach(customer ->
+                            users.add(
+                                    ChatUserResponse.builder()
+                                            .id(customer.getId())
+                                            .name(customer.getCustomerName())
+                                            .role("CUSTOMER")
+                                            .build()
+                            ));
+        }
+
+        else if(role.equals("DEALER")) {
+
+            adminRepository.findAll()
+                    .forEach(admin ->
+                            users.add(
+                                    ChatUserResponse.builder()
+                                            .id(admin.getAdminId())
+                                            .name(admin.getFullName())
+                                            .role("ADMIN")
+                                            .build()
+                            ));
+
+            System.out.println(
+                    "TOTAL ADMINS = "
+                            + adminRepository.findAll().size()
+            );
+
+            dealerRepository.findAll()
+                    .stream()
+                    .filter(d ->
+                            !d.getId().equals(userId))
+                    .forEach(dealer ->
+                            users.add(
+                                    ChatUserResponse.builder()
+                                            .id(dealer.getId())
+                                            .name(dealer.getOwnerName())
+                                            .role("DEALER")
+                                            .build()
+                            ));
+
+            customerRepository.findAll()
+                    .forEach(customer ->
+                            users.add(
+                                    ChatUserResponse.builder()
+                                            .id(customer.getId())
+                                            .name(customer.getCustomerName())
+                                            .role("CUSTOMER")
+                                            .build()
+                            ));
+        }
+
+        else {
+
+            adminRepository.findAll()
+                    .forEach(admin ->
+                            users.add(
+                                    ChatUserResponse.builder()
+                                            .id(admin.getAdminId())
+                                            .name(admin.getFullName())
+                                            .role("ADMIN")
+                                            .build()
+                            ));
+
+            dealerRepository.findAll()
+                    .forEach(dealer ->
+                            users.add(
+                                    ChatUserResponse.builder()
+                                            .id(dealer.getId())
+                                            .name(dealer.getOwnerName())
+                                            .role("DEALER")
+                                            .build()
+                            ));
+        }
+
+        return users;
+    }
+
+
+    @Override
+    public Long getUnreadCount(
+            Long userId,
+            String role){
+
+        return messageRepository
+                .countByReceiverIdAndReceiverRoleAndIsReadFalse(
+                        userId,
+                        role
+                );
+    }
+
+    @Transactional
+    @Override
+    public void markAsRead(
+            String roomId,
+            Long receiverId,
+            String receiverRole){
+        System.out.println("MARK AS READ");
+        System.out.println(roomId);
+        System.out.println(receiverId);
+        System.out.println(receiverRole);
+
+
+        int updated = messageRepository.markAsRead(
+                roomId,
+                receiverId,
+                receiverRole
+        );
+
+        System.out.println("UPDATED = " + updated);
+
+        if(updated > 0){
+
+            ChatMessage lastMessage =
+                    messageRepository
+                            .findByRoomIdOrderBySentAtDesc(roomId)
+                            .get(0);
+
+            messagingTemplate.convertAndSend(
+                    "/queue/"
+                            + lastMessage.getSenderRole()
+                            + "_"
+                            + lastMessage.getSenderId()
+                            + "_read",
+                    roomId
+            );
+        }
+
+
+    }
+
+
+}

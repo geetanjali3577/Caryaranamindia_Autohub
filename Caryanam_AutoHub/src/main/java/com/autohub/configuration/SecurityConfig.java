@@ -4,10 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -63,17 +61,25 @@ public class SecurityConfig {
                                         ,"/api/vehicle/non-premium/all-vehicle"
                                         ,"/api/vehicle/premium/all-vehicle"
                                         ,"/api/lead/generate-lead/**"
-                                        ,"/chat/**"
                                         ,"/api/lead/generate-view/**"
                                         ,"/uploads/**"
-                                        ,"/chat/**"
-                                        ,"/api/chat/**"
                                         ,"/swagger-ui/**",
                                         "/swagger-ui.html",
                                         "/v3/api-docs/**"
                                 ).permitAll()
 
-                                //ADMIN API
+//                                .requestMatchers(
+//                                        "/chat/**",
+//                                        "/api/chat/**"
+//                                ).authenticated()
+
+                                .requestMatchers(
+                                        "/chat/**",
+                                        "/api/chat/**"
+                                ).authenticated()
+
+
+                        //ADMIN API
                                 .requestMatchers("/api/admin/**"
                                         ,"/api/payment/success/**"
                                         ,"/api/payment/failed/**"
@@ -155,7 +161,9 @@ public class SecurityConfig {
         config.setAllowedOrigins(List.of(
                 "http://localhost:5173",
                 "http://localhost:3000",
-                "http://localhost:63342"
+                "http://localhost:63342",
+                "http://127.0.0.1:5500",
+                "http://localhost:5500"
         ));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT","PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("*"));
@@ -168,21 +176,5 @@ public class SecurityConfig {
 
     }
 
-//    @Bean
-//    public CorsConfigurationSource corsConfigurationSource() {
-//
-//        CorsConfiguration config = new CorsConfiguration();
-//
-//        config.setAllowedOriginPatterns(List.of("*"));
-//        config.setAllowedMethods(List.of("*"));
-//        config.setAllowedHeaders(List.of("*"));
-//        config.setAllowCredentials(true);
-//
-//        UrlBasedCorsConfigurationSource source =
-//                new UrlBasedCorsConfigurationSource();
-//
-//        source.registerCorsConfiguration("/**", config);
-//
-//        return source;
-//    }
+
 }

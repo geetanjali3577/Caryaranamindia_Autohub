@@ -111,7 +111,14 @@ public class AuthServiceImpl implements AuthService {
                     dealer.getCity()
             );
 
-            return new LoginResponseDTO(token);
+            LoginResponseDTO dto =
+                    new LoginResponseDTO();
+
+            dto.setId(dealer.getId());
+            dto.setRole(dealer.getRole().name());
+            dto.setToken(token);
+
+            return dto;
         }
 
         // =====================================
@@ -134,7 +141,14 @@ public class AuthServiceImpl implements AuthService {
                     admin.getCity()
             );
 
-            return new LoginResponseDTO(token);
+            LoginResponseDTO dto =
+                    new LoginResponseDTO();
+
+            dto.setId(admin.getAdminId());
+            dto.setRole(admin.getRole().name());
+            dto.setToken(token);
+
+            return dto;
         }
         // =====================================
         // CUSTOMER LOGIN
@@ -155,8 +169,14 @@ public class AuthServiceImpl implements AuthService {
                     customer.getMobile(),
                     customer.getCustomerCity()
             );
+            LoginResponseDTO dto =
+                    new LoginResponseDTO();
 
-            return new LoginResponseDTO(token);
+            dto.setId(customer.getId());
+            dto.setRole(customer.getRole().name());
+            dto.setToken(token);
+
+            return dto;
         }
 
 

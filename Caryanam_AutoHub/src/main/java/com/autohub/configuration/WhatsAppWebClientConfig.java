@@ -13,11 +13,6 @@ import reactor.netty.http.client.HttpClient;
 
 import java.util.concurrent.TimeUnit;
 
-/**
- * WebClient configured exclusively for Meta WhatsApp Cloud API calls.
- * Bean is named explicitly so it doesn't collide with other WebClient beans
- * elsewhere in the application (e.g. payment gateway clients).
- */
 @Configuration
 public class WhatsAppWebClientConfig {
 

@@ -18,7 +18,6 @@ public class CustomerController {
 
 
     // ================= REGISTER CUSTOMER =================
-
     @PostMapping("/register")
     @Operation(summary = "Customer Registration API")
     public ResponseEntity<ResponseDto<CustomerRegistrationResponseDTO>> registerCustomer(@Valid @RequestBody CustomerRegistrationRequestDTO dto) {
