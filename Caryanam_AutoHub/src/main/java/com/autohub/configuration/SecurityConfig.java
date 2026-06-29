@@ -68,6 +68,10 @@ public class SecurityConfig {
                                         "/v3/api-docs/**"
                                 ).permitAll()
 
+                                .requestMatchers(
+                                        "/uploads/**","/api/olx/**")
+                                .permitAll()
+
 //                                .requestMatchers(
 //                                        "/chat/**",
 //                                        "/api/chat/**"

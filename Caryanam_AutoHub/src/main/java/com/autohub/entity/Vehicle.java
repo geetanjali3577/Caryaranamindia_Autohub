@@ -19,6 +19,8 @@ import java.util.List;
 @Builder
 public class Vehicle {
 
+
+//ODL FIELDS REPLACE WITH DEALER MAPPING
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
