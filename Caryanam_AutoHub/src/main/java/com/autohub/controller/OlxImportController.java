@@ -1,10 +1,9 @@
 package com.autohub.controller;
 
 import com.autohub.dto.CarResponse;
-import com.autohub.entity.OlxCar;
+import com.autohub.service.DealerImportService;
 import com.autohub.service.OlxImportService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +17,10 @@ public class OlxImportController {
 
     private final OlxImportService service;
 
+    private final DealerImportService dealerImportService;
+
+
+    //Import Vehicle Data
     @PostMapping(
             value = "/import",
             consumes =
@@ -32,17 +35,35 @@ public class OlxImportController {
         return "Imported Successfully";
     }
 
-    @GetMapping("/{id}")
+    //Get Vehicle By id
+    @GetMapping("/vehicle/{id}")
     public CarResponse getCar(
             @PathVariable Long id) {
 
         return service.getCar(id);
     }
 
-    @GetMapping("/all")
+    //Get All imported Vehicle
+    @GetMapping("/all-vehicle")
     public List<CarResponse> getAllCars() {
 
         return service.getAllCars();
+    }
+
+
+    //Import Dealer Registration
+    @PostMapping(
+            value = "/import-dealer",
+            consumes =
+                    MediaType.MULTIPART_FORM_DATA_VALUE)
+    public String importDealer(
+            @RequestParam MultipartFile excel)
+            throws Exception {
+
+        dealerImportService
+                .importDealerData(excel);
+
+        return "Dealer Imported Successfully";
     }
 
 }

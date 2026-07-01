@@ -20,6 +20,11 @@ public class UserResponseDTO {
     // DEALER or INDIVIDUAL
     private String registrationType;
 
+    private String fileName;
+    private String fileType;
+    private String filePath;
+    private String mediaType;
+
     // Dealer Code
     //private String dealerCode;
 

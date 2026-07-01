@@ -7,7 +7,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,8 +21,7 @@ import java.util.List;
 @Builder
 public class Vehicle {
 
-
-//ODL FIELDS REPLACE WITH DEALER MAPPING
+    //ODL FIELDS REPLACE WITH DEALER MAPPING
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -43,23 +44,23 @@ public class Vehicle {
     @Column(nullable = false)
     private Long kilometerDriven;
 
-    @Column(nullable = false)
+    @Column(nullable = false,length = 100)
     private String fuelType;
 
-    @Column(nullable = false)
-    private String transmission;// automatic / normal
+    //@Column(nullable = false)
+   // private String transmission;// automatic / normal
 
-    @Column(nullable = false)
-    private String rtoInformation;// mh12
+    //@Column(nullable = false)
+    //private String rtoInformation;// mh12
 
     @Column(nullable = false)
     private boolean financeAvailability; //
 
     @Column(nullable = false)
-    private String ownershipDetails;// 1st or 2nd
+    private int ownershipDetails;// 1st or 2nd
 
-    @Enumerated(EnumType.STRING)
-    private InsuranceStatus insuranceStatus;
+    //@Enumerated(EnumType.STRING)
+    //private InsuranceStatus insuranceStatus;
 
     @Column(nullable = false)
     private String city;
@@ -68,10 +69,11 @@ public class Vehicle {
     private String vehicleDescription;
 
     @Enumerated(EnumType.STRING)
-    private VehicleStatus vehicleStatus;
+    private VehicleType vehicleType;
+
 
     @Enumerated(EnumType.STRING)
-    private VehicleType vehicleType;
+    private VehicleStatus vehicleStatus;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -81,16 +83,25 @@ public class Vehicle {
 
     private String dealerContactNumber;
 
-    private  String dealerContactEmail;
+    private Long subLocalityId;
 
-    private String dealerWhatsappNumber;
-
-    private String dealerBusinessName;
+//    private  String dealerContactEmail;
+//
+//    private String dealerWhatsappNumber;
+//
+//    private String dealerBusinessName;
 
     @ManyToOne
-    @JoinColumn(name = "dealer_id")
+    @JoinColumn(name = "dealerId")
     private Dealer dealer;
 
-    @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<VehicleMedia> mediaList;
+//    @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL,orphanRemoval = true)
+//    private List<VehicleMedia> mediaList;
+
+
+    @OneToMany(
+            mappedBy = "vehicle",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private List<VehicleMedia> mediaList = new ArrayList<>();
 }

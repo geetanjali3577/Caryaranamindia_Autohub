@@ -1,9 +1,10 @@
 package com.autohub.entity;
-
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "vehicle-media")
@@ -28,7 +29,13 @@ public class VehicleMedia {
 
     private LocalDateTime uploadedAt;
 
+//    @ManyToOne
+//    @JoinColumn(name = "vehicle_id")
+//    private Vehicle vehicle;
+
+
     @ManyToOne
     @JoinColumn(name = "vehicle_id")
     private Vehicle vehicle;
+
 }

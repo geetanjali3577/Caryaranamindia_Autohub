@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -129,19 +130,19 @@ public class VehicleServiceImpl implements VehicleService {
                 .variant(vehicleRequestDTO.getVariant())
                 .registrationYear(vehicleRequestDTO.getRegistrationYear())
                 .fuelType(vehicleRequestDTO.getFuelType())
-                .transmission(vehicleRequestDTO.getTransmission())
+                //.transmission(vehicleRequestDTO.getTransmission())
                 .kilometerDriven(vehicleRequestDTO.getKilometerDriven())
                 .ownershipDetails(vehicleRequestDTO.getOwnershipDetails())
-                .insuranceStatus(InsuranceStatus.valueOf(String.valueOf(vehicleRequestDTO.getInsuranceStatus())))
+               // .insuranceStatus(InsuranceStatus.valueOf(String.valueOf(vehicleRequestDTO.getInsuranceStatus())))
                 .askingPrice(vehicleRequestDTO.getAskingPrice())
                 .vehicleDescription(vehicleRequestDTO.getVehicleDescription())
                 .city(vehicleRequestDTO.getCity())
                 .dealerContactName(dealer.getOwnerName())
                 .dealerContactNumber(dealer.getMobile())
-                .dealerWhatsappNumber(dealer.getWhatsapp())
-                .dealerBusinessName(dealer.getBusinessName())
-                .dealerContactEmail(dealer.getEmail())
-                .rtoInformation(vehicleRequestDTO.getRtoInformation())
+                //.dealerWhatsappNumber(dealer.getWhatsapp())
+                //.dealerBusinessName(dealer.getBusinessName())
+               // .dealerContactEmail(dealer.getEmail())
+               // .rtoInformation(vehicleRequestDTO.getRtoInformation())
                 .financeAvailability(vehicleRequestDTO.getFinanceAvailability())
                 .vehicleStatus(VehicleStatus.ACTIVE)
                 .vehicleType(vehicleRequestDTO.getVehicleType())
@@ -318,11 +319,11 @@ public class VehicleServiceImpl implements VehicleService {
                 .variant(savedVehicle.getVariant())
                 .registrationYear(savedVehicle.getRegistrationYear())
                 .fuelType(savedVehicle.getFuelType())
-                .transmission(savedVehicle.getTransmission())
+               // .transmission(savedVehicle.getTransmission())
                 .kilometerDriven(savedVehicle.getKilometerDriven())
                 .ownershipDetails(savedVehicle.getOwnershipDetails())
-                .insuranceStatus(String.valueOf(savedVehicle.getInsuranceStatus()))
-                .askingPrice(savedVehicle.getAskingPrice())
+              //  .insuranceStatus(String.valueOf(savedVehicle.getInsuranceStatus()))
+                .askingPrice(BigDecimal.valueOf(savedVehicle.getAskingPrice()))
                 .vehicleDescription(savedVehicle.getVehicleDescription())
                 .city(savedVehicle.getCity())
                 .dealerContactName(vehicle.getDealer().getOwnerName())
@@ -333,7 +334,7 @@ public class VehicleServiceImpl implements VehicleService {
                 .vehicleStatus(savedVehicle.getVehicleStatus())
                 .vehicleType(savedVehicle.getVehicleType())
                 .createdAt(savedVehicle.getCreatedAt())
-                .rtoInformation(savedVehicle.getRtoInformation())
+               // .rtoInformation(savedVehicle.getRtoInformation())
                 .financeAvailability(savedVehicle.isFinanceAvailability())
                 .images(image)
                 .videos(video)
@@ -353,13 +354,13 @@ public class VehicleServiceImpl implements VehicleService {
         vehicle.setVariant(request.getVariant());
         vehicle.setRegistrationYear(request.getRegistrationYear());
         vehicle.setFuelType(request.getFuelType());
-        vehicle.setTransmission(request.getTransmission());
+       // vehicle.setTransmission(request.getTransmission());
         vehicle.setKilometerDriven(request.getKilometerDriven());
         vehicle.setCity(request.getCity());
         vehicle.setOwnershipDetails(request.getOwnershipDetails());
-        vehicle.setInsuranceStatus(request.getInsuranceStatus());
+       // vehicle.setInsuranceStatus(request.getInsuranceStatus());
         vehicle.setAskingPrice(request.getAskingPrice());
-        vehicle.setRtoInformation(request.getRtoInformation());
+       // vehicle.setRtoInformation(request.getRtoInformation());
         vehicle.setFinanceAvailability(request.getFinanceAvailability());
         vehicle.setVehicleType(request.getVehicleType());
         vehicle.setVehicleDescription(request.getVehicleDescription());
@@ -374,11 +375,11 @@ public class VehicleServiceImpl implements VehicleService {
                 .city(updatedVehicle.getCity())
                 .registrationYear(updatedVehicle.getRegistrationYear())
                 .fuelType(updatedVehicle.getFuelType())
-                .transmission(updatedVehicle.getTransmission())
+               // .transmission(updatedVehicle.getTransmission())
                 .kilometerDriven(updatedVehicle.getKilometerDriven())
                 .ownershipDetails(updatedVehicle.getOwnershipDetails())
-                .insuranceStatus(String.valueOf(updatedVehicle.getInsuranceStatus()))
-                .askingPrice(updatedVehicle.getAskingPrice())
+               // .insuranceStatus(String.valueOf(updatedVehicle.getInsuranceStatus()))
+                .askingPrice(BigDecimal.valueOf(updatedVehicle.getAskingPrice()))
                 .vehicleType(updatedVehicle.getVehicleType())
                 .vehicleDescription(updatedVehicle.getVehicleDescription())
                 .build();
@@ -442,12 +443,12 @@ public class VehicleServiceImpl implements VehicleService {
                         .model(vehicle.getModel())
                         .variant(vehicle.getVariant())
                         .registrationYear(vehicle.getRegistrationYear())
-                        .askingPrice(vehicle.getAskingPrice())
+                        .askingPrice(BigDecimal.valueOf(vehicle.getAskingPrice()))
                         .kilometerDriven(vehicle.getKilometerDriven())
                         .fuelType(vehicle.getFuelType())
-                        .transmission(vehicle.getTransmission())
+                    //    .transmission(vehicle.getTransmission())
                         .ownershipDetails(vehicle.getOwnershipDetails())
-                        .insuranceStatus(String.valueOf(vehicle.getInsuranceStatus()))
+                      //  .insuranceStatus(String.valueOf(vehicle.getInsuranceStatus()))
                         .vehicleDescription(vehicle.getVehicleDescription())
                         .city(vehicle.getCity())
                         .dealerContactName(vehicle.getDealer().getOwnerName())
@@ -457,7 +458,7 @@ public class VehicleServiceImpl implements VehicleService {
                         .dealerContactEmail(vehicle.getDealer().getEmail())
                         .vehicleStatus(vehicle.getVehicleStatus())
                         .vehicleType(vehicle.getVehicleType())
-                        .rtoInformation(vehicle.getRtoInformation())
+                    //    .rtoInformation(vehicle.getRtoInformation())
                         .financeAvailability(vehicle.isFinanceAvailability())
                         .createdAt(vehicle.getCreatedAt())
                         .images(
@@ -502,12 +503,12 @@ public class VehicleServiceImpl implements VehicleService {
                 .model(vehicle.getModel())
                 .variant(vehicle.getVariant())
                 .registrationYear(vehicle.getRegistrationYear())
-                .askingPrice(vehicle.getAskingPrice())
+                .askingPrice(BigDecimal.valueOf(vehicle.getAskingPrice()))
                 .kilometerDriven(vehicle.getKilometerDriven())
                 .fuelType(vehicle.getFuelType())
-                .transmission(vehicle.getTransmission())
+           //     .transmission(vehicle.getTransmission())
                 .ownershipDetails(vehicle.getOwnershipDetails())
-                .insuranceStatus(String.valueOf(vehicle.getInsuranceStatus()))
+           //     .insuranceStatus(String.valueOf(vehicle.getInsuranceStatus()))
                 .vehicleDescription(vehicle.getVehicleDescription())
                 .city(vehicle.getCity())
                 .dealerContactName(vehicle.getDealer().getOwnerName())
@@ -517,7 +518,7 @@ public class VehicleServiceImpl implements VehicleService {
                 .dealerContactEmail(vehicle.getDealer().getEmail())
                 .dealerYearsInBusiness(vehicle.getDealer().getYearsInBusiness())
                 .vehicleStatus(vehicle.getVehicleStatus())
-                .rtoInformation(vehicle.getRtoInformation())
+           //     .rtoInformation(vehicle.getRtoInformation())
                 .financeAvailability(vehicle.isFinanceAvailability())
                 .vehicleType(vehicle.getVehicleType())
                 .createdAt(vehicle.getCreatedAt())
@@ -579,12 +580,12 @@ public class VehicleServiceImpl implements VehicleService {
                 .model(vehicle.getModel())
                 .variant(vehicle.getVariant())
                 .registrationYear(vehicle.getRegistrationYear())
-                .askingPrice(vehicle.getAskingPrice())
+                .askingPrice(BigDecimal.valueOf(vehicle.getAskingPrice()))
                 .kilometerDriven(vehicle.getKilometerDriven())
                 .fuelType(vehicle.getFuelType())
-                .transmission(vehicle.getTransmission())
+           //     .transmission(vehicle.getTransmission())
                 .ownershipDetails(vehicle.getOwnershipDetails())
-                .insuranceStatus(String.valueOf(vehicle.getInsuranceStatus()))
+            //    .insuranceStatus(String.valueOf(vehicle.getInsuranceStatus()))
                 .vehicleDescription(vehicle.getVehicleDescription())
                 .city(vehicle.getCity())
                 .dealerContactName(vehicle.getDealer().getOwnerName())
@@ -595,7 +596,7 @@ public class VehicleServiceImpl implements VehicleService {
                 .vehicleStatus(vehicle.getVehicleStatus())
                 .vehicleType(vehicle.getVehicleType())
                 .createdAt(vehicle.getCreatedAt())
-                .rtoInformation(vehicle.getRtoInformation())
+            //    .rtoInformation(vehicle.getRtoInformation())
                 .financeAvailability(vehicle.isFinanceAvailability())
                 .images(
                         vehicle.getMediaList() == null
@@ -649,12 +650,12 @@ public class VehicleServiceImpl implements VehicleService {
                 .model(vehicle.getModel())
                 .variant(vehicle.getVariant())
                 .registrationYear(vehicle.getRegistrationYear())
-                .askingPrice(vehicle.getAskingPrice())
+                .askingPrice(BigDecimal.valueOf(vehicle.getAskingPrice()))
                 .kilometerDriven(vehicle.getKilometerDriven())
                 .fuelType(vehicle.getFuelType())
-                .transmission(vehicle.getTransmission())
+          //      .transmission(vehicle.getTransmission())
                 .ownershipDetails(vehicle.getOwnershipDetails())
-                .insuranceStatus(String.valueOf(vehicle.getInsuranceStatus()))
+          //      .insuranceStatus(String.valueOf(vehicle.getInsuranceStatus()))
                 .vehicleDescription(vehicle.getVehicleDescription())
                 .city(vehicle.getCity())
                 .dealerContactName(vehicle.getDealer().getOwnerName())
@@ -665,7 +666,7 @@ public class VehicleServiceImpl implements VehicleService {
                 .vehicleStatus(vehicle.getVehicleStatus())
                 .vehicleType(vehicle.getVehicleType())
                 .createdAt(vehicle.getCreatedAt())
-                .rtoInformation(vehicle.getRtoInformation())
+         //       .rtoInformation(vehicle.getRtoInformation())
                 .financeAvailability(vehicle.isFinanceAvailability())
 
                 .images(
@@ -712,12 +713,12 @@ public class VehicleServiceImpl implements VehicleService {
                         .model(vehicle.getModel())
                         .variant(vehicle.getVariant())
                         .registrationYear(vehicle.getRegistrationYear())
-                        .askingPrice(vehicle.getAskingPrice())
+                        .askingPrice(BigDecimal.valueOf(vehicle.getAskingPrice()))
                         .kilometerDriven(vehicle.getKilometerDriven())
                         .fuelType(vehicle.getFuelType())
-                        .transmission(vehicle.getTransmission())
+                      //  .transmission(vehicle.getTransmission())
                         .ownershipDetails(vehicle.getOwnershipDetails())
-                        .insuranceStatus(String.valueOf(vehicle.getInsuranceStatus()))
+                  //      .insuranceStatus(String.valueOf(vehicle.getInsuranceStatus()))
                         .vehicleDescription(vehicle.getVehicleDescription())
                         .city(vehicle.getCity())
                         .dealerContactName(vehicle.getDealer().getOwnerName())
@@ -728,7 +729,7 @@ public class VehicleServiceImpl implements VehicleService {
                         .vehicleStatus(vehicle.getVehicleStatus())
                         .vehicleType(vehicle.getVehicleType())
                         .createdAt(vehicle.getCreatedAt())
-                        .rtoInformation(vehicle.getRtoInformation())
+                    //    .rtoInformation(vehicle.getRtoInformation())
                         .financeAvailability(vehicle.isFinanceAvailability())
                         .images(
                                 vehicle.getMediaList() == null
@@ -782,12 +783,12 @@ public class VehicleServiceImpl implements VehicleService {
                         .model(vehicle.getModel())
                         .variant(vehicle.getVariant())
                         .registrationYear(vehicle.getRegistrationYear())
-                        .askingPrice(vehicle.getAskingPrice())
+                        .askingPrice(BigDecimal.valueOf(vehicle.getAskingPrice()))
                         .kilometerDriven(vehicle.getKilometerDriven())
                         .fuelType(vehicle.getFuelType())
-                        .transmission(vehicle.getTransmission())
+                    //    .transmission(vehicle.getTransmission())
                         .ownershipDetails(vehicle.getOwnershipDetails())
-                        .insuranceStatus(String.valueOf(vehicle.getInsuranceStatus()))
+                   //     .insuranceStatus(String.valueOf(vehicle.getInsuranceStatus()))
                         .vehicleDescription(vehicle.getVehicleDescription())
                         .city(vehicle.getCity())
                         .dealerContactName(vehicle.getDealer().getOwnerName())
@@ -798,7 +799,7 @@ public class VehicleServiceImpl implements VehicleService {
                         .vehicleStatus(vehicle.getVehicleStatus())
                         .vehicleType(vehicle.getVehicleType())
                         .createdAt(vehicle.getCreatedAt())
-                        .rtoInformation(vehicle.getRtoInformation())
+                    //    .rtoInformation(vehicle.getRtoInformation())
                         .financeAvailability(vehicle.isFinanceAvailability())
                         .images(
                                 vehicle.getMediaList() == null

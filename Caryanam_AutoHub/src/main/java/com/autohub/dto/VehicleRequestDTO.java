@@ -39,18 +39,19 @@ public class VehicleRequestDTO {
     )
     private String fuelType;
 
-    @NotBlank(message = "Transmission is Required")
-    @Pattern(
-            regexp = "^(MANUAL|AUTOMATIC|CVT|AMT)$",
-            message = "Invalid Transmission Type"
-    )
-    private String transmission;
+//    @NotBlank(message = "Transmission is Required")
+//    @Pattern(
+//            regexp = "^(MANUAL|AUTOMATIC|CVT|AMT)$",
+//            message = "Invalid Transmission Type"
+//    )
+//    private String transmission;
 
-    @NotBlank(message = "Ownership Details is Required")
-    private String ownershipDetails;
+    @NotNull(message = "Kilometer Driven is Required")
+    @Positive(message = "Kilometer Driven must be greater than 0")
+    private int ownershipDetails;
 
-    @NotBlank(message = "Insurance Status is Required")
-    private InsuranceStatus insuranceStatus;
+//    @NotBlank(message = "Insurance Status is Required")
+//    private InsuranceStatus insuranceStatus;
 
     @NotBlank(message = "City is Required")
     @Size(min = 2, max = 50,
@@ -61,12 +62,12 @@ public class VehicleRequestDTO {
     )
     private String city;
 
-    @NotBlank(message = "RTO Information is Required")
-    @Pattern(
-            regexp = "^[A-Z]{2}[0-9]{1,2}$",
-            message = "Invalid RTO Code. Example: MH31, DL1"
-    )
-    private String rtoInformation;
+//    @NotBlank(message = "RTO Information is Required")
+//    @Pattern(
+//            regexp = "^[A-Z]{2}[0-9]{1,2}$",
+//            message = "Invalid RTO Code. Example: MH31, DL1"
+//    )
+//    private String rtoInformation;
 
     @NotNull(message = "Finance Availability is Required")
     private Boolean financeAvailability;

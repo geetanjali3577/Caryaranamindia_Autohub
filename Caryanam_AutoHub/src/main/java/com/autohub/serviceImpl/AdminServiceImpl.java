@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -135,12 +136,12 @@ public class AdminServiceImpl implements AdminService {
                         .model(vehicle.getModel())
                         .variant(vehicle.getVariant())
                         .registrationYear(vehicle.getRegistrationYear())
-                        .askingPrice(vehicle.getAskingPrice())
+                        .askingPrice(BigDecimal.valueOf(vehicle.getAskingPrice()))
                         .kilometerDriven(vehicle.getKilometerDriven())
                         .fuelType(vehicle.getFuelType())
-                        .transmission(vehicle.getTransmission())
+                      //  .transmission(vehicle.getTransmission())
                         .ownershipDetails(vehicle.getOwnershipDetails())
-                        .insuranceStatus(String.valueOf(vehicle.getInsuranceStatus()))
+                      //  .insuranceStatus(String.valueOf(vehicle.getInsuranceStatus()))
                         .vehicleDescription(vehicle.getVehicleDescription())
                         .city(vehicle.getCity())
                         .dealerContactName(vehicle.getDealer().getOwnerName())

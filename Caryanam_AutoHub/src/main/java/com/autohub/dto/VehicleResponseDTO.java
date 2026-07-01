@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -17,6 +18,47 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class VehicleResponseDTO {
+
+/*
+    private Long id;
+
+    private Long dealerId;
+
+    private String brand;
+
+    private String model;
+
+    private String variant;
+
+    private Integer registrationYear;
+
+    private BigDecimal askingPrice;
+
+    private Long kilometerDriven;
+
+    private String fuelType;
+
+    private String city;
+
+    private Integer modelYear;
+
+    private VehicleStatus vehicleStatus;
+
+    private VehicleType vehicleType;
+
+    private String vehicleDescription;
+
+    private LocalDateTime createdAt;
+
+    private String dealerBusinessName;
+
+    private String dealerContactNumber;
+
+    private List<String> images;
+
+    private List<String> videos;
+
+*/
 
     private Long id;
 
@@ -30,7 +72,7 @@ public class VehicleResponseDTO {
 
     private Integer registrationYear;
 
-    private Double askingPrice;
+    private BigDecimal askingPrice;
 
     private Long kilometerDriven;
 
@@ -38,7 +80,7 @@ public class VehicleResponseDTO {
 
     private String transmission;
 
-    private String ownershipDetails;
+    private int ownershipDetails;
 
     private String insuranceStatus;
 

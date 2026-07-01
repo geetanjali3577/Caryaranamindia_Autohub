@@ -25,4 +25,5 @@ public interface DealerService {
 
     DashboardResponseDTO getDashboard(Long dealerId);
 
+
 }

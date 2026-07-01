@@ -38,7 +38,6 @@ public class Dealer {
     @Column(nullable = false)
     private String whatsapp;
 
-    @Column(nullable = false,unique = true)
     private String email;
 
     @Column(nullable = false)
@@ -57,10 +56,10 @@ public class Dealer {
     private String pinCode;
 
     @Column(length = 500)
-    private String dealerLogo;
+    private String dealerLogo; //optional
 
     @Column(length = 500)
-    private String showroomImage;
+    private String showroomImage; //optional
 
     @Enumerated(EnumType.STRING)
     private Role role;

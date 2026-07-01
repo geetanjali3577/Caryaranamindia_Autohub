@@ -3,18 +3,22 @@ package com.autohub.serviceImpl;
 import com.autohub.configuration.ZipExtractor;
 import com.autohub.dto.CarImageResponse;
 import com.autohub.dto.CarResponse;
-import com.autohub.entity.OlxCar;
-import com.autohub.entity.OlxCarImage;
-import com.autohub.repository.OlxCarRepository;
+import com.autohub.entity.Dealer;
+import com.autohub.entity.Vehicle;
+import com.autohub.entity.VehicleMedia;
+import com.autohub.enums.VehicleStatus;
+import com.autohub.enums.VehicleType;
+import com.autohub.repository.DealerRepository;
+import com.autohub.repository.VehicleRepository;
 import com.autohub.service.OlxImportService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,8 +27,12 @@ import java.util.List;
 @Transactional
 public class OlxImportServiceImpl implements OlxImportService {
 
-    private final OlxCarRepository carRepository;
+    private final VehicleRepository vehicleRepository;
     private final ZipExtractor zipExtractor;
+    private final DealerRepository dealerRepository;
+
+    @Value("${server.port}")
+    private String port;
 
     @Override
     public void importData(MultipartFile excel,
@@ -58,54 +66,69 @@ public class OlxImportServiceImpl implements OlxImportService {
                     continue;
                 }
 
-                OlxCar car = new OlxCar();
+                Vehicle car = new Vehicle();
 
-                car.setLocation(
-                        getStringValue(formatter, row, 0));
+                Long dealerId = getLongValue(formatter, row, 0);
 
-                car.setCarName(carName);
+                Dealer dealer = dealerRepository.findById(dealerId)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Dealer not found with id : " + dealerId));
 
-                car.setVariantName(
+                car.setDealer(dealer);
+
+                car.setCity(
+                        getStringValue(formatter, row, 1));
+
+                car.setModel(
                         getStringValue(formatter, row, 2));
 
-                car.setBrand(
+                car.setVariant(
                         getStringValue(formatter, row, 3));
 
-                car.setDescription(
+                car.setBrand(
                         getStringValue(formatter, row, 4));
 
-                car.setFuelType(
+                car.setVehicleDescription(
                         getStringValue(formatter, row, 5));
 
-                car.setKmDriven(
-                        getLongValue(formatter, row, 6));
+                String fuelType =
+                        getStringValue(formatter, row, 6);
 
-                car.setPrice(
-                        BigDecimal.valueOf(
-                                getDoubleValue(formatter, row, 7)));
+                if (fuelType.length() > 100) {
+                    fuelType = fuelType.substring(0, 100);
+                }
 
-                car.setNoOfOwners(
-                        getLongValue(formatter, row, 8).intValue());
+                car.setFuelType(fuelType);
 
-                car.setModelYear(
+                car.setKilometerDriven(
+                        getLongValue(formatter, row, 7));
+
+                car.setAskingPrice(
+                        getDoubleValue(formatter, row, 8));
+
+                car.setOwnershipDetails(
                         getLongValue(formatter, row, 9).intValue());
 
-                car.setSourceId(
-                        getLongValue(formatter, row, 10));
+                car.setRegistrationYear(
+                        getLongValue(formatter, row, 10).intValue());
 
                 car.setSubLocalityId(
-                        getLongValue(formatter, row, 11));
+                        getLongValue(formatter, row, 12));
 
-                car.setSourceUrl(
-                        getStringValue(formatter, row, 30));
-
-                car.setDealerName(
-                        getStringValue(formatter, row, 31));
-
-                car.setContactNo(
+                car.setDealerContactName(
                         getStringValue(formatter, row, 32));
 
+                car.setDealerContactNumber(
+                        getStringValue(formatter, row, 33));
+
+                car.setFinanceAvailability(false);
+
                 car.setCreatedAt(LocalDateTime.now());
+
+                car.setVehicleType(VehicleType.NON_PREMIUM);
+
+                car.setVehicleStatus(VehicleStatus.ACTIVE);
 
                 int imageCount = 0;
 
@@ -122,22 +145,28 @@ public class OlxImportServiceImpl implements OlxImportService {
 
                     if (imageFile.exists()) {
 
-                        OlxCarImage image =
-                                new OlxCarImage();
+                        VehicleMedia image =
+                                new VehicleMedia();
 
-                        image.setImageUrl(
-                                "/uploads/olx/Images_Processed/"
-                                        + imageName);
+                        System.out.println("Checking : " + imageFile.getAbsolutePath());
+                        System.out.println("Exists : " + imageFile.exists());
 
-                        image.setCar(car);
+                        image.setFileName(imageName);
+                        image.setFileType("jpg"); // किंवा extension काढून टाक
+                        image.setFilePath("/uploads/olx/Images_Processed/" + imageName);
+                        image.setMediaType("IMAGE");
+                        image.setUploadedAt(LocalDateTime.now());
 
-                        car.getImages().add(image);
+                        image.setVehicle(car);
+
+                        car.getMediaList().add(image);
 
                         imageCount++;
+
                     }
                 }
 
-                carRepository.save(car);
+                vehicleRepository.save(car);
 
                 System.out.println(
                         "Imported Row : "
@@ -153,7 +182,7 @@ public class OlxImportServiceImpl implements OlxImportService {
     @Override
     public CarResponse getCar(Long id) {
 
-        OlxCar car = carRepository.findById(id)
+        Vehicle car = vehicleRepository.findById(id)
                 .orElseThrow(() ->
                         new RuntimeException("Car Not Found"));
 
@@ -161,11 +190,11 @@ public class OlxImportServiceImpl implements OlxImportService {
 
         response.setId(car.getId());
         response.setBrand(car.getBrand());
-        response.setCarName(car.getCarName());
-        response.setPrice(car.getPrice());
+        response.setCarName(car.getVariant());
+        response.setPrice(car.getAskingPrice());
 
         List<CarImageResponse> images =
-                car.getImages()
+                car.getMediaList()
                         .stream()
                         .map(image -> {
 
@@ -174,7 +203,9 @@ public class OlxImportServiceImpl implements OlxImportService {
 
                             dto.setId(image.getId());
                             dto.setImageUrl(
-                                    image.getImageUrl());
+                                    "http://localhost:" + port +
+                                            image.getFilePath().replace("\\", "/")
+                            );
 
                             return dto;
 
@@ -283,7 +314,7 @@ public class OlxImportServiceImpl implements OlxImportService {
     @Override
     public List<CarResponse> getAllCars() {
 
-        List<OlxCar> cars = carRepository.findAll();
+        List<Vehicle> cars = vehicleRepository.findAll();
 
         return cars.stream()
                 .map(car -> {
@@ -293,11 +324,11 @@ public class OlxImportServiceImpl implements OlxImportService {
 
                     response.setId(car.getId());
                     response.setBrand(car.getBrand());
-                    response.setCarName(car.getCarName());
-                    response.setPrice(car.getPrice());
+                    response.setCarName(car.getVariant());
+                    response.setPrice(car.getAskingPrice());
 
                     List<CarImageResponse> images =
-                            car.getImages()
+                            car.getMediaList()
                                     .stream()
                                     .map(image -> {
 
@@ -305,9 +336,11 @@ public class OlxImportServiceImpl implements OlxImportService {
                                                 new CarImageResponse();
 
                                         dto.setId(image.getId());
+                                       // dto.setImageUrl( image.getImageUrl());
                                         dto.setImageUrl(
-                                                image.getImageUrl());
-
+                                                "http://localhost:" + port +
+                                                        image.getFilePath().replace("\\", "/")
+                                        );
                                         return dto;
 
                                     }).toList();

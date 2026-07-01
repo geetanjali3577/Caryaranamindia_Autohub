@@ -28,11 +28,13 @@ public class DealerController {
 
     // ================= REGISTER DEALER =================
 
-    @PostMapping(value = "/register",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Dealer Registration API")
     public ResponseEntity<ResponseDto<DealerResponseDTO>> registerDealer(@RequestPart("dealer") String dealerJson,
-                                            @RequestPart("dealerLogo")MultipartFile dealerLogo,
-                                            @RequestPart("showroomImage") MultipartFile showroomImage) throws Exception {
+                                                                         @RequestParam(value = "dealerLogo", required = false)
+                                                                         MultipartFile dealerLogo,
+                                                                         @RequestParam(value = "showroomImage", required = false)
+                                                                         MultipartFile showroomImage) throws Exception {
 
         DealerRegisterDTO dto =objectMapper.readValue(dealerJson, DealerRegisterDTO.class);
 

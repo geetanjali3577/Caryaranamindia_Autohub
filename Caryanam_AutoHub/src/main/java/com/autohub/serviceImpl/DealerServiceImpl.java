@@ -47,84 +47,139 @@ public class DealerServiceImpl implements DealerService {
     private String baseUrl;
 
 
+
     @Override
-    public DealerResponseDTO registerDealer(DealerRegisterDTO dto, MultipartFile dealerLogo, MultipartFile showroomImage) {
+    public DealerResponseDTO registerDealer(
+            DealerRegisterDTO dto,
+            MultipartFile dealerLogo,
+            MultipartFile showroomImage) {
 
-    if (dealerRepository.existsByEmail(dto.getEmail())) {
-        throw new RuntimeException("Email already registered");
-    }
-
-    if (dealerRepository.existsByMobile(dto.getMobile())) {
-        throw new RuntimeException("Mobile already registered");
-    }
-
-    validateImage(dealerLogo, "Dealer Logo");
-    validateImage(showroomImage, "Showroom Image");
-
-    Dealer dealer = new Dealer();
-    dealer.setBusinessName(dto.getBusinessName());
-    dealer.setOwnerName(dto.getOwnerName());
-    dealer.setGstNumber(dto.getGstNumber());
-    dealer.setYearsInBusiness(dto.getYearsInBusiness());
-    dealer.setMobile(dto.getMobile());
-    dealer.setWhatsapp(dto.getWhatsapp());
-    dealer.setEmail(dto.getEmail());
-    dealer.setPassword(passwordEncoder.encode(dto.getPassword()));
-    dealer.setAddress(dto.getAddress());
-    dealer.setDealerAccountStatus(DealerStatus.PENDING);
-    dealer.setCity(dto.getCity());
-    dealer.setState(dto.getState());
-    dealer.setPinCode(dto.getPinCode());
-    dealer.setRole(Role.DEALER);
-
-
-    Dealer savedDealer = dealerRepository.save(dealer);
-
-    String logoPath = saveFile(
-            dealerLogo,
-            String.valueOf(savedDealer.getId()),
-            "logo"
-    );
-
-    String showroomPath = saveFile(
-            showroomImage,
-            String.valueOf(savedDealer.getId()),
-            "showroom"
-    );
-
-    savedDealer.setDealerLogo(logoPath);
-    savedDealer.setShowroomImage(showroomPath);
-
-    savedDealer = dealerRepository.save(savedDealer);
-
-    return modelMapper.map(savedDealer, DealerResponseDTO.class);
-
-}
-
-    private void validateImage(MultipartFile file, String fieldName) {
-
-        if (file == null || file.isEmpty()) {
-            throw new RuntimeException(fieldName + " is required");
+        if (dealerRepository.existsByEmail(dto.getEmail())) {
+            throw new RuntimeException("Email already registered");
         }
 
-        String fileName = file.getOriginalFilename();
-
-        if (fileName == null) {
-            throw new RuntimeException(fieldName + " is invalid");
+        if (dealerRepository.existsByMobile(dto.getMobile())) {
+            throw new RuntimeException("Mobile already registered");
         }
 
-        String extension =
-                fileName.substring(fileName.lastIndexOf(".") + 1)
-                        .toLowerCase();
+        Dealer dealer = new Dealer();
+        dealer.setBusinessName(dto.getBusinessName());
+        dealer.setOwnerName(dto.getOwnerName());
+        dealer.setGstNumber(dto.getGstNumber());
+        dealer.setYearsInBusiness(dto.getYearsInBusiness());
+        dealer.setMobile(dto.getMobile());
+        dealer.setWhatsapp(dto.getWhatsapp());
+        dealer.setEmail(dto.getEmail());
+        dealer.setPassword(passwordEncoder.encode(dto.getPassword()));
+        dealer.setAddress(dto.getAddress());
+        dealer.setDealerAccountStatus(DealerStatus.PENDING);
+        dealer.setCity(dto.getCity());
+        dealer.setState(dto.getState());
+        dealer.setPinCode(dto.getPinCode());
+        dealer.setRole(Role.DEALER);
 
-        if (!extension.equals("jpg")
-                && !extension.equals("jpeg")
-                && !extension.equals("png")) {
+        Dealer savedDealer = dealerRepository.save(dealer);
 
-            throw new RuntimeException(
-                    fieldName + " must be JPG, JPEG or PNG format");
+        if (dealerLogo != null && !dealerLogo.isEmpty()) {
+            String logoPath = saveFile(
+                    dealerLogo,
+                    String.valueOf(savedDealer.getId()),
+                    "logo");
+
+            savedDealer.setDealerLogo(logoPath);
         }
+
+        if (showroomImage != null && !showroomImage.isEmpty()) {
+            String showroomPath = saveFile(
+                    showroomImage,
+                    String.valueOf(savedDealer.getId()),
+                    "showroom");
+
+            savedDealer.setShowroomImage(showroomPath);
+        }
+
+        savedDealer = dealerRepository.save(savedDealer);
+
+        return modelMapper.map(savedDealer, DealerResponseDTO.class);
     }
+//    @Override
+//    public DealerResponseDTO registerDealer(DealerRegisterDTO dto, MultipartFile dealerLogo, MultipartFile showroomImage) {
+//
+//    if (dealerRepository.existsByEmail(dto.getEmail())) {
+//        throw new RuntimeException("Email already registered");
+//    }
+//
+//    if (dealerRepository.existsByMobile(dto.getMobile())) {
+//        throw new RuntimeException("Mobile already registered");
+//    }
+//
+//    validateImage(dealerLogo, "Dealer Logo");
+//    validateImage(showroomImage, "Showroom Image");
+//
+//    Dealer dealer = new Dealer();
+//    dealer.setBusinessName(dto.getBusinessName());
+//    dealer.setOwnerName(dto.getOwnerName());
+//    dealer.setGstNumber(dto.getGstNumber());
+//    dealer.setYearsInBusiness(dto.getYearsInBusiness());
+//    dealer.setMobile(dto.getMobile());
+//    dealer.setWhatsapp(dto.getWhatsapp());
+//    dealer.setEmail(dto.getEmail());
+//    dealer.setPassword(passwordEncoder.encode(dto.getPassword()));
+//    dealer.setAddress(dto.getAddress());
+//    dealer.setDealerAccountStatus(DealerStatus.PENDING);
+//    dealer.setCity(dto.getCity());
+//    dealer.setState(dto.getState());
+//    dealer.setPinCode(dto.getPinCode());
+//    dealer.setRole(Role.DEALER);
+//
+//
+//    Dealer savedDealer = dealerRepository.save(dealer);
+//
+//    String logoPath = saveFile(
+//            dealerLogo,
+//            String.valueOf(savedDealer.getId()),
+//            "logo"
+//    );
+//
+//    String showroomPath = saveFile(
+//            showroomImage,
+//            String.valueOf(savedDealer.getId()),
+//            "showroom"
+//    );
+//
+//    savedDealer.setDealerLogo(logoPath);
+//    savedDealer.setShowroomImage(showroomPath);
+//
+//    savedDealer = dealerRepository.save(savedDealer);
+//
+//    return modelMapper.map(savedDealer, DealerResponseDTO.class);
+//
+//}
+
+//    private void validateImage(MultipartFile file, String fieldName) {
+//
+//        if (file == null || file.isEmpty()) {
+//            throw new RuntimeException(fieldName + " is required");
+//        }
+//
+//        String fileName = file.getOriginalFilename();
+//
+//        if (fileName == null) {
+//            throw new RuntimeException(fieldName + " is invalid");
+//        }
+//
+//        String extension =
+//                fileName.substring(fileName.lastIndexOf(".") + 1)
+//                        .toLowerCase();
+//
+//        if (!extension.equals("jpg")
+//                && !extension.equals("jpeg")
+//                && !extension.equals("png")) {
+//
+//            throw new RuntimeException(
+//                    fieldName + " must be JPG, JPEG or PNG format");
+//        }
+//    }
 
 
     private String saveFile(MultipartFile file,String dealerId,String prefix) {

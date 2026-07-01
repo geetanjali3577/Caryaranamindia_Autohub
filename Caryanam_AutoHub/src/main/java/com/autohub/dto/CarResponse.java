@@ -14,7 +14,7 @@ public class CarResponse {
 
     private String carName;
 
-    private BigDecimal price;
+    private Double price;
 
     private List<CarImageResponse> images;
 }

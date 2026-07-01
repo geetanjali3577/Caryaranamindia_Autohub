@@ -9,10 +9,10 @@ import com.autohub.repository.VehicleRepository;
 import com.autohub.repository.VehicleViewRepository;
 import com.autohub.service.VehicleViewService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 @Service
@@ -96,17 +96,17 @@ public class VehicleViewServiceImpl implements VehicleViewService {
                 .model(vehicle.getModel())
                 .variant(vehicle.getVariant())
                 .registrationYear(vehicle.getRegistrationYear())
-                .askingPrice(vehicle.getAskingPrice())
+                .askingPrice(BigDecimal.valueOf(vehicle.getAskingPrice()))
                 .kilometerDriven(vehicle.getKilometerDriven())
                 .fuelType(vehicle.getFuelType())
-                .transmission(vehicle.getTransmission())
+                //.transmission(vehicle.getTransmission())
                 .ownershipDetails(vehicle.getOwnershipDetails())
-                .insuranceStatus(String.valueOf(vehicle.getInsuranceStatus()))
+                //.insuranceStatus(String.valueOf(vehicle.getInsuranceStatus()))
                 .vehicleDescription(vehicle.getVehicleDescription())
                 .city(vehicle.getCity())
                 .dealerContactName(vehicle.getDealerContactName())
                 .dealerContactNumber(vehicle.getDealerContactNumber())
-                .dealerContactEmail(vehicle.getDealerContactEmail())
+              //  .dealerContactEmail(vehicle.getDealerContactEmail())
                 .vehicleStatus(vehicle.getVehicleStatus())
                 .createdAt(vehicle.getCreatedAt())
                 .images(

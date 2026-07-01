@@ -32,13 +32,7 @@ public class DealerRegisterDTO {
     )
     private String whatsapp;
 
-   @NotBlank(message = "Email is Required")
-   @Email(message = "Invalid Email")
-   @Pattern(
-           regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
-           message = "Please enter a valid email address"
-   )
-    private String email;
+   private String email;
 
     @NotBlank(message = "Password is Required")
     @Size(min = 6, message = "Password must be at least 6 characters")

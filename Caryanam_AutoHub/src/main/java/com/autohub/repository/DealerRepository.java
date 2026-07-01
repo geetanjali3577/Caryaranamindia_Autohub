@@ -13,6 +13,8 @@ import java.util.Optional;
 @Repository
 public interface DealerRepository extends JpaRepository<Dealer, Long> {
 
+    Optional<Dealer> findByOwnerName(String ownerName);
+
     Optional<Dealer> findByMobile(String mobile);
 
     Optional<Dealer> findByEmail(String email);
