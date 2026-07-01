@@ -1,6 +1,7 @@
 package com.autohub.serviceImpl;
 
 import com.autohub.configuration.CustomUserDetails;
+import com.autohub.configuration.OnlineUserStore;
 import com.autohub.dto.ChatMessageRequest;
 import com.autohub.dto.ChatMessageResponse;
 import com.autohub.dto.ChatUserResponse;
@@ -31,6 +32,8 @@ public class ChatServiceImpl
     private final CustomerRepository customerRepository;
 
     private final SimpMessagingTemplate messagingTemplate;
+
+    private final OnlineUserStore onlineUserStore;
 
 
     @Override
@@ -319,107 +322,6 @@ public class ChatServiceImpl
         return users;
     }
 
-//    @Override
-//    public List<ChatUserResponse> getAvailableUsers(
-//            Long userId,
-//            String role) {
-//
-//        List<ChatUserResponse> users =
-//                new ArrayList<>();
-//
-//        if ("ADMIN".equals(role)) {
-//
-//            dealerRepository.findAll()
-//                    .forEach(dealer ->
-//                            users.add(
-//                                    ChatUserResponse.builder()
-//                                            .id(dealer.getId())
-//                                            .name(dealer.getOwnerName())
-//                                            .role("DEALER")
-//                                            .chatKey("DEALER_" + dealer.getId())
-//                                            .build()
-//                            ));
-//
-//            customerRepository.findAll()
-//                    .forEach(customer ->
-//                            users.add(
-//                                    ChatUserResponse.builder()
-//                                            .id(customer.getId())
-//                                            .name(customer.getCustomerName())
-//                                            .role("CUSTOMER")
-//                                            .chatKey("CUSTOMER_" + customer.getId())
-//                                            .build()
-//                            ));
-//        }
-//
-//        else if ("DEALER".equals(role)) {
-//
-//            adminRepository.findAll()
-//                    .forEach(admin ->
-//                            users.add(
-//                                    ChatUserResponse.builder()
-//                                            .id(admin.getAdminId())
-//                                            .name(admin.getFullName())
-//                                            .role("ADMIN")
-//                                            .chatKey("ADMIN_" + admin.getAdminId())
-//                                            .build()
-//                            ));
-//
-//            dealerRepository.findAll()
-//                    .stream()
-//                    .filter(d -> !d.getId().equals(userId))
-//                    .forEach(dealer ->
-//                            users.add(
-//                                    ChatUserResponse.builder()
-//                                            .id(dealer.getId())
-//                                            .name(dealer.getOwnerName())
-//                                            .role("DEALER")
-//                                            .chatKey("DEALER_" + dealer.getId())
-//                                            .build()
-//                            ));
-//
-//            customerRepository.findAll()
-//                    .forEach(customer ->
-//                            users.add(
-//                                    ChatUserResponse.builder()
-//                                            .id(customer.getId())
-//                                            .name(customer.getCustomerName())
-//                                            .role("CUSTOMER")
-//                                            .chatKey("CUSTOMER_" + customer.getId())
-//                                            .build()
-//                            ));
-//        }
-//
-//        else if ("CUSTOMER".equals(role)) {
-//
-//            adminRepository.findAll()
-//                    .forEach(admin ->
-//                            users.add(
-//                                    ChatUserResponse.builder()
-//                                            .id(admin.getAdminId())
-//                                            .name(admin.getFullName())
-//                                            .role("ADMIN")
-//                                            .chatKey("ADMIN_" + admin.getAdminId())
-//                                            .build()
-//                            ));
-//
-//            dealerRepository.findAll()
-//                    .forEach(dealer ->
-//                            users.add(
-//                                    ChatUserResponse.builder()
-//                                            .id(dealer.getId())
-//                                            .name(dealer.getOwnerName())
-//                                            .role("DEALER")
-//                                            .chatKey("DEALER_" + dealer.getId())
-//                                            .build()
-//                            ));
-//        }
-//
-//        return users;
-//    }
-
-
-
     @Override
     public Long getUnreadCount(
             Long userId,
@@ -491,6 +393,25 @@ public class ChatServiceImpl
                         .findTopByRoomIdOrderBySentAtDesc(roomId)
                         .orElse(null);
 
+//        Long unreadCount =
+//                messageRepository
+//                        .countByReceiverIdAndReceiverRoleAndIsReadFalse(
+//                                loggedInUserId,
+//                                loggedInRole
+//                        );
+
+        Long unreadCount =
+                messageRepository.getUnreadCountForRoom(
+                        roomId,
+                        loggedInUserId,
+                        loggedInRole
+                );
+
+        Boolean online =
+                onlineUserStore.isOnline(
+                        targetRole + "_" + targetId
+                );
+
         return ChatUserResponse.builder()
                 .id(targetId)
                 .name(targetName)
@@ -506,8 +427,8 @@ public class ChatServiceImpl
                                 ? lastMessage.getSentAt()
                                 : null
                 )
+                .unreadCount(unreadCount)
+                .online(online)
                 .build();
     }
-
-
 }

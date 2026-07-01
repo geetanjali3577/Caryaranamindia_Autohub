@@ -43,4 +43,19 @@ AND c.isRead = false
 
     Optional<ChatMessage>findTopByRoomIdOrderBySentAtDesc( String roomId );
 
+
+    @Query("""
+SELECT COUNT(c)
+FROM ChatMessage c
+WHERE c.roomId = :roomId
+AND c.receiverId = :receiverId
+AND c.receiverRole = :receiverRole
+AND c.isRead = false
+""")
+    Long getUnreadCountForRoom(
+            @Param("roomId") String roomId,
+            @Param("receiverId") Long receiverId,
+            @Param("receiverRole") String receiverRole
+    );
+
 }

@@ -20,5 +20,9 @@ public class ChatUserResponse {
     private String lastMessage;
 
     private LocalDateTime lastMessageAt;
+
+    private Long unreadCount;
+
+    private Boolean online;
 }
 
