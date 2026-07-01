@@ -593,142 +593,269 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
-    public Page<VehicleResponseDTO> getAllNonPremiumVehicle(Long customerId,int page, int size) {
+    public List<VehicleResponseDTO> getAllNonPremiumVehicle(Long customerId) {
 
-        Pageable pageable = PageRequest.of(page, size);
-
-        Page<Vehicle> vehicles =
+        List<Vehicle> vehicles =
                 vehicleRepository.findAllActiveAndFeaturedVehicles(
-                        VehicleType.NON_PREMIUM,
-                        pageable);
+                        VehicleType.NON_PREMIUM);
 
         if (vehicles.isEmpty()) {
             throw new ResourceNotFoundException("No vehicles found");
         }
 
-        return vehicles.map(vehicle -> VehicleResponseDTO.builder()
-                .id(vehicle.getId())
-                .dealerId(vehicle.getDealer().getId())
-                .brand(vehicle.getBrand())
-                .model(vehicle.getModel())
-                .variant(vehicle.getVariant())
-                .registrationYear(vehicle.getRegistrationYear())
-                .askingPrice(BigDecimal.valueOf(vehicle.getAskingPrice()))
-                .kilometerDriven(vehicle.getKilometerDriven())
-                .fuelType(vehicle.getFuelType())
-           //     .transmission(vehicle.getTransmission())
-                .ownershipDetails(vehicle.getOwnershipDetails())
-            //    .insuranceStatus(String.valueOf(vehicle.getInsuranceStatus()))
-                .vehicleDescription(vehicle.getVehicleDescription())
-                .city(vehicle.getCity())
-                .dealerContactName(vehicle.getDealer().getOwnerName())
-                .dealerContactNumber(vehicle.getDealer().getMobile())
-                .dealerWhatsappNumber(vehicle.getDealer().getWhatsapp())
-                .dealerBusinessName(vehicle.getDealer().getBusinessName())
-                .dealerContactEmail(vehicle.getDealer().getEmail())
-                .vehicleStatus(vehicle.getVehicleStatus())
-                .vehicleType(vehicle.getVehicleType())
-                .createdAt(vehicle.getCreatedAt())
-            //    .rtoInformation(vehicle.getRtoInformation())
-                .financeAvailability(vehicle.isFinanceAvailability())
-                .images(
-                        vehicle.getMediaList() == null
-                                ? List.of()
-                                : vehicle.getMediaList().stream()
-                                .filter(media -> "IMAGE".equalsIgnoreCase(media.getMediaType()))
-                                .map(media -> "http://localhost:" + port +
-                                        media.getFilePath().replace("\\", "/"))
-                                .toList()
-                )
-
-                .videos(
-                        vehicle.getMediaList() == null
-                                ? List.of()
-                                : vehicle.getMediaList().stream()
-                                .filter(media -> "VIDEO".equalsIgnoreCase(media.getMediaType()))
-                                .map(media -> "http://localhost:" + port +
-                                        media.getFilePath().replace("\\", "/"))
-                                .toList()
-                )
-                .isWishList(
-                        wishlistRepository.existsByCustomer_IdAndVehicle_Id(
-                                customerId,
-                                vehicle.getId()
+        return vehicles.stream()
+                .map(vehicle -> VehicleResponseDTO.builder()
+                        .id(vehicle.getId())
+                        .dealerId(vehicle.getDealer().getId())
+                        .brand(vehicle.getBrand())
+                        .model(vehicle.getModel())
+                        .variant(vehicle.getVariant())
+                        .registrationYear(vehicle.getRegistrationYear())
+                        .askingPrice(BigDecimal.valueOf(vehicle.getAskingPrice()))
+                        .kilometerDriven(vehicle.getKilometerDriven())
+                        .fuelType(vehicle.getFuelType())
+                        .ownershipDetails(vehicle.getOwnershipDetails())
+                        .vehicleDescription(vehicle.getVehicleDescription())
+                        .city(vehicle.getCity())
+                        .dealerContactName(vehicle.getDealer().getOwnerName())
+                        .dealerContactNumber(vehicle.getDealer().getMobile())
+                        .dealerWhatsappNumber(vehicle.getDealer().getWhatsapp())
+                        .dealerBusinessName(vehicle.getDealer().getBusinessName())
+                        .dealerContactEmail(vehicle.getDealer().getEmail())
+                        .vehicleStatus(vehicle.getVehicleStatus())
+                        .vehicleType(vehicle.getVehicleType())
+                        .createdAt(vehicle.getCreatedAt())
+                        .financeAvailability(vehicle.isFinanceAvailability())
+                        .images(
+                                vehicle.getMediaList() == null
+                                        ? List.of()
+                                        : vehicle.getMediaList().stream()
+                                        .filter(media -> "IMAGE".equalsIgnoreCase(media.getMediaType()))
+                                        .map(media -> "http://localhost:" + port +
+                                                media.getFilePath().replace("\\", "/"))
+                                        .toList()
                         )
-                )
-                .build());
-
-
+                        .videos(
+                                vehicle.getMediaList() == null
+                                        ? List.of()
+                                        : vehicle.getMediaList().stream()
+                                        .filter(media -> "VIDEO".equalsIgnoreCase(media.getMediaType()))
+                                        .map(media -> "http://localhost:" + port +
+                                                media.getFilePath().replace("\\", "/"))
+                                        .toList()
+                        )
+                        .isWishList(
+                                wishlistRepository.existsByCustomer_IdAndVehicle_Id(
+                                        customerId,
+                                        vehicle.getId()
+                                )
+                        )
+                        .build())
+                .toList();
     }
 
 
     @Override
-    public Page<VehicleResponseDTO> getAllPremiumVehicle(Long customerId,int page, int size) {
+    public List<VehicleResponseDTO> getAllPremiumVehicle(Long customerId) {
 
-        Pageable pageable = PageRequest.of(page, size);
-
-        Page<Vehicle> vehicles =
+        List<Vehicle> vehicles =
                 vehicleRepository.findAllActiveAndFeaturedVehicles(
-                        VehicleType.PREMIUM,
-                        pageable);
+                        VehicleType.PREMIUM);
 
         if (vehicles.isEmpty()) {
             throw new ResourceNotFoundException("No vehicles found");
         }
 
-        return vehicles.map(vehicle -> VehicleResponseDTO.builder()
-                .id(vehicle.getId())
-                .dealerId(vehicle.getDealer().getId())
-                .brand(vehicle.getBrand())
-                .model(vehicle.getModel())
-                .variant(vehicle.getVariant())
-                .registrationYear(vehicle.getRegistrationYear())
-                .askingPrice(BigDecimal.valueOf(vehicle.getAskingPrice()))
-                .kilometerDriven(vehicle.getKilometerDriven())
-                .fuelType(vehicle.getFuelType())
-          //      .transmission(vehicle.getTransmission())
-                .ownershipDetails(vehicle.getOwnershipDetails())
-          //      .insuranceStatus(String.valueOf(vehicle.getInsuranceStatus()))
-                .vehicleDescription(vehicle.getVehicleDescription())
-                .city(vehicle.getCity())
-                .dealerContactName(vehicle.getDealer().getOwnerName())
-                .dealerContactNumber(vehicle.getDealer().getMobile())
-                .dealerWhatsappNumber(vehicle.getDealer().getWhatsapp())
-                .dealerBusinessName(vehicle.getDealer().getBusinessName())
-                .dealerContactEmail(vehicle.getDealer().getEmail())
-                .vehicleStatus(vehicle.getVehicleStatus())
-                .vehicleType(vehicle.getVehicleType())
-                .createdAt(vehicle.getCreatedAt())
-         //       .rtoInformation(vehicle.getRtoInformation())
-                .financeAvailability(vehicle.isFinanceAvailability())
-
-                .images(
-                        vehicle.getMediaList() == null
-                                ? List.of()
-                                : vehicle.getMediaList().stream()
-                                .filter(media -> "IMAGE".equalsIgnoreCase(media.getMediaType()))
-                                .map(media -> "http://localhost:" + port +
-                                        media.getFilePath().replace("\\", "/"))
-                                .toList()
-                )
-
-                .videos(
-                        vehicle.getMediaList() == null
-                                ? List.of()
-                                : vehicle.getMediaList().stream()
-                                .filter(media -> "VIDEO".equalsIgnoreCase(media.getMediaType()))
-                                .map(media -> "http://localhost:" + port +
-                                        media.getFilePath().replace("\\", "/"))
-                                .toList()
-                )
-                .isWishList(
-                        wishlistRepository.existsByCustomer_IdAndVehicle_Id(
-                                customerId,
-                                vehicle.getId()
+        return vehicles.stream()
+                .map(vehicle -> VehicleResponseDTO.builder()
+                        .id(vehicle.getId())
+                        .dealerId(vehicle.getDealer().getId())
+                        .brand(vehicle.getBrand())
+                        .model(vehicle.getModel())
+                        .variant(vehicle.getVariant())
+                        .registrationYear(vehicle.getRegistrationYear())
+                        .askingPrice(BigDecimal.valueOf(vehicle.getAskingPrice()))
+                        .kilometerDriven(vehicle.getKilometerDriven())
+                        .fuelType(vehicle.getFuelType())
+                        .ownershipDetails(vehicle.getOwnershipDetails())
+                        .vehicleDescription(vehicle.getVehicleDescription())
+                        .city(vehicle.getCity())
+                        .dealerContactName(vehicle.getDealer().getOwnerName())
+                        .dealerContactNumber(vehicle.getDealer().getMobile())
+                        .dealerWhatsappNumber(vehicle.getDealer().getWhatsapp())
+                        .dealerBusinessName(vehicle.getDealer().getBusinessName())
+                        .dealerContactEmail(vehicle.getDealer().getEmail())
+                        .vehicleStatus(vehicle.getVehicleStatus())
+                        .vehicleType(vehicle.getVehicleType())
+                        .createdAt(vehicle.getCreatedAt())
+                        .financeAvailability(vehicle.isFinanceAvailability())
+                        .images(
+                                vehicle.getMediaList() == null
+                                        ? List.of()
+                                        : vehicle.getMediaList().stream()
+                                        .filter(media -> "IMAGE".equalsIgnoreCase(media.getMediaType()))
+                                        .map(media -> "http://localhost:" + port +
+                                                media.getFilePath().replace("\\", "/"))
+                                        .toList()
                         )
-                )
-                .build());
+                        .videos(
+                                vehicle.getMediaList() == null
+                                        ? List.of()
+                                        : vehicle.getMediaList().stream()
+                                        .filter(media -> "VIDEO".equalsIgnoreCase(media.getMediaType()))
+                                        .map(media -> "http://localhost:" + port +
+                                                media.getFilePath().replace("\\", "/"))
+                                        .toList()
+                        )
+                        .isWishList(
+                                wishlistRepository.existsByCustomer_IdAndVehicle_Id(
+                                        customerId,
+                                        vehicle.getId()
+                                )
+                        )
+                        .build())
+                .toList();
     }
+
+
+//
+//    @Override
+//    public List<VehicleResponseDTO> getAllNonPremiumVehicle(Long customerId) {
+//
+//        Pageable pageable = PageRequest.of(page, size);
+//
+//        List<Vehicle> vehicles =
+//                vehicleRepository.findAllActiveAndFeaturedVehicles(
+//                        VehicleType.NON_PREMIUM,
+//                        pageable);
+//
+//        if (vehicles.isEmpty()) {
+//            throw new ResourceNotFoundException("No vehicles found");
+//        }
+//
+//        return vehicles.map(vehicle -> VehicleResponseDTO.builder()
+//                .id(vehicle.getId())
+//                .dealerId(vehicle.getDealer().getId())
+//                .brand(vehicle.getBrand())
+//                .model(vehicle.getModel())
+//                .variant(vehicle.getVariant())
+//                .registrationYear(vehicle.getRegistrationYear())
+//                .askingPrice(BigDecimal.valueOf(vehicle.getAskingPrice()))
+//                .kilometerDriven(vehicle.getKilometerDriven())
+//                .fuelType(vehicle.getFuelType())
+//           //     .transmission(vehicle.getTransmission())
+//                .ownershipDetails(vehicle.getOwnershipDetails())
+//            //    .insuranceStatus(String.valueOf(vehicle.getInsuranceStatus()))
+//                .vehicleDescription(vehicle.getVehicleDescription())
+//                .city(vehicle.getCity())
+//                .dealerContactName(vehicle.getDealer().getOwnerName())
+//                .dealerContactNumber(vehicle.getDealer().getMobile())
+//                .dealerWhatsappNumber(vehicle.getDealer().getWhatsapp())
+//                .dealerBusinessName(vehicle.getDealer().getBusinessName())
+//                .dealerContactEmail(vehicle.getDealer().getEmail())
+//                .vehicleStatus(vehicle.getVehicleStatus())
+//                .vehicleType(vehicle.getVehicleType())
+//                .createdAt(vehicle.getCreatedAt())
+//            //    .rtoInformation(vehicle.getRtoInformation())
+//                .financeAvailability(vehicle.isFinanceAvailability())
+//                .images(
+//                        vehicle.getMediaList() == null
+//                                ? List.of()
+//                                : vehicle.getMediaList().stream()
+//                                .filter(media -> "IMAGE".equalsIgnoreCase(media.getMediaType()))
+//                                .map(media -> "http://localhost:" + port +
+//                                        media.getFilePath().replace("\\", "/"))
+//                                .toList()
+//                )
+//
+//                .videos(
+//                        vehicle.getMediaList() == null
+//                                ? List.of()
+//                                : vehicle.getMediaList().stream()
+//                                .filter(media -> "VIDEO".equalsIgnoreCase(media.getMediaType()))
+//                                .map(media -> "http://localhost:" + port +
+//                                        media.getFilePath().replace("\\", "/"))
+//                                .toList()
+//                )
+//                .isWishList(
+//                        wishlistRepository.existsByCustomer_IdAndVehicle_Id(
+//                                customerId,
+//                                vehicle.getId()
+//                        )
+//                )
+//                .build());
+//
+//
+//    }
+//
+//
+//    @Override
+//    public Page<VehicleResponseDTO> getAllPremiumVehicle(Long customerId,int page, int size) {
+//
+//        Pageable pageable = PageRequest.of(page, size);
+//
+//        Page<Vehicle> vehicles =
+//                vehicleRepository.findAllActiveAndFeaturedVehicles(
+//                        VehicleType.PREMIUM,
+//                        pageable);
+//
+//        if (vehicles.isEmpty()) {
+//            throw new ResourceNotFoundException("No vehicles found");
+//        }
+//
+//        return vehicles.map(vehicle -> VehicleResponseDTO.builder()
+//                .id(vehicle.getId())
+//                .dealerId(vehicle.getDealer().getId())
+//                .brand(vehicle.getBrand())
+//                .model(vehicle.getModel())
+//                .variant(vehicle.getVariant())
+//                .registrationYear(vehicle.getRegistrationYear())
+//                .askingPrice(BigDecimal.valueOf(vehicle.getAskingPrice()))
+//                .kilometerDriven(vehicle.getKilometerDriven())
+//                .fuelType(vehicle.getFuelType())
+//          //      .transmission(vehicle.getTransmission())
+//                .ownershipDetails(vehicle.getOwnershipDetails())
+//          //      .insuranceStatus(String.valueOf(vehicle.getInsuranceStatus()))
+//                .vehicleDescription(vehicle.getVehicleDescription())
+//                .city(vehicle.getCity())
+//                .dealerContactName(vehicle.getDealer().getOwnerName())
+//                .dealerContactNumber(vehicle.getDealer().getMobile())
+//                .dealerWhatsappNumber(vehicle.getDealer().getWhatsapp())
+//                .dealerBusinessName(vehicle.getDealer().getBusinessName())
+//                .dealerContactEmail(vehicle.getDealer().getEmail())
+//                .vehicleStatus(vehicle.getVehicleStatus())
+//                .vehicleType(vehicle.getVehicleType())
+//                .createdAt(vehicle.getCreatedAt())
+//         //       .rtoInformation(vehicle.getRtoInformation())
+//                .financeAvailability(vehicle.isFinanceAvailability())
+//
+//                .images(
+//                        vehicle.getMediaList() == null
+//                                ? List.of()
+//                                : vehicle.getMediaList().stream()
+//                                .filter(media -> "IMAGE".equalsIgnoreCase(media.getMediaType()))
+//                                .map(media -> "http://localhost:" + port +
+//                                        media.getFilePath().replace("\\", "/"))
+//                                .toList()
+//                )
+//
+//                .videos(
+//                        vehicle.getMediaList() == null
+//                                ? List.of()
+//                                : vehicle.getMediaList().stream()
+//                                .filter(media -> "VIDEO".equalsIgnoreCase(media.getMediaType()))
+//                                .map(media -> "http://localhost:" + port +
+//                                        media.getFilePath().replace("\\", "/"))
+//                                .toList()
+//                )
+//                .isWishList(
+//                        wishlistRepository.existsByCustomer_IdAndVehicle_Id(
+//                                customerId,
+//                                vehicle.getId()
+//                        )
+//                )
+//                .build());
+//    }
 
 
     @Override

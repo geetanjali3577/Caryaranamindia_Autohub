@@ -31,22 +31,25 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
             List<VehicleStatus> statuses
     );
 
+
 //    @Query("""
 //       SELECT v
 //       FROM Vehicle v
 //       WHERE v.vehicleStatus IN ('ACTIVE', 'FEATURED')
+//       AND v.vehicleType = :vehicleType
 //       """)
-//    Page<Vehicle> findAllActiveAndFeaturedVehicles(Pageable pageable);
+//    Page<Vehicle> findAllActiveAndFeaturedVehicles(
+//            @Param("vehicleType") VehicleType vehicleType,
+//            Pageable pageable);
 
     @Query("""
        SELECT v
        FROM Vehicle v
-       WHERE v.vehicleStatus IN ('ACTIVE', 'FEATURED')
-       AND v.vehicleType = :vehicleType
+       WHERE v.vehicleType = :vehicleType
+       AND v.vehicleStatus = 'ACTIVE'
        """)
-    Page<Vehicle> findAllActiveAndFeaturedVehicles(
-            @Param("vehicleType") VehicleType vehicleType,
-            Pageable pageable);
+    List<Vehicle> findAllActiveAndFeaturedVehicles(
+            @Param("vehicleType") VehicleType vehicleType);
 
 
 

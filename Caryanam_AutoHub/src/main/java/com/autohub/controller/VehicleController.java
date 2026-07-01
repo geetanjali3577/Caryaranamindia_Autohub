@@ -129,27 +129,31 @@ public class VehicleController {
     }
 
 
-    // ================= GET ALL ACTIVE AND FEATURES AND NON-PREMIUM VEHICLE WITH PAGINATION =================
+    // ================= GET ALL ACTIVE AND FEATURES AND NON-PREMIUM VEHICLE =================
     @GetMapping("/non-premium/all-vehicle")
-    public ResponseEntity<Page<VehicleResponseDTO>> getAllNonPremiumVehicle(
-            @RequestParam(required = false) Long customerId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "7") int size
+    public ResponseEntity<ResponseDto<List<VehicleResponseDTO>>> getAllNonPremiumVehicle(
+            @RequestParam(required = false) Long customerId
     ) {
+
         return ResponseEntity.ok(
-                vehicleService.getAllNonPremiumVehicle(customerId,page, size)
+                new ResponseDto<>(
+                        200,
+                        "All Non Premium Vehicle fetched successfully",
+                        vehicleService.getAllNonPremiumVehicle(customerId))
         );
     }
 
-    // ================= GET ALL ACTIVE AND FEATURES AND PREMIUM VEHICLE WITH PAGINATION =================
+    // ================= GET ALL ACTIVE AND FEATURES AND PREMIUM VEHICLE =================
     @GetMapping("/premium/all-vehicle")
-    public ResponseEntity<Page<VehicleResponseDTO>> getAllPremiumVehicle(
-            @RequestParam(required = false) Long customerId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "7") int size
+    public ResponseEntity<ResponseDto<List<VehicleResponseDTO>>> getAllPremiumVehicle(
+            @RequestParam(required = false) Long customerId
     ) {
+
         return ResponseEntity.ok(
-                vehicleService.getAllPremiumVehicle(customerId,page, size)
+                new ResponseDto<>(
+                        200,
+                        "All Non Premium Vehicle fetched successfully",
+                        vehicleService.getAllPremiumVehicle(customerId))
         );
     }
 

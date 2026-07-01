@@ -158,7 +158,7 @@ public class AdminServiceImpl implements AdminService {
                                         : vehicle.getMediaList().stream()
                                         .filter(media -> "IMAGE".equalsIgnoreCase(media.getMediaType()))
                                         //.map(VehicleMedia::getFilePath)
-                                        .map(media -> "http://localhost:"+port+"/" +
+                                        .map(media -> "http://localhost:"+port+
                                                 media.getFilePath().replace("\\", "/"))
                                         .toList()
                         )

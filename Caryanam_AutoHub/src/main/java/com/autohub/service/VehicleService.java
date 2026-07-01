@@ -30,9 +30,9 @@ public interface VehicleService {
 
     List<VehicleResponseDTO> getLatestVehicles(Long customerId);
 
-    Page<VehicleResponseDTO> getAllNonPremiumVehicle(Long customerId,int page, int size);
+    List<VehicleResponseDTO> getAllNonPremiumVehicle(Long customerId);
 
-    Page<VehicleResponseDTO> getAllPremiumVehicle(Long customerId,int page, int size);
+    List<VehicleResponseDTO> getAllPremiumVehicle(Long customerId);
 
 
   }
