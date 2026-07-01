@@ -82,7 +82,7 @@ public class WishlistServiceImpl implements WishlistService {
                                         : w.getVehicle().getMediaList().stream()
                                         .filter(media -> "IMAGE".equalsIgnoreCase(media.getMediaType()))
                                         .findFirst()
-                                        .map(media -> "http://localhost:" + port + "/" +
+                                        .map(media -> "http://localhost:" + port + 
                                                 media.getFilePath().replace("\\", "/"))
                                         .orElse(null)
                         )
