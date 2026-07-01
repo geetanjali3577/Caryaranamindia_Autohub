@@ -3,8 +3,10 @@ import com.autohub.entity.ChatMessage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ChatMessageRepository
         extends JpaRepository<ChatMessage,Long> {
@@ -38,5 +40,7 @@ AND c.isRead = false
     List<ChatMessage> findByRoomIdOrderBySentAtDesc(
             String roomId
     );
+
+    Optional<ChatMessage>findTopByRoomIdOrderBySentAtDesc( String roomId );
 
 }

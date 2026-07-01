@@ -217,23 +217,25 @@ public class ChatServiceImpl
             dealerRepository.findAll()
                     .forEach(dealer ->
                             users.add(
-                                    ChatUserResponse.builder()
-                                            .id(dealer.getId())
-                                            .name(dealer.getOwnerName())
-                                            .role("DEALER")
-                                            .chatKey("DEALER_" + dealer.getId())
-                                            .build()
+                                    buildUserResponse(
+                                            userId,
+                                            role,
+                                            dealer.getId(),
+                                            "DEALER",
+                                            dealer.getOwnerName()
+                                    )
                             ));
 
             customerRepository.findAll()
                     .forEach(customer ->
                             users.add(
-                                    ChatUserResponse.builder()
-                                            .id(customer.getId())
-                                            .name(customer.getCustomerName())
-                                            .role("CUSTOMER")
-                                            .chatKey("CUSTOMER_" + customer.getId())
-                                            .build()
+                                    buildUserResponse(
+                                            userId,
+                                            role,
+                                            customer.getId(),
+                                            "CUSTOMER",
+                                            customer.getCustomerName()
+                                    )
                             ));
         }
 
@@ -242,12 +244,13 @@ public class ChatServiceImpl
             adminRepository.findAll()
                     .forEach(admin ->
                             users.add(
-                                    ChatUserResponse.builder()
-                                            .id(admin.getAdminId())
-                                            .name(admin.getFullName())
-                                            .role("ADMIN")
-                                            .chatKey("ADMIN_" + admin.getAdminId())
-                                            .build()
+                                    buildUserResponse(
+                                            userId,
+                                            role,
+                                            admin.getAdminId(),
+                                            "ADMIN",
+                                            admin.getFullName()
+                                    )
                             ));
 
             dealerRepository.findAll()
@@ -255,23 +258,25 @@ public class ChatServiceImpl
                     .filter(d -> !d.getId().equals(userId))
                     .forEach(dealer ->
                             users.add(
-                                    ChatUserResponse.builder()
-                                            .id(dealer.getId())
-                                            .name(dealer.getOwnerName())
-                                            .role("DEALER")
-                                            .chatKey("DEALER_" + dealer.getId())
-                                            .build()
+                                    buildUserResponse(
+                                            userId,
+                                            role,
+                                            dealer.getId(),
+                                            "DEALER",
+                                            dealer.getOwnerName()
+                                    )
                             ));
 
             customerRepository.findAll()
                     .forEach(customer ->
                             users.add(
-                                    ChatUserResponse.builder()
-                                            .id(customer.getId())
-                                            .name(customer.getCustomerName())
-                                            .role("CUSTOMER")
-                                            .chatKey("CUSTOMER_" + customer.getId())
-                                            .build()
+                                    buildUserResponse(
+                                            userId,
+                                            role,
+                                            customer.getId(),
+                                            "CUSTOMER",
+                                            customer.getCustomerName()
+                                    )
                             ));
         }
 
@@ -280,25 +285,36 @@ public class ChatServiceImpl
             adminRepository.findAll()
                     .forEach(admin ->
                             users.add(
-                                    ChatUserResponse.builder()
-                                            .id(admin.getAdminId())
-                                            .name(admin.getFullName())
-                                            .role("ADMIN")
-                                            .chatKey("ADMIN_" + admin.getAdminId())
-                                            .build()
+                                    buildUserResponse(
+                                            userId,
+                                            role,
+                                            admin.getAdminId(),
+                                            "ADMIN",
+                                            admin.getFullName()
+                                    )
                             ));
 
             dealerRepository.findAll()
                     .forEach(dealer ->
                             users.add(
-                                    ChatUserResponse.builder()
-                                            .id(dealer.getId())
-                                            .name(dealer.getOwnerName())
-                                            .role("DEALER")
-                                            .chatKey("DEALER_" + dealer.getId())
-                                            .build()
+                                    buildUserResponse(
+                                            userId,
+                                            role,
+                                            dealer.getId(),
+                                            "DEALER",
+                                            dealer.getOwnerName()
+                                    )
                             ));
         }
+
+        users.sort(
+                Comparator.comparing(
+                        ChatUserResponse::getLastMessageAt,
+                        Comparator.nullsLast(
+                                Comparator.reverseOrder()
+                        )
+                )
+        );
 
         return users;
     }
@@ -308,15 +324,10 @@ public class ChatServiceImpl
 //            Long userId,
 //            String role) {
 //
-//        System.out.println(
-//                "ROLE RECEIVED = "
-//                        + role
-//        );
-//
 //        List<ChatUserResponse> users =
 //                new ArrayList<>();
 //
-//        if(role.equals("ADMIN")) {
+//        if ("ADMIN".equals(role)) {
 //
 //            dealerRepository.findAll()
 //                    .forEach(dealer ->
@@ -325,6 +336,7 @@ public class ChatServiceImpl
 //                                            .id(dealer.getId())
 //                                            .name(dealer.getOwnerName())
 //                                            .role("DEALER")
+//                                            .chatKey("DEALER_" + dealer.getId())
 //                                            .build()
 //                            ));
 //
@@ -335,11 +347,12 @@ public class ChatServiceImpl
 //                                            .id(customer.getId())
 //                                            .name(customer.getCustomerName())
 //                                            .role("CUSTOMER")
+//                                            .chatKey("CUSTOMER_" + customer.getId())
 //                                            .build()
 //                            ));
 //        }
 //
-//        else if(role.equals("DEALER")) {
+//        else if ("DEALER".equals(role)) {
 //
 //            adminRepository.findAll()
 //                    .forEach(admin ->
@@ -348,24 +361,20 @@ public class ChatServiceImpl
 //                                            .id(admin.getAdminId())
 //                                            .name(admin.getFullName())
 //                                            .role("ADMIN")
+//                                            .chatKey("ADMIN_" + admin.getAdminId())
 //                                            .build()
 //                            ));
-//
-//            System.out.println(
-//                    "TOTAL ADMINS = "
-//                            + adminRepository.findAll().size()
-//            );
 //
 //            dealerRepository.findAll()
 //                    .stream()
-//                    .filter(d ->
-//                            !d.getId().equals(userId))
+//                    .filter(d -> !d.getId().equals(userId))
 //                    .forEach(dealer ->
 //                            users.add(
 //                                    ChatUserResponse.builder()
 //                                            .id(dealer.getId())
 //                                            .name(dealer.getOwnerName())
 //                                            .role("DEALER")
+//                                            .chatKey("DEALER_" + dealer.getId())
 //                                            .build()
 //                            ));
 //
@@ -376,11 +385,12 @@ public class ChatServiceImpl
 //                                            .id(customer.getId())
 //                                            .name(customer.getCustomerName())
 //                                            .role("CUSTOMER")
+//                                            .chatKey("CUSTOMER_" + customer.getId())
 //                                            .build()
 //                            ));
 //        }
 //
-//        else {
+//        else if ("CUSTOMER".equals(role)) {
 //
 //            adminRepository.findAll()
 //                    .forEach(admin ->
@@ -389,6 +399,7 @@ public class ChatServiceImpl
 //                                            .id(admin.getAdminId())
 //                                            .name(admin.getFullName())
 //                                            .role("ADMIN")
+//                                            .chatKey("ADMIN_" + admin.getAdminId())
 //                                            .build()
 //                            ));
 //
@@ -399,12 +410,14 @@ public class ChatServiceImpl
 //                                            .id(dealer.getId())
 //                                            .name(dealer.getOwnerName())
 //                                            .role("DEALER")
+//                                            .chatKey("DEALER_" + dealer.getId())
 //                                            .build()
 //                            ));
 //        }
 //
 //        return users;
 //    }
+
 
 
     @Override
@@ -457,6 +470,43 @@ public class ChatServiceImpl
         }
 
 
+    }
+
+    private ChatUserResponse buildUserResponse(
+            Long loggedInUserId,
+            String loggedInRole,
+            Long targetId,
+            String targetRole,
+            String targetName) {
+
+        String roomId = generateRoomId(
+                loggedInUserId,
+                loggedInRole,
+                targetId,
+                targetRole
+        );
+
+        ChatMessage lastMessage =
+                messageRepository
+                        .findTopByRoomIdOrderBySentAtDesc(roomId)
+                        .orElse(null);
+
+        return ChatUserResponse.builder()
+                .id(targetId)
+                .name(targetName)
+                .role(targetRole)
+                .chatKey(targetRole + "_" + targetId)
+                .lastMessage(
+                        lastMessage != null
+                                ? lastMessage.getContent()
+                                : null
+                )
+                .lastMessageAt(
+                        lastMessage != null
+                                ? lastMessage.getSentAt()
+                                : null
+                )
+                .build();
     }
 
 

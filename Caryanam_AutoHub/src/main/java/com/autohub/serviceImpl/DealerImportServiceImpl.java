@@ -124,7 +124,7 @@ public class DealerImportServiceImpl
 
                     dealer.setRole(Role.DEALER);
                     dealer.setDealerAccountStatus(
-                            DealerStatus.PENDING);
+                            DealerStatus.APPROVED);
 
                     dealer.setSubscriptionActive(false);
 

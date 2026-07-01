@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
@@ -76,6 +77,10 @@ public class DealerServiceImpl implements DealerService {
         dealer.setCity(dto.getCity());
         dealer.setState(dto.getState());
         dealer.setPinCode(dto.getPinCode());
+
+        //Free trial for 1 month for dealer from registraion
+        dealer.setFreeTrialEndDate(LocalDateTime.now().plusMonths(1));
+
         dealer.setRole(Role.DEALER);
 
         Dealer savedDealer = dealerRepository.save(dealer);

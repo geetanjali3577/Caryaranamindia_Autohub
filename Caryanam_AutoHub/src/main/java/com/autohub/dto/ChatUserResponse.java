@@ -3,6 +3,8 @@ package com.autohub.dto;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 public class ChatUserResponse {
@@ -14,5 +16,9 @@ public class ChatUserResponse {
     private String role;
 
     private String chatKey;
+
+    private String lastMessage;
+
+    private LocalDateTime lastMessageAt;
 }
 

@@ -20,7 +20,6 @@ public class Dealer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     @Column(nullable = false)
     private String businessName;
 
@@ -64,7 +63,6 @@ public class Dealer {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-
     private String otp;
 
     private LocalDateTime otpGeneratedTime;
@@ -86,6 +84,9 @@ public class Dealer {
     private LocalDateTime subscriptionStartDate;
 
     private LocalDateTime subscriptionEndDate;
+
+    @Column(name = "free_trial_end_date")
+    private LocalDateTime freeTrialEndDate;
 
 
 

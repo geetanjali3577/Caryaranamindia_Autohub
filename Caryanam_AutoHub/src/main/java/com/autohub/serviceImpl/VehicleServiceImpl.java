@@ -56,53 +56,88 @@ public class VehicleServiceImpl implements VehicleService {
             throw new RuntimeException("Your account is pending for admin approval. You cannot add vehicles until approval.");
         }
 
-        // Dealer subscription Check
-//        if (dealer.getSubscriptionActive() == null ||
-//                !dealer.getSubscriptionActive()) {
-//            throw new RuntimeException("Please purchase subscription before adding vehicles");
-//        }
+        // ===============================
+            // FREE TRIAL / SUBSCRIPTION CHECK
+        // ===============================
 
-        //Check subscription plan
-        Payment payment = paymentRepository.findTopByDealerIdOrderByPaymentIdDesc(dealerId)
-                .orElseThrow(() ->
-                        new RuntimeException("You don't have any subscription plan. Please purchase subscription before adding vehicles"));
+        boolean freeTrialActive =
+                dealer.getFreeTrialEndDate() != null
+                        && LocalDateTime.now()
+                        .isBefore(dealer.getFreeTrialEndDate());
 
-        if (payment.getPaymentStatus() == PaymentStatus.PENDING) {
+        if (!freeTrialActive) {
 
+            Payment payment = paymentRepository
+                    .findTopByDealerIdOrderByPaymentIdDesc(dealerId)
+                    .orElseThrow(() ->
+                            new RuntimeException(
+                                    "Your free trial has expired. Please purchase a subscription plan."));
+
+            if (payment.getPaymentStatus() == PaymentStatus.PENDING) {
+
+                throw new RuntimeException(
+                        "Your subscription plan is waiting for admin approval.");
+            }
+
+            if (dealer.getSubscriptionEndDate() != null
+                    && dealer.getSubscriptionEndDate()
+                    .isBefore(LocalDateTime.now())) {
+
+                throw new RuntimeException(
+                        "Subscription expired. Please renew subscription.");
+            }
+        }
+
+        if (!freeTrialActive && dealer.getSubscriptionPlan() == null) {
             throw new RuntimeException(
-                    "Your subscription plan is waiting for admin approval.");
+                    "Subscription plan not assigned. Please contact admin.");
         }
 
-        // Dealer subscription expiration Check
-        if (dealer.getSubscriptionEndDate() != null &&dealer.getSubscriptionEndDate().isBefore(LocalDateTime.now())) {
-
-            throw new RuntimeException("Subscription expired. Please renew subscription");
-        }
 
         // Vehicle Limit Check
         Long vehicleCount = vehicleRepository.countByDealer_Id(dealerId);
 
-        if (dealer.getSubscriptionPlan() != SubscriptionPlan.PREMIUM) {
+        if (freeTrialActive) {
 
-            int vehicleLimit = dealer.getSubscriptionPlan().getVehicleLimit();
+            // Free Trial = BASIC Plan Limit
+            int vehicleLimit = SubscriptionPlan.BASIC.getVehicleLimit();
 
             if (vehicleCount >= vehicleLimit) {
+
                 throw new RuntimeException(
-                        "Vehicle limit exceeded. Your "
-                                + dealer.getSubscriptionPlan()
-                                + " plan allows only "
+                        "Free trial allows only "
                                 + vehicleLimit
                                 + " vehicles.");
             }
+
+        } else {
+
+            if (dealer.getSubscriptionPlan() != null
+                    && dealer.getSubscriptionPlan() != SubscriptionPlan.PREMIUM) {
+
+                int vehicleLimit =
+                        dealer.getSubscriptionPlan().getVehicleLimit();
+
+                if (vehicleCount >= vehicleLimit) {
+
+                    throw new RuntimeException(
+                            "Vehicle limit exceeded. Your "
+                                    + dealer.getSubscriptionPlan()
+                                    + " plan allows only "
+                                    + vehicleLimit
+                                    + " vehicles.");
+                }
+            }
         }
 
-        //Minimum 5 image required to add vehicle
+
+        //Upload Image Validation Minimum 10 image required to add vehicle
         if (images == null || images.size() < 10) {
             throw new RuntimeException(
                     "Minimum 10 images are required");
         }
 
-        //Video required to add vehicle
+        //Upload Video Validation required to add vehicle
         if (videos == null || videos.isEmpty()) {
             throw new RuntimeException(
                     "Minimum 1 video is required");
