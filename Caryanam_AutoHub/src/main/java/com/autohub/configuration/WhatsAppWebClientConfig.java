@@ -4,6 +4,8 @@ import com.autohub.dto.WhatsAppProperties;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
+import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -14,8 +16,21 @@ import reactor.netty.http.client.HttpClient;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
+@Slf4j
 public class WhatsAppWebClientConfig {
 
+    private final WhatsAppProperties properties;
+
+    public WhatsAppWebClientConfig(WhatsAppProperties properties) {
+        this.properties = properties;
+    }
+
+    @PostConstruct
+    public void verifyConfig() {
+        log.info("Phone Number Id : {}", properties.phoneNumberId());
+        log.info("API Version     : {}", properties.apiVersion());
+        log.info("Template Name   : {}", properties.templateName());
+    }
     @Bean(name = "whatsAppWebClient")
     public WebClient whatsAppWebClient(WhatsAppProperties properties) {
 

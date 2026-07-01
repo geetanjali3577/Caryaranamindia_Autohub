@@ -2,6 +2,7 @@ package com.autohub.controller;
 
 import com.autohub.configuration.CustomUserDetails;
 import com.autohub.dto.ChatMessageRequest;
+import com.autohub.dto.GroupMessageRequest;
 import com.autohub.dto.TypingDTO;
 import com.autohub.service.ChatService;
 import lombok.RequiredArgsConstructor;
@@ -26,22 +27,58 @@ public class ChatSocketController {
             ChatMessageRequest request,
             SimpMessageHeaderAccessor accessor) {
 
-        Long loggedInUserId =
+        Long userId =
                 (Long) accessor
                         .getSessionAttributes()
                         .get("userId");
 
-        String loggedInRole =
+        String role =
                 (String) accessor
                         .getSessionAttributes()
                         .get("role");
 
+        if (Boolean.TRUE.equals(
+                request.getGroupMessage())) {
+
+            chatService.sendGroupMessage(
+                    userId,
+                    role,
+                    request
+            );
+
+            return;
+        }
+
         chatService.sendMessage(
-                loggedInUserId,
-                loggedInRole,
+                userId,
+                role,
                 request
         );
     }
+
+
+
+//    @MessageMapping("/chat.send")
+//    public void sendMessage(
+//            ChatMessageRequest request,
+//            SimpMessageHeaderAccessor accessor) {
+//
+//        Long loggedInUserId =
+//                (Long) accessor
+//                        .getSessionAttributes()
+//                        .get("userId");
+//
+//        String loggedInRole =
+//                (String) accessor
+//                        .getSessionAttributes()
+//                        .get("role");
+//
+//        chatService.sendMessage(
+//                loggedInUserId,
+//                loggedInRole,
+//                request
+//        );
+//    }
 
 
     @MessageMapping("/chat.typing")
@@ -55,6 +92,28 @@ public class ChatSocketController {
                         + request.getReceiverId()
                         + "_typing",
                 request
+        );
+    }
+
+    @MessageMapping("/group.send")
+    public void sendGroupMessage(
+            GroupMessageRequest request,
+            SimpMessageHeaderAccessor accessor) {
+
+        Long userId =
+                (Long) accessor
+                        .getSessionAttributes()
+                        .get("userId");
+
+        String role =
+                (String) accessor
+                        .getSessionAttributes()
+                        .get("role");
+
+        chatService.sendGroupMessage(
+                userId,
+                role,
+                request.getContent()
         );
     }
 }

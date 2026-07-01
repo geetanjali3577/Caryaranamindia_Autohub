@@ -141,4 +141,22 @@ public class ChatHistoryController {
         );
     }
 
+//    @GetMapping("/group/history")
+//    public List<ChatMessage> groupHistory() {
+//
+//        return chatService.getGroupHistory();
+//    }
+
+    @GetMapping("/group/history")
+    public ResponseEntity<List<ChatMessage>>
+    groupHistory() {
+
+        return ResponseEntity.ok(
+                chatService.getGroupHistory(
+                        "ALL_DEALERS_GROUP"
+                )
+        );
+    }
+
+
 }

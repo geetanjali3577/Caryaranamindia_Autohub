@@ -21,6 +21,8 @@ public class ChatMessage {
 
     private String senderRole;
 
+    private String senderName;
+
     private Long receiverId;
 
     private String receiverRole;
@@ -32,6 +34,11 @@ public class ChatMessage {
     private Boolean isRead = false;
 
     private LocalDateTime readAt;
+
+    private Boolean groupMessage = false;
+
+    private String groupId;
+
 
     @Column(columnDefinition = "TEXT")
     private String content;

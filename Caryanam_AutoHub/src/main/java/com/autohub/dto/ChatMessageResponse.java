@@ -13,9 +13,13 @@ public class ChatMessageResponse {
     private String roomId;
 
     private Long senderId;
+
     private String senderRole;
 
+    private String senderName;
+
     private Long receiverId;
+
     private String receiverRole;
 
     private String content;
@@ -25,6 +29,7 @@ public class ChatMessageResponse {
     private LocalDateTime sentAt;
 
     private LocalDateTime readAt;
+
 
 
 }

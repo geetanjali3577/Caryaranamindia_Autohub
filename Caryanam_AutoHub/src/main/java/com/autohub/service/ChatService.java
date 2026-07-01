@@ -40,6 +40,25 @@ public interface ChatService {
             String receiverRole
     );
 
+    void sendGroupMessage(
+            Long senderId,
+            String senderRole,
+            String content
+    );
+
+    List<ChatMessage> getGroupHistory();
+
+    void sendGroupMessage(
+            Long senderId,
+            String senderRole,
+            ChatMessageRequest request
+    );
+
+    List<ChatMessage> getGroupHistory(
+            String groupId
+    );
+
+
 
 }
 

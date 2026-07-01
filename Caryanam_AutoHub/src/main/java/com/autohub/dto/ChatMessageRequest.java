@@ -12,6 +12,12 @@ public class ChatMessageRequest {
 
     private String content;
 
+    private Boolean groupMessage;
+
+    private String groupId;
+
+
+
 
 }
 

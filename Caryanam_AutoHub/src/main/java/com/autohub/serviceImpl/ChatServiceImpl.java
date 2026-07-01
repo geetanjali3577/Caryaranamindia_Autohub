@@ -1,5 +1,6 @@
 package com.autohub.serviceImpl;
 
+import com.autohub.configuration.ChatConstants;
 import com.autohub.configuration.CustomUserDetails;
 import com.autohub.configuration.OnlineUserStore;
 import com.autohub.dto.ChatMessageRequest;
@@ -50,6 +51,11 @@ public class ChatServiceImpl
         System.out.println("Content      = " + request.getContent());
         System.out.println("==================================");
 
+        validateChat(
+                senderRole,
+                request.getReceiverRole()
+        );
+
         String roomId = generateRoomId(
                 senderId,
                 senderRole,
@@ -71,8 +77,14 @@ public class ChatServiceImpl
         message.setSenderId(senderId);
         message.setSenderRole(senderRole);
 
-        message.setReceiverId(
-                request.getReceiverId()
+
+        message.setReceiverId(request.getReceiverId());
+
+        message.setSenderName(
+                getUserName(
+                        senderId,
+                        senderRole
+                )
         );
 
         message.setReceiverRole(
@@ -105,6 +117,7 @@ public class ChatServiceImpl
                         .receiverId(saved.getReceiverId())
                         .receiverRole(saved.getReceiverRole())
                         .content(saved.getContent())
+                        .senderName(saved.getSenderName())
                         .isRead(saved.getIsRead())
                         .sentAt(saved.getSentAt())
                         .readAt(saved.getReadAt())
@@ -193,19 +206,71 @@ public class ChatServiceImpl
     }
 
 
+//    private void validateChat(
+//            String senderRole,
+//            String receiverRole){
+//
+//        if("CUSTOMER".equals(senderRole)
+//                &&
+//                "CUSTOMER".equals(receiverRole)){
+//
+//            throw new RuntimeException(
+//                    "Customer cannot chat with another customer"
+//            );
+//        }
+//    }
+
     private void validateChat(
             String senderRole,
             String receiverRole){
 
-        if("CUSTOMER".equals(senderRole)
-                &&
-                "CUSTOMER".equals(receiverRole)){
+        // Customer ↔ Customer Block
+        if ("CUSTOMER".equals(senderRole)
+                && "CUSTOMER".equals(receiverRole)) {
 
             throw new RuntimeException(
-                    "Customer cannot chat with another customer"
+                    "Customer to Customer chat not allowed"
+            );
+        }
+
+        // Dealer ↔ Dealer Block
+        if ("DEALER".equals(senderRole)
+                && "DEALER".equals(receiverRole)) {
+
+            throw new RuntimeException(
+                    "Dealer to Dealer chat not allowed"
+            );
+        }
+
+        // Admin ↔ Dealer Block
+        if (
+                ("ADMIN".equals(senderRole)
+                        && "DEALER".equals(receiverRole))
+                        ||
+                        ("DEALER".equals(senderRole)
+                                && "ADMIN".equals(receiverRole))
+        ) {
+
+            throw new RuntimeException(
+                    "Admin to Dealer individual chat not allowed. Use All Dealers Group."
+            );
+        }
+
+        // Admin ↔ Customer Block
+        if (
+                ("ADMIN".equals(senderRole)
+                        && "CUSTOMER".equals(receiverRole))
+                        ||
+                        ("CUSTOMER".equals(senderRole)
+                                && "ADMIN".equals(receiverRole))
+        ) {
+
+            throw new RuntimeException(
+                    "Admin to Customer chat not allowed"
             );
         }
     }
+
 
     @Override
     public List<ChatUserResponse> getAvailableUsers(
@@ -215,61 +280,31 @@ public class ChatServiceImpl
         List<ChatUserResponse> users =
                 new ArrayList<>();
 
+        // ADMIN & DEALER => Group visible
+        if ("ADMIN".equals(role)
+                || "DEALER".equals(role)) {
+
+            users.add(
+                    ChatUserResponse.builder()
+                            .id(0L)
+                            .name("All Dealers Group")
+                            .role("GROUP")
+                            .chatKey("ALL_DEALERS_GROUP")
+                            .online(true)
+                            .unreadCount(0L)
+                            .build()
+            );
+        }
+
+        // ADMIN => ONLY GROUP
         if ("ADMIN".equals(role)) {
 
-            dealerRepository.findAll()
-                    .forEach(dealer ->
-                            users.add(
-                                    buildUserResponse(
-                                            userId,
-                                            role,
-                                            dealer.getId(),
-                                            "DEALER",
-                                            dealer.getOwnerName()
-                                    )
-                            ));
-
-            customerRepository.findAll()
-                    .forEach(customer ->
-                            users.add(
-                                    buildUserResponse(
-                                            userId,
-                                            role,
-                                            customer.getId(),
-                                            "CUSTOMER",
-                                            customer.getCustomerName()
-                                    )
-                            ));
+            return users;
         }
 
+        // DEALER => GROUP + CUSTOMERS ONLY
         else if ("DEALER".equals(role)) {
 
-            adminRepository.findAll()
-                    .forEach(admin ->
-                            users.add(
-                                    buildUserResponse(
-                                            userId,
-                                            role,
-                                            admin.getAdminId(),
-                                            "ADMIN",
-                                            admin.getFullName()
-                                    )
-                            ));
-
-            dealerRepository.findAll()
-                    .stream()
-                    .filter(d -> !d.getId().equals(userId))
-                    .forEach(dealer ->
-                            users.add(
-                                    buildUserResponse(
-                                            userId,
-                                            role,
-                                            dealer.getId(),
-                                            "DEALER",
-                                            dealer.getOwnerName()
-                                    )
-                            ));
-
             customerRepository.findAll()
                     .forEach(customer ->
                             users.add(
@@ -283,19 +318,9 @@ public class ChatServiceImpl
                             ));
         }
 
-        else if ("CUSTOMER".equals(role)) {
 
-            adminRepository.findAll()
-                    .forEach(admin ->
-                            users.add(
-                                    buildUserResponse(
-                                            userId,
-                                            role,
-                                            admin.getAdminId(),
-                                            "ADMIN",
-                                            admin.getFullName()
-                                    )
-                            ));
+        // CUSTOMER => DEALERS ONLY
+        else if ("CUSTOMER".equals(role)) {
 
             dealerRepository.findAll()
                     .forEach(dealer ->
@@ -321,6 +346,121 @@ public class ChatServiceImpl
 
         return users;
     }
+
+//    @Override
+//    public List<ChatUserResponse> getAvailableUsers(
+//            Long userId,
+//            String role) {
+//
+//        List<ChatUserResponse> users =
+//                new ArrayList<>();
+//
+//        if ("ADMIN".equals(role)) {
+//
+//            dealerRepository.findAll()
+//                    .forEach(dealer ->
+//                            users.add(
+//                                    buildUserResponse(
+//                                            userId,
+//                                            role,
+//                                            dealer.getId(),
+//                                            "DEALER",
+//                                            dealer.getOwnerName()
+//                                    )
+//                            ));
+//
+//            customerRepository.findAll()
+//                    .forEach(customer ->
+//                            users.add(
+//                                    buildUserResponse(
+//                                            userId,
+//                                            role,
+//                                            customer.getId(),
+//                                            "CUSTOMER",
+//                                            customer.getCustomerName()
+//                                    )
+//                            ));
+//        }
+//
+//        else if ("DEALER".equals(role)) {
+//
+//            adminRepository.findAll()
+//                    .forEach(admin ->
+//                            users.add(
+//                                    buildUserResponse(
+//                                            userId,
+//                                            role,
+//                                            admin.getAdminId(),
+//                                            "ADMIN",
+//                                            admin.getFullName()
+//                                    )
+//                            ));
+//
+//            dealerRepository.findAll()
+//                    .stream()
+//                    .filter(d -> !d.getId().equals(userId))
+//                    .forEach(dealer ->
+//                            users.add(
+//                                    buildUserResponse(
+//                                            userId,
+//                                            role,
+//                                            dealer.getId(),
+//                                            "DEALER",
+//                                            dealer.getOwnerName()
+//                                    )
+//                            ));
+//
+//            customerRepository.findAll()
+//                    .forEach(customer ->
+//                            users.add(
+//                                    buildUserResponse(
+//                                            userId,
+//                                            role,
+//                                            customer.getId(),
+//                                            "CUSTOMER",
+//                                            customer.getCustomerName()
+//                                    )
+//                            ));
+//        }
+//
+//        else if ("CUSTOMER".equals(role)) {
+//
+//            adminRepository.findAll()
+//                    .forEach(admin ->
+//                            users.add(
+//                                    buildUserResponse(
+//                                            userId,
+//                                            role,
+//                                            admin.getAdminId(),
+//                                            "ADMIN",
+//                                            admin.getFullName()
+//                                    )
+//                            ));
+//
+//            dealerRepository.findAll()
+//                    .forEach(dealer ->
+//                            users.add(
+//                                    buildUserResponse(
+//                                            userId,
+//                                            role,
+//                                            dealer.getId(),
+//                                            "DEALER",
+//                                            dealer.getOwnerName()
+//                                    )
+//                            ));
+//        }
+//
+//        users.sort(
+//                Comparator.comparing(
+//                        ChatUserResponse::getLastMessageAt,
+//                        Comparator.nullsLast(
+//                                Comparator.reverseOrder()
+//                        )
+//                )
+//        );
+//
+//        return users;
+//    }
 
     @Override
     public Long getUnreadCount(
@@ -430,5 +570,152 @@ public class ChatServiceImpl
                 .unreadCount(unreadCount)
                 .online(online)
                 .build();
+    }
+
+
+
+    @Override
+    public void sendGroupMessage(
+            Long senderId,
+            String senderRole,
+            String content) {
+
+        if (!senderRole.equals("ADMIN")
+                &&
+                !senderRole.equals("DEALER")) {
+
+            throw new RuntimeException(
+                    "Only Admin and Dealer allowed"
+            );
+        }
+
+        ChatMessage message =
+                new ChatMessage();
+
+        message.setGroupMessage(true);
+
+        message.setGroupId(
+                "ALL_DEALERS_GROUP"
+        );
+
+        message.setSenderId(senderId);
+
+        message.setSenderRole(senderRole);
+
+        message.setContent(content);
+
+        ChatMessage saved =
+                messageRepository.save(message);
+
+        ChatMessageResponse response =
+                ChatMessageResponse.builder()
+                        .senderId(saved.getSenderId())
+                        .senderRole(saved.getSenderRole())
+                        .content(saved.getContent())
+                        .sentAt(saved.getSentAt())
+                        .build();
+
+        messagingTemplate.convertAndSend(
+                "/queue/group/all-dealers",
+                response
+        );
+    }
+
+    @Override
+    public List<ChatMessage> getGroupHistory() {
+
+        return messageRepository
+                .findByGroupIdOrderBySentAtAsc(
+                        "ALL_DEALERS_GROUP"
+                );
+    }
+
+    @Override
+    public List<ChatMessage> getGroupHistory(
+            String groupId) {
+
+        return messageRepository
+                .findByGroupIdOrderBySentAtAsc(
+                        groupId
+                );
+    }
+
+    private String getUserName(
+            Long userId,
+            String role) {
+
+        if ("ADMIN".equals(role)) {
+
+            return adminRepository
+                    .findById(userId)
+                    .map(a -> a.getFullName())
+                    .orElse("ADMIN");
+        }
+
+        if ("DEALER".equals(role)) {
+
+            return dealerRepository
+                    .findById(userId)
+                    .map(d -> d.getOwnerName())
+                    .orElse("DEALER");
+        }
+
+        return customerRepository
+                .findById(userId)
+                .map(c -> c.getCustomerName())
+                .orElse("CUSTOMER");
+    }
+
+    @Override
+    public void sendGroupMessage(
+            Long senderId,
+            String senderRole,
+            ChatMessageRequest request) {
+
+        ChatMessage message =
+                new ChatMessage();
+
+        message.setGroupMessage(true);
+
+        message.setGroupId(
+                "ALL_DEALERS_GROUP"
+        );
+
+        message.setRoomId(
+                "ALL_DEALERS_GROUP"
+        );
+
+        message.setSenderId(senderId);
+
+        message.setSenderRole(senderRole);
+
+        message.setSenderName(
+                getUserName(
+                        senderId,
+                        senderRole
+                )
+        );
+
+        message.setContent(
+                request.getContent()
+        );
+
+        ChatMessage saved =
+                messageRepository.save(message);
+
+        ChatMessageResponse response =
+                ChatMessageResponse.builder()
+                        .roomId(saved.getRoomId())
+                        .senderId(saved.getSenderId())
+                        .senderRole(saved.getSenderRole())
+                        .senderName(saved.getSenderName())
+                        .content(saved.getContent())
+                        .sentAt(saved.getSentAt())
+                        .build();
+
+        messagingTemplate.convertAndSend(
+                "/queue/all-dealers-group",
+                response
+        );
     }
 }

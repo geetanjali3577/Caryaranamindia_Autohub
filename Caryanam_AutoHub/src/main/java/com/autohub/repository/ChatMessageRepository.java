@@ -58,4 +58,28 @@ AND c.isRead = false
             @Param("receiverRole") String receiverRole
     );
 
+    List<ChatMessage>
+    findByGroupIdOrderBySentAtAsc(
+            String groupId
+    );
+
+    Optional<ChatMessage>
+    findTopByGroupIdOrderBySentAtDesc(
+            String groupId
+    );
+
+    @Query("""
+SELECT COUNT(c)
+FROM ChatMessage c
+WHERE c.groupId=:groupId
+AND c.receiverId=:receiverId
+AND c.receiverRole=:receiverRole
+AND c.isRead=false
+""")
+    Long getGroupUnreadCount(
+            String groupId,
+            Long receiverId,
+            String receiverRole
+    );
+
 }
