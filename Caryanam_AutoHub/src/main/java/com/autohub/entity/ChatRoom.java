@@ -22,6 +22,10 @@ public class ChatRoom {
 
     private String user1Role;
 
+    private String user1Key;
+
+    private String user2Key;
+
     private Long user2Id;
 
     private String user2Role;

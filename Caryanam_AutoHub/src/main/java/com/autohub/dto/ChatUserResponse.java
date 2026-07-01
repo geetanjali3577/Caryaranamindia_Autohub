@@ -12,5 +12,7 @@ public class ChatUserResponse {
     private String name;
 
     private String role;
+
+    private String chatKey;
 }
 

@@ -80,6 +80,17 @@ public class ChatServiceImpl
                 request.getContent()
         );
 
+        String senderKey =
+                senderRole + "_" + senderId;
+
+        String receiverKey =
+                request.getReceiverRole()
+                        + "_"
+                        + request.getReceiverId();
+
+        message.setSenderKey(senderKey);
+        message.setReceiverKey(receiverKey);
+
         ChatMessage saved =
                 messageRepository.save(message);
 
@@ -160,6 +171,13 @@ public class ChatServiceImpl
                 .orElseGet(() -> {
 
                     ChatRoom room = new ChatRoom();
+                    room.setUser1Key(
+                            senderRole + "_" + senderId
+                    );
+
+                    room.setUser2Key(
+                            receiverRole + "_" + receiverId
+                    );
 
                     room.setRoomId(roomId);
                     room.setUser1Id(senderId);
@@ -191,15 +209,10 @@ public class ChatServiceImpl
             Long userId,
             String role) {
 
-        System.out.println(
-                "ROLE RECEIVED = "
-                        + role
-        );
-
         List<ChatUserResponse> users =
                 new ArrayList<>();
 
-        if(role.equals("ADMIN")) {
+        if ("ADMIN".equals(role)) {
 
             dealerRepository.findAll()
                     .forEach(dealer ->
@@ -208,6 +221,7 @@ public class ChatServiceImpl
                                             .id(dealer.getId())
                                             .name(dealer.getOwnerName())
                                             .role("DEALER")
+                                            .chatKey("DEALER_" + dealer.getId())
                                             .build()
                             ));
 
@@ -218,11 +232,12 @@ public class ChatServiceImpl
                                             .id(customer.getId())
                                             .name(customer.getCustomerName())
                                             .role("CUSTOMER")
+                                            .chatKey("CUSTOMER_" + customer.getId())
                                             .build()
                             ));
         }
 
-        else if(role.equals("DEALER")) {
+        else if ("DEALER".equals(role)) {
 
             adminRepository.findAll()
                     .forEach(admin ->
@@ -231,24 +246,20 @@ public class ChatServiceImpl
                                             .id(admin.getAdminId())
                                             .name(admin.getFullName())
                                             .role("ADMIN")
+                                            .chatKey("ADMIN_" + admin.getAdminId())
                                             .build()
                             ));
-
-            System.out.println(
-                    "TOTAL ADMINS = "
-                            + adminRepository.findAll().size()
-            );
 
             dealerRepository.findAll()
                     .stream()
-                    .filter(d ->
-                            !d.getId().equals(userId))
+                    .filter(d -> !d.getId().equals(userId))
                     .forEach(dealer ->
                             users.add(
                                     ChatUserResponse.builder()
                                             .id(dealer.getId())
                                             .name(dealer.getOwnerName())
                                             .role("DEALER")
+                                            .chatKey("DEALER_" + dealer.getId())
                                             .build()
                             ));
 
@@ -259,11 +270,12 @@ public class ChatServiceImpl
                                             .id(customer.getId())
                                             .name(customer.getCustomerName())
                                             .role("CUSTOMER")
+                                            .chatKey("CUSTOMER_" + customer.getId())
                                             .build()
                             ));
         }
 
-        else {
+        else if ("CUSTOMER".equals(role)) {
 
             adminRepository.findAll()
                     .forEach(admin ->
@@ -272,6 +284,7 @@ public class ChatServiceImpl
                                             .id(admin.getAdminId())
                                             .name(admin.getFullName())
                                             .role("ADMIN")
+                                            .chatKey("ADMIN_" + admin.getAdminId())
                                             .build()
                             ));
 
@@ -282,12 +295,116 @@ public class ChatServiceImpl
                                             .id(dealer.getId())
                                             .name(dealer.getOwnerName())
                                             .role("DEALER")
+                                            .chatKey("DEALER_" + dealer.getId())
                                             .build()
                             ));
         }
 
         return users;
     }
+
+//    @Override
+//    public List<ChatUserResponse> getAvailableUsers(
+//            Long userId,
+//            String role) {
+//
+//        System.out.println(
+//                "ROLE RECEIVED = "
+//                        + role
+//        );
+//
+//        List<ChatUserResponse> users =
+//                new ArrayList<>();
+//
+//        if(role.equals("ADMIN")) {
+//
+//            dealerRepository.findAll()
+//                    .forEach(dealer ->
+//                            users.add(
+//                                    ChatUserResponse.builder()
+//                                            .id(dealer.getId())
+//                                            .name(dealer.getOwnerName())
+//                                            .role("DEALER")
+//                                            .build()
+//                            ));
+//
+//            customerRepository.findAll()
+//                    .forEach(customer ->
+//                            users.add(
+//                                    ChatUserResponse.builder()
+//                                            .id(customer.getId())
+//                                            .name(customer.getCustomerName())
+//                                            .role("CUSTOMER")
+//                                            .build()
+//                            ));
+//        }
+//
+//        else if(role.equals("DEALER")) {
+//
+//            adminRepository.findAll()
+//                    .forEach(admin ->
+//                            users.add(
+//                                    ChatUserResponse.builder()
+//                                            .id(admin.getAdminId())
+//                                            .name(admin.getFullName())
+//                                            .role("ADMIN")
+//                                            .build()
+//                            ));
+//
+//            System.out.println(
+//                    "TOTAL ADMINS = "
+//                            + adminRepository.findAll().size()
+//            );
+//
+//            dealerRepository.findAll()
+//                    .stream()
+//                    .filter(d ->
+//                            !d.getId().equals(userId))
+//                    .forEach(dealer ->
+//                            users.add(
+//                                    ChatUserResponse.builder()
+//                                            .id(dealer.getId())
+//                                            .name(dealer.getOwnerName())
+//                                            .role("DEALER")
+//                                            .build()
+//                            ));
+//
+//            customerRepository.findAll()
+//                    .forEach(customer ->
+//                            users.add(
+//                                    ChatUserResponse.builder()
+//                                            .id(customer.getId())
+//                                            .name(customer.getCustomerName())
+//                                            .role("CUSTOMER")
+//                                            .build()
+//                            ));
+//        }
+//
+//        else {
+//
+//            adminRepository.findAll()
+//                    .forEach(admin ->
+//                            users.add(
+//                                    ChatUserResponse.builder()
+//                                            .id(admin.getAdminId())
+//                                            .name(admin.getFullName())
+//                                            .role("ADMIN")
+//                                            .build()
+//                            ));
+//
+//            dealerRepository.findAll()
+//                    .forEach(dealer ->
+//                            users.add(
+//                                    ChatUserResponse.builder()
+//                                            .id(dealer.getId())
+//                                            .name(dealer.getOwnerName())
+//                                            .role("DEALER")
+//                                            .build()
+//                            ));
+//        }
+//
+//        return users;
+//    }
 
 
     @Override

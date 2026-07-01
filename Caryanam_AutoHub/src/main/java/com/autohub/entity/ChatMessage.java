@@ -25,6 +25,10 @@ public class ChatMessage {
 
     private String receiverRole;
 
+    private String senderKey;
+
+    private String receiverKey;
+
     private Boolean isRead = false;
 
     private LocalDateTime readAt;
