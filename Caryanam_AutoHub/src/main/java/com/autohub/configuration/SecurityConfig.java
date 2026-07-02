@@ -63,6 +63,8 @@ public class SecurityConfig {
                                         ,"/api/lead/generate-lead/**"
                                         ,"/api/lead/generate-view/**"
                                         ,"/uploads/**"
+                                        ,"/api/lead/**"
+                                        ,"/api/dealer/dashboard/**"
                                         ,"/swagger-ui/**",
                                         "/swagger-ui.html",
                                         "/v3/api-docs/**"
@@ -83,7 +85,7 @@ public class SecurityConfig {
                                 ).authenticated()
 
 
-                        //ADMIN API
+                                //ADMIN API
                                 .requestMatchers("/api/admin/**"
                                         ,"/api/payment/success/**"
                                         ,"/api/payment/failed/**"
@@ -93,6 +95,7 @@ public class SecurityConfig {
                                         ,"/api/admin/all-vehicle"
                                         ,"/api/admin/all-dealers"
                                         ,"/api/admin/dealer/count"
+
 
                                 ).hasRole("ADMIN")
 
@@ -116,7 +119,76 @@ public class SecurityConfig {
 
 
                                 .anyRequest().authenticated()
-                                )
+                )
+
+//                                //Permit All
+//                                .requestMatchers(
+//                                        "/api/auth/**"
+//                                        ,"/api/customer/**"
+//                                        ,"/api/dealer/register/**"
+//                                        ,"/api/vehicle/dealer/**"
+//                                        ,"/api/vehicle/**"
+//                                        ,"/api/vehicle/featured"
+//                                        ,"/api/vehicle/latest-vehicles"
+//                                        ,"/api/vehicle/non-premium/all-vehicle"
+//                                        ,"/api/vehicle/premium/all-vehicle"
+//                                        ,"/api/lead/generate-lead/**"
+//                                        ,"/api/lead/generate-view/**"
+//                                        ,"/uploads/**"
+//                                        ,"/swagger-ui/**",
+//                                        "/swagger-ui.html",
+//                                        "/v3/api-docs/**"
+//                                ).permitAll()
+//
+//                                .requestMatchers(
+//                                        "/uploads/**","/api/olx/**")
+//                                .permitAll()
+//
+////                                .requestMatchers(
+////                                        "/chat/**",
+////                                        "/api/chat/**"
+////                                ).authenticated()
+//
+//                                .requestMatchers(
+//                                        "/chat/**",
+//                                        "/api/chat/**"
+//                                ).authenticated()
+//
+//
+//                        //ADMIN API
+//                                .requestMatchers("/api/admin/**"
+//                                        ,"/api/payment/success/**"
+//                                        ,"/api/payment/failed/**"
+//                                        ,"/api/payment/admin/history"
+//                                        ,"/api/payment/dealer/**"
+//                                        ,"/api/admin/reports/**"
+//                                        ,"/api/admin/all-vehicle"
+//                                        ,"/api/admin/all-dealers"
+//                                        ,"/api/admin/dealer/count"
+//
+//                                ).hasRole("ADMIN")
+//
+//                                //DEALER API
+//                                .requestMatchers(
+//                                        "/api/lead/**",
+//                                        "/api/dealer/**",
+//                                        "/api/vehicle/add/**",
+//                                        "/api/vehicle/update/**",
+//                                        "/api/vehicle/status/**",
+//                                        "/api/vehicle/delete/**",
+//                                        "/api/payment/subscription/purchase",
+//                                        "/api/analytics/**"
+//                                        ,"/api/wishlist/dealer/**"
+//                                ).hasRole("DEALER")
+//
+//                                .requestMatchers("/api/lead/customer-dashboard"
+//                                        ,"/api/wishlist/**"
+//                                ).hasRole("CUSTOMER")
+//
+//
+//
+//                                .anyRequest().authenticated()
+//                                )
 
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(authenticationEntryPoint) //401 Unauthorized
@@ -167,7 +239,9 @@ public class SecurityConfig {
                 "http://localhost:3000",
                 "http://localhost:63342",
                 "http://127.0.0.1:5500",
-                "http://localhost:5500"
+                "http://localhost:5500",
+                "https://caryanam.com/",
+                "https://c1.caryanam.com/"
         ));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT","PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("*"));

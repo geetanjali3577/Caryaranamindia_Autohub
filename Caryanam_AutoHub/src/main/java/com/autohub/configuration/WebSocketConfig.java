@@ -27,7 +27,6 @@ public class WebSocketConfig
             MessageBrokerRegistry registry) {
 
         registry.enableSimpleBroker("/queue");
-
         registry.setApplicationDestinationPrefixes(
                 "/app"
         );

@@ -1,7 +1,5 @@
 package com.autohub.serviceImpl;
 
-import com.autohub.configuration.ChatConstants;
-import com.autohub.configuration.CustomUserDetails;
 import com.autohub.configuration.OnlineUserStore;
 import com.autohub.dto.ChatMessageRequest;
 import com.autohub.dto.ChatMessageResponse;

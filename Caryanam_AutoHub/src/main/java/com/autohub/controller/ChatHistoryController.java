@@ -141,11 +141,6 @@ public class ChatHistoryController {
         );
     }
 
-//    @GetMapping("/group/history")
-//    public List<ChatMessage> groupHistory() {
-//
-//        return chatService.getGroupHistory();
-//    }
 
     @GetMapping("/group/history")
     public ResponseEntity<List<ChatMessage>>

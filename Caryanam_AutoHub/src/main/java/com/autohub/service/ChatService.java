@@ -1,9 +1,6 @@
 package com.autohub.service;
 
-
-import com.autohub.configuration.CustomUserDetails;
 import com.autohub.dto.ChatMessageRequest;
-import com.autohub.dto.ChatMessageResponse;
 import com.autohub.dto.ChatUserResponse;
 import com.autohub.entity.ChatMessage;
 
