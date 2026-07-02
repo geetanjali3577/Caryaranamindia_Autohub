@@ -32,7 +32,9 @@ public class Dealer {
     private int yearsInBusiness;
 
     @Column(nullable = false)
-    private String mobile;
+    private String dealerMobile;
+
+    private String executiveMobile;
 
     @Column(nullable = false)
     private String whatsapp;

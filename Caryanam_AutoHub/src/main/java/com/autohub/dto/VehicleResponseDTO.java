@@ -102,6 +102,8 @@ public class VehicleResponseDTO {
 
     private String dealerContactNumber;
 
+    private String executiveMobile;
+
     private  String dealerContactEmail;
 
     private String dealerWhatsappNumber;

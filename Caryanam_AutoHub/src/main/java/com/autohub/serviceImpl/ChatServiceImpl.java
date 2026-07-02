@@ -132,7 +132,7 @@ public class ChatServiceImpl
                 response
         );
 
-        // Sender la pan live message disava
+        // Sender la pan live message
         messagingTemplate.convertAndSend(
                 "/queue/" + senderRole + "_" + senderId,
                 response
@@ -206,25 +206,11 @@ public class ChatServiceImpl
     }
 
 
-//    private void validateChat(
-//            String senderRole,
-//            String receiverRole){
-//
-//        if("CUSTOMER".equals(senderRole)
-//                &&
-//                "CUSTOMER".equals(receiverRole)){
-//
-//            throw new RuntimeException(
-//                    "Customer cannot chat with another customer"
-//            );
-//        }
-//    }
-
     private void validateChat(
             String senderRole,
             String receiverRole){
 
-        // Customer ↔ Customer Block
+        // Customer to Customer Block
         if ("CUSTOMER".equals(senderRole)
                 && "CUSTOMER".equals(receiverRole)) {
 
@@ -233,7 +219,7 @@ public class ChatServiceImpl
             );
         }
 
-        // Dealer ↔ Dealer Block
+        // Dealer to Dealer Block
         if ("DEALER".equals(senderRole)
                 && "DEALER".equals(receiverRole)) {
 
@@ -242,7 +228,7 @@ public class ChatServiceImpl
             );
         }
 
-        // Admin ↔ Dealer Block
+        // Admin to Dealer Block
         if (
                 ("ADMIN".equals(senderRole)
                         && "DEALER".equals(receiverRole))
@@ -252,11 +238,11 @@ public class ChatServiceImpl
         ) {
 
             throw new RuntimeException(
-                    "Admin to Dealer individual chat not allowed. Use All Dealers Group."
+                    "Admin to Dealer individual chat not allowed. Use CARYANAM DEALERS🚘 Group."
             );
         }
 
-        // Admin ↔ Customer Block
+        // Admin to Customer Block
         if (
                 ("ADMIN".equals(senderRole)
                         && "CUSTOMER".equals(receiverRole))
@@ -287,9 +273,9 @@ public class ChatServiceImpl
             users.add(
                     ChatUserResponse.builder()
                             .id(0L)
-                            .name("All Dealers Group")
+                            .name("CARYANAM DEALERS🚘")
                             .role("GROUP")
-                            .chatKey("ALL_DEALERS_GROUP")
+                            .chatKey("CARYANAM DEALERS🚘")
                             .online(true)
                             .unreadCount(0L)
                             .build()
@@ -533,13 +519,6 @@ public class ChatServiceImpl
                         .findTopByRoomIdOrderBySentAtDesc(roomId)
                         .orElse(null);
 
-//        Long unreadCount =
-//                messageRepository
-//                        .countByReceiverIdAndReceiverRoleAndIsReadFalse(
-//                                loggedInUserId,
-//                                loggedInRole
-//                        );
-
         Long unreadCount =
                 messageRepository.getUnreadCountForRoom(
                         roomId,
@@ -594,9 +573,7 @@ public class ChatServiceImpl
 
         message.setGroupMessage(true);
 
-        message.setGroupId(
-                "ALL_DEALERS_GROUP"
-        );
+        message.setGroupId("CARYANAM DEALERS🚘");
 
         message.setSenderId(senderId);
 
@@ -625,9 +602,7 @@ public class ChatServiceImpl
     public List<ChatMessage> getGroupHistory() {
 
         return messageRepository
-                .findByGroupIdOrderBySentAtAsc(
-                        "ALL_DEALERS_GROUP"
-                );
+                .findByGroupIdOrderBySentAtAsc("CARYANAM DEALERS🚘");
     }
 
     @Override
@@ -677,13 +652,9 @@ public class ChatServiceImpl
 
         message.setGroupMessage(true);
 
-        message.setGroupId(
-                "ALL_DEALERS_GROUP"
-        );
+        message.setGroupId("CARYANAM DEALERS🚘");
 
-        message.setRoomId(
-                "ALL_DEALERS_GROUP"
-        );
+        message.setRoomId("CARYANAM DEALERS🚘");
 
         message.setSenderId(senderId);
 

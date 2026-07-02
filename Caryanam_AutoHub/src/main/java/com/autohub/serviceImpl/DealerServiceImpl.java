@@ -59,7 +59,7 @@ public class DealerServiceImpl implements DealerService {
             throw new RuntimeException("Email already registered");
         }
 
-        if (dealerRepository.existsByMobile(dto.getMobile())) {
+        if (dealerRepository.existsByDealerMobile(dto.getDealerMobile())) {
             throw new RuntimeException("Mobile already registered");
         }
 
@@ -68,7 +68,8 @@ public class DealerServiceImpl implements DealerService {
         dealer.setOwnerName(dto.getOwnerName());
         dealer.setGstNumber(dto.getGstNumber());
         dealer.setYearsInBusiness(dto.getYearsInBusiness());
-        dealer.setMobile(dto.getMobile());
+        dealer.setDealerMobile(dto.getDealerMobile());
+        dealer.setExecutiveMobile(dto.getExecutiveMobile());
         dealer.setWhatsapp(dto.getWhatsapp());
         dealer.setEmail(dto.getEmail());
         dealer.setPassword(passwordEncoder.encode(dto.getPassword()));
@@ -274,10 +275,10 @@ public class DealerServiceImpl implements DealerService {
                 .ownerName(dealer.getOwnerName())
                 .gstNumber(dealer.getGstNumber())
                 .yearsInBusiness(dealer.getYearsInBusiness())
-                .mobile(dealer.getMobile())
+                .dealerMobile(dealer.getDealerMobile())
+               .executiveMobile(dealer.getExecutiveMobile())
                 .whatsapp(dealer.getWhatsapp())
                 .email(dealer.getEmail())
-                //.password(dealer.getPassword())
                 .address(dealer.getAddress())
                 .city(dealer.getCity())
                 .state(dealer.getState())
@@ -308,6 +309,7 @@ public class DealerServiceImpl implements DealerService {
         dealer.setBusinessName(dto.getBusinessName());
         dealer.setOwnerName(dto.getOwnerName());
         dealer.setWhatsapp(dto.getWhatsapp());
+        dealer.setExecutiveMobile(dto.getExecutiveMobile());
         dealer.setAddress(dto.getAddress());
         dealer.setCity(dto.getCity());
         dealer.setPinCode(dto.getPinCode());

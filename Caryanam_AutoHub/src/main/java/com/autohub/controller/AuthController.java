@@ -24,7 +24,7 @@ public class AuthController {
     public ResponseEntity<ResponseDto<LoginResponseDTO>> login(
             @RequestBody LoginRequestDTO request) {
 
-        System.out.println("Mobile : " + request.getMobile());
+        System.out.println("Mobile : " + request.getUsername());
 
         // REQUEST BODY VALIDATION
         if (request == null) {
@@ -37,9 +37,9 @@ public class AuthController {
                     ));
         }
 
-        if (request.getMobile() == null
-                || request.getMobile().trim().isEmpty()) {
-            if (!request.getMobile()
+        if (request.getUsername() == null
+                || request.getUsername().trim().isEmpty()) {
+            if (!request.getUsername()
                     .matches("^[6-9]\\d{9}$")) {
 
                 return ResponseEntity.badRequest()
@@ -50,33 +50,38 @@ public class AuthController {
                         ));
             }
         }
-/*
-        // EMAIL VALIDATION
-        if (request.getEmail() == null
-                || request.getEmail().trim().isEmpty()) {
+
+        // USERNAME VALIDATION
+        if (request.getUsername() == null
+                || request.getUsername().trim().isEmpty()) {
 
             return ResponseEntity.badRequest()
                     .body(new ResponseDto<>(
                             400,
-                            "Email is Required",
+                            "Email, Dealer Mobile or Executive Mobile is Required",
                             null
                     ));
         }
 
-        // EMAIL LENGTH VALIDATION
-        if (request.getEmail().length() > 50) {
+        // USERNAME LENGTH VALIDATION
+        if (request.getUsername().length() > 50) {
 
             return ResponseEntity.badRequest()
                     .body(new ResponseDto<>(
                             400,
-                            "Email must be maximum 50 characters",
+                            "Username must be maximum 50 characters",
                             null
                     ));
         }
+
+        String username = request.getUsername().trim();
+
+        boolean isEmail = username.contains("@");
 
         // EMAIL FORMAT VALIDATION
-        if (!request.getEmail()
-                .matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+        if (isEmail &&
+                !username.matches(
+                        "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
 
             return ResponseEntity.badRequest()
                     .body(new ResponseDto<>(
@@ -85,7 +90,19 @@ public class AuthController {
                             null
                     ));
         }
-*/
+
+        // MOBILE FORMAT VALIDATION
+        if (!isEmail &&
+                !username.matches("^[0-9]{10}$")) {
+
+            return ResponseEntity.badRequest()
+                    .body(new ResponseDto<>(
+                            400,
+                            "Mobile Number must be 10 digits",
+                            null
+                    ));
+        }
+
         // PASSWORD VALIDATION
         if (request.getPassword() == null
                 || request.getPassword().trim().isEmpty()) {

@@ -2,6 +2,7 @@ package com.autohub.dto;
 
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Data
@@ -14,10 +15,17 @@ public class UpdateDealerProfileRequestDTO {
     private String ownerName;
 
     @NotBlank(message = "Mobile Number is Required")
-    private String mobile;
+    private String dealerMobile;
 
     @NotBlank(message = "WhatsAPP Number is Required")
     private String whatsapp;
+
+
+    @Pattern(
+            regexp = "^$|^[6-9]\\d{9}$",
+            message = "Executive mobile number must be a valid 10-digit Indian mobile number"
+    )
+    private String executiveMobile;
 
     @NotBlank(message = "Address is Required")
     private String address;

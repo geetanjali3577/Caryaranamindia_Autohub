@@ -1,5 +1,6 @@
 package com.autohub.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -24,11 +25,7 @@ public class CustomerRegistrationRequestDTO {
             message = "City must be between 2 and 50 characters")
     private String customerCity;
 
-    @NotBlank(message = "Customer Email is Required")
-    @Pattern(
-            regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
-            message = "Please enter a valid email address"
-    )
+    @Email(message = "Invalid email format")
     private String email;
 
     @NotBlank(message = "Customer Password is Required")

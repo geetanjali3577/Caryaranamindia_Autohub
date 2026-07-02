@@ -28,41 +28,54 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-    private final AuthenticationManager authenticationManager;
-    private final JwtUtil jwtUtil;
-
-    private final DealerRepository dealerRepository;
-    private final AdminRepository adminRepository;
-
-
-
-    private final PasswordEncoder passwordEncoder;
-    private final EmailService emailService;
-
-
-    private final CustomerRepository customerRepository;
-
     // TOKEN BLACKLIST
     private static final Set<String> tokenBlacklist = new HashSet<>();
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
+    private final DealerRepository dealerRepository;
+    private final AdminRepository adminRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
+    private final CustomerRepository customerRepository;
 
     // =====================================================
     // LOGIN
     // =====================================================
+
+    // =====================================================
+    // CHECK TOKEN
+    // =====================================================
+    public static boolean isTokenBlacklisted(String token) {
+
+        return tokenBlacklist.contains(token);
+    }
+
     @Override
     public LoginResponseDTO login(LoginRequestDTO request) {
 
+        boolean isEmail = request.getUsername().contains("@");
+
         // =====================================
-        // EMAIL EXISTS CHECK
+        // USER EXISTS CHECK
         // =====================================
 
-//        boolean emailExists = dealerRepository.existsByEmail(request.getEmail())
-//                        || adminRepository.existsByEmail(request.getEmail())
-//                        || customerRepository.existsByEmail(request.getEmail());
+        boolean exists;
 
-        boolean exists = dealerRepository.existsByMobile(request.getMobile())
-                || adminRepository.existsByMobile(request.getMobile())
-                || customerRepository.existsByMobile(request.getMobile());
+        if (isEmail) {
 
+            exists =
+                    dealerRepository.existsByEmail(request.getUsername())
+                            || adminRepository.existsByEmail(request.getUsername())
+                            || customerRepository.existsByEmail(request.getUsername());
+
+        } else {
+
+            exists =
+                    dealerRepository.existsByDealerMobile(request.getUsername())
+                            || dealerRepository.existsByExecutiveMobile(request.getUsername())
+                            || adminRepository.existsByMobile(request.getUsername())
+                            || customerRepository.existsByMobile(request.getUsername());
+        }
 
         if (!exists) {
 
@@ -78,9 +91,8 @@ public class AuthServiceImpl implements AuthService {
         try {
 
             authenticationManager.authenticate(
-
                     new UsernamePasswordAuthenticationToken(
-                            request.getMobile(),
+                            request.getUsername(),
                             request.getPassword()
                     )
             );
@@ -92,16 +104,35 @@ public class AuthServiceImpl implements AuthService {
             );
         }
 
-
         // =====================================
         // DEALER LOGIN
         // =====================================
 
-//        Optional<Dealer> dealerOpt =
-//                dealerRepository.findByEmail(request.getEmail());
 
-        Optional<Dealer> dealerOpt =
-                dealerRepository.findByMobile(request.getMobile());
+        Optional<Dealer> dealerOpt;
+
+        if (isEmail) {
+
+            dealerOpt =
+                    dealerRepository.findByEmail(
+                            request.getUsername()
+                    );
+
+        } else {
+
+            dealerOpt =
+                    dealerRepository.findByDealerMobile(
+                            request.getUsername()
+                    );
+
+            if (dealerOpt.isEmpty()) {
+
+                dealerOpt =
+                        dealerRepository.findByExecutiveMobile(
+                                request.getUsername()
+                        );
+            }
+        }
 
         if (dealerOpt.isPresent()) {
 
@@ -110,31 +141,27 @@ public class AuthServiceImpl implements AuthService {
             String token = jwtUtil.generateToken(
                     dealer.getId(),
                     dealer.getOwnerName(),
-                    dealer.getMobile(),
+                    dealer.getDealerMobile(),
                     dealer.getRole(),
-                    dealer.getMobile(),
+                    dealer.getDealerMobile(),
                     dealer.getCity()
             );
 
-            LoginResponseDTO dto =
-                    new LoginResponseDTO();
-
-            dto.setId(dealer.getId());
-            dto.setRole(dealer.getRole().name());
-            dto.setToken(token);
-
-            return dto;
+            return new LoginResponseDTO(
+                    dealer.getId(),
+                    dealer.getRole().name(),
+                    token
+            );
         }
 
         // =====================================
         // ADMIN LOGIN
         // =====================================
 
-//        Optional<Admin> adminOpt =
-//                adminRepository.findByEmail(request.getEmail());
-
         Optional<Admin> adminOpt =
-                adminRepository.findByMobile(request.getMobile());
+                isEmail
+                        ? adminRepository.findByEmail(request.getUsername())
+                        : adminRepository.findByMobile(request.getUsername());
 
         if (adminOpt.isPresent()) {
 
@@ -149,26 +176,25 @@ public class AuthServiceImpl implements AuthService {
                     admin.getCity()
             );
 
-            LoginResponseDTO dto =
-                    new LoginResponseDTO();
-
-            dto.setId(admin.getAdminId());
-            dto.setRole(admin.getRole().name());
-            dto.setToken(token);
-
-            return dto;
+            return new LoginResponseDTO(
+                    admin.getAdminId(),
+                    admin.getRole().name(),
+                    token
+            );
         }
+
         // =====================================
         // CUSTOMER LOGIN
         // =====================================
 
+        Optional<Customer> customerOpt =
+                isEmail
+                        ? customerRepository.findByEmail(request.getUsername())
+                        : customerRepository.findByMobile(request.getUsername());
 
-//        Optional<Customer> byEmail = customerRepository.findByEmail(request.getEmail());
-        Optional<Customer> byMobile = customerRepository.findByMobile(request.getMobile());
+        if (customerOpt.isPresent()) {
 
-        if (byMobile.isPresent()) {
-
-            Customer customer = byMobile.get();
+            Customer customer = customerOpt.get();
 
             String token = jwtUtil.generateToken(
                     customer.getId(),
@@ -178,26 +204,18 @@ public class AuthServiceImpl implements AuthService {
                     customer.getMobile(),
                     customer.getCustomerCity()
             );
-            LoginResponseDTO dto =
-                    new LoginResponseDTO();
 
-            dto.setId(customer.getId());
-            dto.setRole(customer.getRole().name());
-            dto.setToken(token);
-
-            return dto;
+            return new LoginResponseDTO(
+                    customer.getId(),
+                    customer.getRole().name(),
+                    token
+            );
         }
-
-
 
         throw new RuntimeException(
                 "Login Failed"
         );
     }
-
-    // =====================================================
-    // LOGOUT
-    // =====================================================
 
     @Override
     public void logout(String token) {
@@ -217,14 +235,6 @@ public class AuthServiceImpl implements AuthService {
         tokenBlacklist.add(token);
 
         System.out.println("Logout Successfully");
-    }
-
-    // =====================================================
-    // CHECK TOKEN
-    // =====================================================
-    public static boolean isTokenBlacklisted(String token) {
-
-        return tokenBlacklist.contains(token);
     }
 
 

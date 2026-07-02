@@ -15,13 +15,17 @@ public interface DealerRepository extends JpaRepository<Dealer, Long> {
 
     Optional<Dealer> findByOwnerName(String ownerName);
 
-    Optional<Dealer> findByMobile(String mobile);
+    Optional<Dealer> findByDealerMobile(String mobile);
 
     Optional<Dealer> findByEmail(String email);
 
+    Optional<Dealer> findByExecutiveMobile(String executiveMobile);
+
+    boolean existsByExecutiveMobile(String executiveMobile);
+
     boolean existsByEmail(String email);
 
-    boolean existsByMobile(String mobileNumber);
+    boolean existsByDealerMobile(String mobileNumber);
 
     @Query("""
             SELECT d.city,
@@ -45,5 +49,6 @@ public interface DealerRepository extends JpaRepository<Dealer, Long> {
     ORDER BY MONTH(d.createdAt)
 """)
     List<Object[]> getMonthlyDealerAnalytics();
+
 
 }

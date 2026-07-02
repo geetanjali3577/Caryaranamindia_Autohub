@@ -12,8 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -77,7 +76,7 @@ public class DealerImportServiceImpl
                     String mobile =
                             getStringValue(formatter, row, 3);
 
-                    dealer.setMobile(
+                    dealer.setDealerMobile(
                             mobile.isBlank()
                                     ? "NA_" + rowNum
                                     : mobile);
@@ -87,14 +86,14 @@ public class DealerImportServiceImpl
 
                     dealer.setWhatsapp(
                             whatsapp.isBlank()
-                                    ? dealer.getMobile()
+                                    ? dealer.getDealerMobile()
                                     : whatsapp);
 
                     String password =
                             getStringValue(formatter, row, 5);
 
                     if (password.isBlank()) {
-                        password = "123456";
+                        password = "pass@123";
                     }
 
                     dealer.setPassword(
@@ -120,15 +119,35 @@ public class DealerImportServiceImpl
                                     ? "000000"
                                     : getStringValue(formatter, row, 9));
 
-                    dealer.setEmail(null);
+                    String executiveNumber =
+                            getStringValue(formatter, row, 10);
+
+                    dealer.setExecutiveMobile(
+                            executiveNumber != null && !executiveNumber.trim().isEmpty()
+                                    ? executiveNumber.trim()
+                                    : null
+                    );
+
+                    String email = getStringValue(formatter, row, 11);
+
+                    dealer.setEmail(
+                            email != null && !email.trim().isEmpty()
+                                    ? email.trim()
+                                    : null
+                    );
+
+                    dealer.setFreeTrialEndDate(LocalDateTime.now().plusMonths(1));
 
                     dealer.setRole(Role.DEALER);
-                    dealer.setDealerAccountStatus(
-                            DealerStatus.APPROVED);
+
+                    dealer.setDealerAccountStatus(DealerStatus.APPROVED);
 
                     dealer.setSubscriptionActive(false);
 
-                    dealerRepository.save(dealer);
+                    Dealer save = dealerRepository.save(dealer);
+
+                    System.out.println(
+                            "Saved Dealer: " + save);
 
                     success++;
 

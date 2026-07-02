@@ -21,7 +21,8 @@ public class DealerResponseDTO {
     private String gstNumber;
     private Integer yearsInBusiness;
 
-    private String mobile;
+    private String dealerMobile;
+    private String executiveMobile;
     private String whatsapp;
     private String email;
     private String password;

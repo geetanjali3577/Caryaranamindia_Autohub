@@ -18,20 +18,28 @@ public class DealerRegisterDTO {
     @NotNull(message = "Years In Business is Required")
     private Integer yearsInBusiness;
 
-    @NotBlank(message = "Mobile Number is Required")
+    @NotBlank(message = "Dealer Mobile Number is Required")
     @Pattern(
             regexp = "^[6-9]\\d{9}$",
             message = "Mobile Number must be a valid 10-digit Indian mobile number"
     )
-    private String mobile;
+    private String dealerMobile;
 
-    @NotBlank(message = "WhatsApp Number is Required")
+
+    @Pattern(
+            regexp = "^$|^[6-9]\\d{9}$",
+            message = "Executive mobile number must be a valid 10-digit Indian mobile number"
+    )
+    private String executiveMobile;
+
+    @NotBlank(message = "Dealer WhatsApp Number is Required")
     @Pattern(
             regexp = "^[6-9]\\d{9}$",
             message = "Mobile Number must be a valid 10-digit Indian mobile number"
     )
     private String whatsapp;
 
+   @Email(message = "Invalid email format")
    private String email;
 
     @NotBlank(message = "Password is Required")
